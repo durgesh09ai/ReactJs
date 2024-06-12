@@ -1,0 +1,124 @@
+Writing Test Cases
+
+Writing tests for the LoginForm component involves checking various aspects such as rendering, interaction, and state management. We will use Jest and React Testing Library for this purpose.
+npm install --save-dev @testing-library/react @testing-library/jest-dom @testing-library/user-event jest
+Steps to Set Up Testing Environment
+1. Install Dependencies:
+npm install --save-dev @testing-library/react @testing-library/jest-dom @testing-library/user-event jest
+
+2. Create a Test File:
+Create a test file named LoginForm.test.tsx in the same directory as your LoginForm component or in a __tests__ directory.
+
+import React from 'react';
+import { render, screen, fireEvent } from '@testing-library/react';
+import '@testing-library/jest-dom/extend-expect';
+import userEvent from '@testing-library/user-event';
+import { Provider } from 'react-redux';
+import configureStore from 'redux-mock-store';
+import LoginForm from './LoginForm';
+import { CREDENTIALS } from '../credentials';
+import { login } from '../store/store';
+
+const mockStore = configureStore([]);
+const store = mockStore({
+  auth: { role: null },
+});
+
+describe('LoginForm Component', () => {
+  beforeEach(() => {
+    store.clearActions();
+  });
+
+  test('renders email and password input fields', () => {
+    render(
+      <Provider store={store}>
+        <LoginForm />
+      </Provider>
+    );
+
+    expect(screen.getByLabelText(/email/i)).toBeInTheDocument();
+    expect(screen.getByLabelText(/password/i)).toBeInTheDocument();
+  });
+
+  test('displays an error message when email or password is missing', () => {
+    render(
+      <Provider store={store}>
+        <LoginForm />
+      </Provider>
+    );
+
+    fireEvent.click(screen.getByText(/login/i));
+    expect(screen.getByText(/invalid username\/password/i)).toBeInTheDocument();
+  });
+
+  test('displays an error message when user does not exist', () => {
+    render(
+      <Provider store={store}>
+        <LoginForm />
+      </Provider>
+    );
+
+    userEvent.type(screen.getByLabelText(/email/i), 'nonexistent@example.com');
+    userEvent.type(screen.getByLabelText(/password/i), 'password');
+    fireEvent.click(screen.getByText(/login/i));
+
+    expect(screen.getByText(/user does not exist/i)).toBeInTheDocument();
+  });
+
+  test('calls dispatch with user role on successful login', () => {
+    render(
+      <Provider store={store}>
+        <LoginForm />
+      </Provider>
+    );
+
+    const validUser = CREDENTIALS[0];
+    userEvent.type(screen.getByLabelText(/email/i), validUser.email);
+    userEvent.type(screen.getByLabelText(/password/i), validUser.password);
+    fireEvent.click(screen.getByText(/login/i));
+
+    const actions = store.getActions();
+    expect(actions).toEqual([login(validUser.role)]);
+  });
+
+  test('does not display error message when login is successful', () => {
+    render(
+      <Provider store={store}>
+        <LoginForm />
+      </Provider>
+    );
+
+    const validUser = CREDENTIALS[0];
+    userEvent.type(screen.getByLabelText(/email/i), validUser.email);
+    userEvent.type(screen.getByLabelText(/password/i), validUser.password);
+    fireEvent.click(screen.getByText(/login/i));
+
+    expect(screen.queryByText(/invalid username\/password/i)).not.toBeInTheDocument();
+    expect(screen.queryByText(/user does not exist/i)).not.toBeInTheDocument();
+  });
+});
+
+
+3. Running the Tests
+npm test
+
+
+Explanation
+Setup:
+
+We use redux-mock-store to create a mock store for testing Redux-related functionality.
+The Provider component is used to wrap the LoginForm component to provide the mock Redux store.
+Rendering Tests:
+
+Check if the form renders correctly: Ensure the email and password input fields are rendered.
+Validation Tests:
+
+Check validation error for missing email or password: When the form is submitted with either the email or password missing, the appropriate error message should be displayed.
+Check validation error for non-existent user: When the form is submitted with an email and password that do not match any user in CREDENTIALS, the appropriate error message should be displayed.
+Successful Login Tests:
+
+Check dispatch on successful login: Ensure the correct dispatch action is called with the user's role when valid credentials are provided.
+Check no error message on successful login: Ensure no error messages are displayed when the form is submitted with valid credentials.
+
+
+
