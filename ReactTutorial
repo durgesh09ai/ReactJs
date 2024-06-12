@@ -44,6 +44,11 @@ This margin creates space outside the div, separating it from other elements.
 One common use of margin is to center an element horizontally. This can be done by setting the left and right margins to auto.
 
 margin: 0 auto; sets the top and bottom margins to 0, and the left and right margins to auto, which centers the element horizontally within its parent.
+--------------------------------------------------------------------------------
+
+The <Router> component is a fundamental part of client-side routing in React applications. 
+It is provided by routing libraries like React Router and is used to define the routing configuration for your application.
+
 
  <Router>
             <div>
@@ -56,6 +61,7 @@ margin: 0 auto; sets the top and bottom margins to 0, and the left and right mar
             </div>
         </Router>
 
+-------------------------------------------------------------------
 
 e: React.FormEvent : React.FormEvent is used to type form-related event handlers in React components.
 ------------------------------------------------------------
