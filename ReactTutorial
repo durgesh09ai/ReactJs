@@ -174,3 +174,39 @@ async function fetchData() {
     }
 }
 The combination of async and await allows you to write asynchronous code ;
+---------------------------------------------------------------------------------
+Callback function : A callback function in JavaScript is a function that is passed as an argument to another function and 
+is executed later in the program's execution. Callback functions are commonly used in asynchronous programming,
+event handling, and functional programming paradigms.
+
+Example : 
+function doSomething(callback) {
+    // Perform some operation
+    console.log("Doing something...");
+    
+    // Call the callback function
+    callback();
+}
+
+function callbackFunction() {
+    console.log("Callback function executed!");
+}
+
+// Pass the callback function to doSomething
+doSomething(callbackFunction);
+
+
+Common Use Cases:
+Asynchronous Programming: Callback functions are often used to handle asynchronous operations, such as fetching data from a server, reading a file,
+or waiting for user input. Instead of blocking the execution of the program,
+asynchronous operations accept callback functions to be executed once the operation completes.
+
+Event Handling: In web development, callback functions are commonly used to handle events triggered by user actions,
+such as clicks, mouse movements, or keyboard input. Event listeners are set up to call callback functions when the corresponding event occurs.
+
+Callback Hell:
+Callback hell, also known as "pyramid of doom," refers to the situation in asynchronous JavaScript programming where multiple nested callback functions are used,
+leading to code that is difficult to read, understand, and maintain.
+This can be mitigated by using techniques like modularization, promises, or async/await to write more readable and structured code.
+
+
