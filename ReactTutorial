@@ -7,15 +7,18 @@ onSubmit(email: string, password: string) : void;
 
 
 Store : place where all the state of the application are stored.
-Reducers : It is an object  just like as Controller which controll the action of the application , it is pure function , Action like, Add, Delete, Update . It is an object which having Key: Value things, Each key act as Action
+Reducers : It is an object  just like as Controller which controll the action of the application ,
+it is pure function , Action like, Add, Delete, Update . It is an object which having Key: Value things, Each key act as Action
 UseSelector  :  This is the hook which is use to communicate with the Store, It selectively ask the store that I need that infornmation.
 UseDispatch : THis hook is basically use to update Spacific things in the Store along with the reducer
 const App: React.FC = () => { ... } 
 
 : React.FC
-This is TypeScript type annotation. Here, React.FC stands for "React Function Component." By annotating App with React.FC, you're telling TypeScript that App is a functional component in React.
+This is TypeScript type annotation. Here, React.FC stands for "React Function Component." 
+By annotating App with React.FC, you're telling TypeScript that App is a functional component in React.
 
-React.FC (or React.FunctionComponent) is a built-in type in React's type definitions that represents a functional component. It automatically includes type checking for children, default props, prop types, and return type.
+React.FC (or React.FunctionComponent) is a built-in type in React's type definitions that represents a functional component. 
+It automatically includes type checking for children, default props, prop types, and return type.
 
 
 Cmd +shift  + p =  Reload application
