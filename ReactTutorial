@@ -56,3 +56,8 @@ margin: 0 auto; sets the top and bottom margins to 0, and the left and right mar
             </div>
         </Router>
 
+
+e: React.FormEvent : React.FormEvent is used to type form-related event handlers in React components.
+The e.preventDefault() method is used to prevent the default behavior of an event in JavaScript. When used in a React application,
+it stops the default action associated with an event from being executed. 
+
