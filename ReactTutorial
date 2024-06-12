@@ -1,0 +1,58 @@
+interface LoginFormProps {
+    onSubmit: (email: string, password: string) => void;
+}
+interface LoginFormProps {
+onSubmit(email: string, password: string) : void;
+}
+
+
+Store : place where all the state of the application are stored.
+Reducers : It is an object  just like as Controller which controll the action of the application , it is pure function , Action like, Add, Delete, Update . It is an object which having Key: Value things, Each key act as Action
+UseSelector  :  This is the hook which is use to communicate with the Store, It selectively ask the store that I need that infornmation.
+UseDispatch : THis hook is basically use to update Spacific things in the Store along with the reducer
+const App: React.FC = () => { ... } 
+
+: React.FC
+This is TypeScript type annotation. Here, React.FC stands for "React Function Component." By annotating App with React.FC, you're telling TypeScript that App is a functional component in React.
+
+React.FC (or React.FunctionComponent) is a built-in type in React's type definitions that represents a functional component. It automatically includes type checking for children, default props, prop types, and return type.
+
+
+Cmd +shift  + p =  Reload application
+
+Padding is used to create space inside an element, between the element's content and its border. 	
+<style>
+        .box {
+            padding: 20px;
+            background-color: lightgoldenrodyellow;
+            border: 1px solid #000;
+        }
+media queries to apply different padding based on the screen size 
+        @media (max-width: 600px) {
+            .box {
+                padding: 10px; /* Smaller padding for smaller screens */
+            }
+        }
+    </style>
+
+The .box class initially has padding: 20px;.
+When the viewport width is 600 pixels or less, the padding is reduced to 10px using a media query (@media (max-width: 600px)).
+
+
+Margins in CSS are used to create space around elements, outside of any defined borders.
+This margin creates space outside the div, separating it from other elements.
+One common use of margin is to center an element horizontally. This can be done by setting the left and right margins to auto.
+
+margin: 0 auto; sets the top and bottom margins to 0, and the left and right margins to auto, which centers the element horizontally within its parent.
+
+ <Router>
+            <div>
+
+                <Routes>
+                <Route path="/" element={<Layout />}>
+                    <Route path="/user-dashboard" element=<UserDashboard /> : <Navigate to="/login" />/>
+                </Route>
+                </Routes>
+            </div>
+        </Router>
+
