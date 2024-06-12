@@ -88,3 +88,10 @@ package.json
  It contains metadata relevant to the project.It specifies the project dependencies and their respective versions or version ranges.
 package-lock.json
 It Locks down the full dependency tree to exact versions, ensuring consistent installations.
+Ensures that the exact same versions of dependencies are installed on every installation.
+--------------------------------------------------------------
+Jest : TO test the Component
+npm install --save-dev @testing-library/react @testing-library/jest-dom @testing-library/user-event jest
+
+
+
