@@ -83,3 +83,8 @@ Component Usage: The React component uses useSelector to access the Redux state 
 checking credentials, and dispatching appropriate actions.
 Using createSlice() from Redux Toolkit simplifies the process of managing Redux state by combining the reducer logic and action creators in a concise and
 readable way.
+---------------------------------------------------------
+package.json
+ It contains metadata relevant to the project.It specifies the project dependencies and their respective versions or version ranges.
+package-lock.json
+It Locks down the full dependency tree to exact versions, ensuring consistent installations.
