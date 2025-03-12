@@ -29,3 +29,42 @@ export default DocumentEditor;
 
 
 --------------------------------------
+
+<script type="text/javascript" src="https://onlyoffice.com/sdkjs"></script>
+
+-----------------------
+import React, { useEffect, useRef } from "react";
+
+const DocumentEditor = () => {
+  const editorRef = useRef(null);
+
+  useEffect(() => {
+    if (!window.DocEditor) {
+      console.error("OnlyOffice DocEditor not found. Make sure the script is loaded.");
+      return;
+    }
+
+    editorRef.current = new window.DocEditor("onlyoffice-container", {
+      document: {
+        fileType: "docx",
+        key: "random-doc-key", // Unique identifier
+        url: "https://your-public-server.com/sample.docx",
+      },
+      editorConfig: {
+        mode: "edit",
+      },
+    });
+
+    return () => {
+      editorRef.current?.destroy();
+    };
+  }, []);
+
+  return <div id="onlyoffice-container" style={{ width: "100%", height: "600px" }}></div>;
+};
+
+export default DocumentEditor;
+
+
+
+
