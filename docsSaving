@@ -95,13 +95,13 @@ const WordEditor = () => {
 
 export default WordEditor;
 
-
 documentServerUrl="https://onlinedocs.onlyoffice.com"
-
-
 -------------------------------------
 CKEditor can be used to render and edit Word (.docx) documents in React, but it does not support .docx natively. You will need additional plugins or libraries to convert .docx to HTML and then edit it in CKEditor
 
+-----------------------------------------------
+
+I was stuck with OnlyOffice because it requires a Document Server URL, which I didn’t have. Without a self-hosted server or a paid cloud subscription, I couldn’t generate the necessary document security token (JWT). I tried using https://onlinedocs.onlyoffice.com, but it returned a "Document security token is not correctly formed" error. OnlyOffice requires either a self-hosted instance or an official cloud service with proper authentication. I explored alternative libraries for rendering and editing Word documents in React. Microsoft Office.js provides full Word integration but needs Office 365. Mammoth.js + CKEditor is lightweight but loses complex formatting. Google Docs API allows cloud-based editing but requires authentication. Collabora Online offers a self-hosted option similar to OnlyOffice. docx.js is useful for generating Word files but lacks full editing capabilities
 
 
 
