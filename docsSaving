@@ -99,3 +99,9 @@ export default WordEditor;
 documentServerUrl="https://onlinedocs.onlyoffice.com"
 
 
+-------------------------------------
+CKEditor can be used to render and edit Word (.docx) documents in React, but it does not support .docx natively. You will need additional plugins or libraries to convert .docx to HTML and then edit it in CKEditor
+
+
+
+
