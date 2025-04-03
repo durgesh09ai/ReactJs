@@ -12,7 +12,14 @@ import {
   MenuItem,
 } from "@mui/material";
 
-export  const Sidebar = ({ selectedAgent, setSelectedAgent }) => {
+interface SidebarProps {
+    selectedAgent: string;
+    setSelectedAgent: React.Dispatch<React.SetStateAction<string>>;
+  }
+
+
+ export const Sidebar = ({ selectedAgent, setSelectedAgent }: SidebarProps) => {
+
     const agents = ["LitSeek", "TopicWeaver", "InsightGen", "InsightGapX", "ProtoGen"];
     return (
       <Paper sx={{ p: 2, width: "250px", textAlign: "center" }}>
