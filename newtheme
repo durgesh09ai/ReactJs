@@ -1,0 +1,88 @@
+import React, { useState } from "react";
+import { AppBar, Box, CssBaseline, Drawer, IconButton, List, ListItem, ListItemText, Toolbar, Typography, Paper, Button, Switch } from "@mui/material";
+import MenuIcon from "@mui/icons-material/Menu";
+import SettingsIcon from "@mui/icons-material/Settings";
+
+const drawerWidth = 240;
+
+const Sidebar = ({ open, handleToggle, darkMode, handleThemeToggle }) => (
+  <Drawer
+    variant="permanent"
+    sx={{
+      width: open ? drawerWidth : 60,
+      flexShrink: 0,
+      transition: "width 0.3s",
+      [`& .MuiDrawer-paper`]: { width: open ? drawerWidth : 60, boxSizing: "border-box", background: darkMode ? "#222" : "#888", color: "#fff", transition: "width 0.3s" },
+    }}
+  >
+    <Toolbar sx={{ display: "flex", justifyContent: "space-between" }}>
+      <IconButton onClick={handleToggle} sx={{ color: "#fff" }}>
+        <MenuIcon />
+      </IconButton>
+      <IconButton sx={{ color: "#fff" }}>
+        <SettingsIcon />
+      </IconButton>
+    </Toolbar>
+    <List>
+      {["Who is Babaji?", "A Simple Greeting", "Translation and Transcription"].map((text) => (
+        <ListItem button key={text}>
+          <ListItemText primary={text} sx={{ display: open ? "block" : "none" }} />
+        </ListItem>
+      ))}
+      <ListItem>
+        <Typography variant="body1" sx={{ display: open ? "block" : "none", mr: 2 }}>Dark Mode</Typography>
+        <Switch checked={darkMode} onChange={handleThemeToggle} />
+      </ListItem>
+    </List>
+  </Drawer>
+);
+
+const Content = ({ backgroundColor }) => (
+  <Box sx={{ flexGrow: 1, p: 3, color: "#fff", backgroundColor, minHeight: "100vh" }}>
+    <Toolbar />
+    <Paper sx={{ p: 2, backgroundColor: backgroundColor === "#121212" ? "#333" : "#bbb", color: "#fff" }}>
+      <Typography variant="h6" gutterBottom>
+        In some Hindu traditions, "Babaji" is used as a respectful title for a holy or wise man.
+      </Typography>
+      <Typography variant="body1">
+        <b>Mahavatar Babaji:</b> A legendary yogi believed to have revived Kriya Yoga.
+      </Typography>
+      <Typography variant="body1">
+        <b>Other Gurus:</b> Many spiritual teachers are addressed as "Babaji."
+      </Typography>
+    </Paper>
+  </Box>
+);
+
+const FilesPanel = ({ backgroundColor }) => (
+  <Box sx={{ width: 300, p: 2, backgroundColor, color: "#fff", height: "100vh" }}>
+    <Typography variant="h6">Files</Typography>
+    <Paper sx={{ p: 2, mt: 2, textAlign: "center", backgroundColor: backgroundColor === "#222" ? "#333" : "#aaa" }}>
+      <Typography variant="body1">Nothing here yet</Typography>
+      <Button variant="contained" sx={{ mt: 2 }}>+ Add Files</Button>
+    </Paper>
+  </Box>
+);
+
+const App = () => {
+  const [open, setOpen] = useState(true);
+  const [darkMode, setDarkMode] = useState(true);
+  const [backgroundColor, setBackgroundColor] = useState("#121212");
+
+  const handleToggle = () => setOpen(!open);
+  const handleThemeToggle = () => {
+    setDarkMode(!darkMode);
+    setBackgroundColor(darkMode ? "#999" : "#121212");
+  };
+
+  return (
+    <Box sx={{ display: "flex" }}>
+      <CssBaseline />
+      <Sidebar open={open} handleToggle={handleToggle} darkMode={darkMode} handleThemeToggle={handleThemeToggle} />
+      <Content backgroundColor={backgroundColor} />
+      <FilesPanel backgroundColor={darkMode ? "#222" : "#888"} />
+    </Box>
+  );
+};
+
+export default App;
