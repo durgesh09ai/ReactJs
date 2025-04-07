@@ -48,3 +48,85 @@ const generatePDFWithParsedTable = (description: string) => {
 
   doc.save("llm-response.pdf");
 };
+
+
+---------------------------------------------------------------------------------------
+
+// Helper to extract markdown table from string
+const extractTableParts = (text: string) => {
+  const tableRegex = /(\|.*\|\n(?:\|.*\|\n?)+)/; // matches markdown tables
+  const match = text.match(tableRegex);
+
+  if (!match) return { before: text, table: null, after: "" };
+
+  const table = match[1];
+  const [before, after] = text.split(table);
+
+  return { before, table, after };
+};
+
+// Parse markdown table to columns/rows
+const parseMarkdownTable = (tableText: string) => {
+  const lines = tableText.trim().split("\n");
+  const header = lines[0].split("|").map((cell) => cell.trim()).filter(Boolean);
+  const rows = lines.slice(2).map((line) =>
+    line.split("|").map((cell) => cell.trim()).filter(Boolean)
+  );
+  return { columns: header, rows };
+};
+
+// Main function
+const generatePDFt = (description: string) => {
+  const doc = new jsPDF();
+  let currentY = 10;
+
+  const { before, table, after } = extractTableParts(description);
+
+  // Render text before table
+  if (before) {
+    const lines = doc.splitTextToSize(before.trim(), 180);
+    doc.text(lines, 14, currentY);
+    currentY += lines.length * 6 + 4;
+  }
+
+  // Render table if exists
+  if (table) {
+    const parsed = parseMarkdownTable(table);
+
+    autoTable(doc, {
+      startY: currentY,
+      head: [parsed.columns],
+      body: parsed.rows,
+      headStyles: {
+        fillColor: [40, 40, 40],
+        textColor: [255, 255, 255],
+        fontStyle: 'bold',
+      },
+      styles: { fontSize: 10 },
+      margin: { left: 14, right: 14 },
+      didDrawPage: (data) => {
+        currentY = data.cursor.y + 10; // update current Y after table
+      },
+    });
+  }
+
+  // Render text after table
+  if (after) {
+    const lines = doc.splitTextToSize(after.trim(), 180);
+    doc.text(lines, 14, currentY);
+  }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
