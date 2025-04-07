@@ -1,0 +1,50 @@
+const parseMarkdownTable = (text: string): { columns: string[]; rows: string[][] } | null => {
+  const lines = text.trim().split("\n");
+
+  // Find the table lines (basic check for "|")
+  const tableStartIndex = lines.findIndex(line => line.trim().startsWith("|") && line.includes("|"));
+  if (tableStartIndex === -1 || tableStartIndex + 2 >= lines.length) return null;
+
+  const headerLine = lines[tableStartIndex];
+  const separatorLine = lines[tableStartIndex + 1];
+
+  // Basic validation for table separator line
+  if (!separatorLine.includes("---")) return null;
+
+  const columnNames = headerLine.split("|").map(col => col.trim()).filter(Boolean);
+
+  const rows: string[][] = [];
+
+  for (let i = tableStartIndex + 2; i < lines.length; i++) {
+    if (!lines[i].includes("|")) break;
+    const row = lines[i].split("|").map(cell => cell.trim()).filter(Boolean);
+    if (row.length > 0) rows.push(row);
+  }
+
+  return { columns: columnNames, rows };
+};
+
+
+-------------
+
+import { jsPDF } from "jspdf";
+import autoTable from "jspdf-autotable";
+
+const generatePDFWithParsedTable = (description: string) => {
+  const doc = new jsPDF();
+  const parsed = parseMarkdownTable(description);
+
+  doc.text("LLM Response", 14, 10);
+
+  if (parsed) {
+    autoTable(doc, {
+      startY: 20,
+      head: [parsed.columns],
+      body: parsed.rows,
+    });
+  } else {
+    doc.text("No table detected or table is invalid.", 14, 30);
+  }
+
+  doc.save("llm-response.pdf");
+};
