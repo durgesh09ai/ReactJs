@@ -119,45 +119,136 @@ const generatePDFt = (description: string) => {
 
 
 -------------------------------
+import React, { useState } from "react";
+import {
+  Box,
+  Paper,
+  TextField,
+  Typography,
+  Chip,
+  Button
+} from "@mui/material";
+import { styled } from "@mui/material/styles";
+import InsertDriveFileIcon from '@mui/icons-material/InsertDriveFile'; // Import document icon
 
-export const theme = createTheme({
-  palette: {
-    primary: {
-      main: "#0F4977",
-    },
-    secondary: {
-      main: "#F3FAFF",
-    },
-    background: {
-      default: "#F5F7FA",
-      paper: "#FFFFFF",
-    },
-  },
-  typography: {
-    fontFamily: '"Roboto", "Helvetica", "Arial", sans-serif',
-  },
-  shape: {
-    borderRadius: 8,
-  },
-  components: {
-    MuiOutlinedInput: {
-      styleOverrides: {
-        input: {
-          '::placeholder': {
-            fontSize: '14px', // Adjust this value as needed
-            fontWeight: 500,
-            opacity: 1, // Ensures full visibility
-            color: '#9e9e9e', // Optional: placeholder color
-          },
-        },
-      },
-    },
-  },
-});
+interface DocsUrl {
+  id: string;
+  label: string;
+}
 
+interface TagSelectorProps {
+  selectedDocsUrl: DocsUrl[];
+  onDocUrlSelect: (docsUrl: DocsUrl) => void;
+  onDocUrlRemove: (docUrlId: string) => void;
+}
 
+const StyledChip = styled(Chip)(({ theme }) => ({
+  backgroundColor: 'rgba(243,250,255,1)',
+  borderRadius: '16px',
+  '& .MuiChip-deleteIcon': {
+    color: 'rgba(15,73,119,1)',
+  }
+}));
 
+export const AddUrlSection: React.FC<TagSelectorProps> = ({
+  selectedDocsUrl,
+  onDocUrlSelect,
+  onDocUrlRemove,
+}) => {
+  const [searchQuery, setSearchQuery] = useState<string>("");
+  const [showForm, setShowForm] = useState<boolean>(false); // State to control form visibility
 
+  // Toggle visibility of the form when the button is clicked
+  const handleAddUrlClick = () => {
+    setShowForm((prevState) => !prevState); // Toggle visibility
+  };
+
+  return (
+    <Paper
+      elevation={0}
+      sx={{
+        border: 1,
+        borderColor: 'rgba(15,73,119,0.1)',
+        borderRadius: 2,
+        minWidth: '240px',
+        minHeight: '502px',
+        flexGrow: 1,
+        display: 'flex',
+        flexDirection: 'column',
+      }}
+    >
+      <Box
+        sx={{
+          display: "flex",
+          justifyContent: "space-between",
+          alignItems: "center",
+          p: 1,
+          borderBottom: 2,
+          borderColor: '#0c3b61',
+        }}
+      >
+        <Typography variant="body2" sx={{ fontWeight: 500 }}>
+          Reference Document URLs
+        </Typography>
+        <Button
+          variant="contained"
+          size="small"
+          sx={{
+            backgroundColor: "#0F4977",
+            borderRadius: "8px",
+            color: "#fff",
+            textTransform: "none",
+            fontSize: "0.75rem",
+            padding: "4px 12px",
+            minWidth: "unset", // optional: to reduce button width
+            "&:hover": {
+              backgroundColor: "#0c3b61",
+            },
+          }}
+          onClick={handleAddUrlClick} // Show/Hide form
+        >
+          +
+        </Button>
+      </Box>
+
+      {/* Conditionally render the form based on showForm state */}
+      {showForm && (
+        <Box sx={{ display: 'flex', flexDirection: 'column', flexGrow: 1 }}>
+          <Typography variant="body2" gutterBottom>
+            Add Document Url:
+          </Typography>
+          <TextField
+            placeholder="Add Document Url"
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            size="small"
+            fullWidth
+          />
+        </Box>
+      )}
+
+<Box sx={{ display: 'flex', flexDirection: 'column', gap: 1, p: 2, alignItems: 'flex-start' }}>
+        <Typography variant="body2" sx={{ fontWeight: 500,fontSize:'12px' }}>
+          Selected Documents
+        </Typography>
+        {selectedDocsUrl.map((docUrl) => (
+          <StyledChip
+            key={docUrl.id}
+            sx={{fontSize: 12,color: '#0c3b61' }}
+            label={
+              <>
+                <InsertDriveFileIcon sx={{ fontSize: 16, marginRight: 1, color: '#0c3b61' }} /> {/* Document Icon with specific color */}
+                {docUrl.label}
+              </>
+            }
+            onDelete={() => onDocUrlRemove(docUrl.id)}
+            size="small"
+          />
+        ))}
+      </Box>
+    </Paper>
+  );
+};
 
 
 
