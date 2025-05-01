@@ -250,6 +250,240 @@ export const AddUrlSection: React.FC<TagSelectorProps> = ({
   );
 };
 
+_______________________________
+
+
+import React, { useState } from "react";
+import {
+  Box,
+  Typography,
+  IconButton,
+  List,
+  ListItem,
+  ListItemText,
+  Collapse,
+  Avatar,
+  Paper,
+} from "@mui/material";
+import AddIcon from "@mui/icons-material/Add";
+import RemoveIcon from "@mui/icons-material/Remove";
+import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
+
+const Sidebar = () => {
+  const navLinks = ["Home", "Discover", "Create workspace"];
+
+  const [expandWorkspace, setExpandWorkspace] = useState(true);
+  const [expandResearch, setExpandResearch] = useState(true);
+  const [expandExperiment, setExpandExperiment] = useState(true);
+
+  return (
+    <Box
+      display="flex"
+      flexDirection="column"
+      height="100vh"
+      px={2}
+      py={1}
+      fontFamily="Montserrat, sans-serif"
+      fontSize="14px"
+      bgcolor="#fff"
+      maxWidth="300px"
+      width="100%"
+      boxShadow="1px 0 4px rgba(0,0,0,0.1)"
+    >
+      {/* Header */}
+      <Box
+        display="flex"
+        alignItems="center"
+        justifyContent="space-between"
+        px={1}
+        py={1}
+        borderBottom="1px solid rgba(0,0,0,0.1)"
+      >
+        <Typography
+          variant="h6"
+          sx={{ fontSize: "28px", fontWeight: 600, color: "#0F4977" }}
+        >
+          EXL
+        </Typography>
+        <Avatar
+          src="https://cdn.builder.io/api/v1/image/assets/b22a1f591db946d8a5b6fadc33b7c231/9df66a2e096fffaa4eec49ff70db980f5326516a?placeholderIfAbsent=true"
+          alt="Logo"
+          sx={{ width: 24, height: 24 }}
+          variant="square"
+        />
+      </Box>
+
+      {/* Nav Section */}
+      <Box mt={2}>
+        <List disablePadding>
+          {navLinks.map((label, i) => (
+            <ListItem key={i} disablePadding>
+              <ListItemText
+                primary={label}
+                primaryTypographyProps={{
+                  fontSize: "14px",
+                  color: "#343434",
+                  px: 1,
+                  py: 1,
+                }}
+              />
+            </ListItem>
+          ))}
+        </List>
+      </Box>
+
+      {/* Workspace Card */}
+      <Paper
+        elevation={0}
+        sx={{
+          bgcolor: "#F3FAFF",
+          p: 1,
+          borderRadius: 2,
+        }}
+      >
+
+<Box
+    sx={{
+      backgroundColor: expandWorkspace ? "#ffffff" : "#F3FAFF", // dynamic background
+      borderRadius: 2,
+      p: 1,
+      transition: "background-color 0.2s ease"
+    }}
+  >
+
+        {/* Workspace Header (Collapsible) */}
+        <Box
+    display="flex"
+    justifyContent="space-between"
+    alignItems="center"
+    onClick={() => setExpandWorkspace(!expandWorkspace)}
+    sx={{ cursor: "pointer", py: 0.5 }}
+  >
+    <Typography fontSize="14px" fontWeight={600} color="#343434">
+      Diabetes - WB 1
+    </Typography>
+    <IconButton size="small">
+      <ExpandMoreIcon
+        fontSize="small"
+        sx={{
+          transform: expandWorkspace ? "rotate(180deg)" : "rotate(0deg)",
+          transition: "0.2s",
+        }}
+      />
+    </IconButton>
+  </Box>
+
+        <Collapse in={expandWorkspace}>
+          {/* Research Section */}
+          <Box>
+            <Box
+              display="flex"
+              justifyContent="space-between"
+              alignItems="center"
+              onClick={() => setExpandResearch(!expandResearch)}
+              sx={{ cursor: "pointer", py: 0.5 }}
+            >
+              <Typography fontSize="14px" fontWeight={500} color="#0F4977">
+                Research
+              </Typography>
+              <IconButton size="small">
+                {expandResearch ? (
+                  <RemoveIcon fontSize="small" />
+                ) : (
+<IconButton
+  size="small"
+  sx={{
+    backgroundColor: '#D9EDFF',
+    color: '#000',
+    borderRadius: '4px',
+    width: 24,
+    height: 24,
+    '&:hover': {
+      backgroundColor: '#D9EDFF'
+    }
+  }}
+>
+  <AddIcon fontSize="small" />
+</IconButton>                )}
+              </IconButton>
+            </Box>
+            <Collapse in={expandResearch}>
+              <List dense disablePadding>
+                <ListItem sx={{ pl: 3 }}>
+                  <ListItemText
+                    primary="Diabetes Type 1"
+                    primaryTypographyProps={{ fontSize: "13px" }}
+                  />
+                </ListItem>
+                <ListItem sx={{ pl: 3 }}>
+                  <ListItemText
+                    primary="Diabetes Type 2"
+                    primaryTypographyProps={{ fontSize: "13px" }}
+                  />
+                </ListItem>
+              </List>
+            </Collapse>
+          </Box>
+
+          {/* Experiment Section */}
+          <Box mt={1}>
+            <Box
+              display="flex"
+              justifyContent="space-between"
+              alignItems="center"
+              onClick={() => setExpandExperiment(!expandExperiment)}
+              sx={{ cursor: "pointer", py: 0.5 }}
+            >
+              <Typography fontSize="14px" fontWeight={500} color="#0F4977">
+                Experiment
+              </Typography>
+              <IconButton size="small">
+                {expandExperiment ? (
+                  <RemoveIcon fontSize="small" />
+                ) : (
+<IconButton
+  size="small"
+  sx={{
+    backgroundColor: '#D9EDFF',
+    color: '#000',
+    borderRadius: '4px',
+    width: 24,
+    height: 24,
+    '&:hover': {
+      backgroundColor: '#D9EDFF'
+    }
+  }}
+>
+  <AddIcon fontSize="small" />
+</IconButton>                )}
+              </IconButton>
+            </Box>
+            <Collapse in={expandExperiment}>
+              <List dense disablePadding>
+                <ListItem sx={{ pl: 3 }}>
+                  <ListItemText
+                    primary="Configuration 2"
+                    primaryTypographyProps={{ fontSize: "13px" }}
+                  />
+                </ListItem>
+                <ListItem sx={{ pl: 3 }}>
+                  <ListItemText
+                    primary="Configuration 3"
+                    primaryTypographyProps={{ fontSize: "13px" }}
+                  />
+                </ListItem>
+              </List>
+            </Collapse>
+          </Box>
+        </Collapse>
+        </Box>
+      </Paper>
+    </Box>
+  );
+};
+
+export default Sidebar;
+
 
 
 
