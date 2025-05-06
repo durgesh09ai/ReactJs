@@ -484,7 +484,52 @@ const Sidebar = () => {
 
 export default Sidebar;
 
+-------------------------------------------------------------
 
+# Starter pipeline
+# Start with a minimal pipeline that you can customize to build and deploy your code.
+# Add steps that build, run tests, deploy, and more:
+# https://aka.ms/yaml
+ 
+resources: 
+  repositories:
+    - repository: protoweave_db_accelerator_frt
+      type: git
+      name: HCTitan/protoweave_db_accelerator_frt
+      ref: 'refs/heads/main'
+      trigger:
+      - main
+ 
+ 
+pool:
+  vmImage: ubuntu-latest
+steps:
+- checkout: protoweave_db_accelerator_frt
+- task: Npm@1
+  inputs:
+    command: 'install'
+- script: npm run build
+  displayName: 'Build React Js Application'
+- task: CopyFiles@2
+  inputs:
+    Contents: 'build/**'
+    TargetFolder: '$(Build.ArtifactStagingDirectory)'
+- task: ArchiveFiles@2
+  inputs:
+    rootFolderOrFile: '$(Build.BinariesDirectory)'
+    includeRootFolder: true
+    archiveType: 'zip'
+    archiveFile: '$(Build.ArtifactStagingDirectory)/$(Build.BuildId).zip'
+    replaceExistingArchive: true
+ 
+# Deploy to Azure App Service
+- task: AzureWebApp@1
+  displayName: 'Deploy to protoweave-db-accelerator App Service'
+  inputs:
+    azureSubscription: 'XXXXX'
+    appType: 'webApp'
+    appName: 'protoweave-db-accelerator'
+    package: '$(Build.ArtifactStagingDirectory)/$(Build.BuildId).zip'
 
 
 
