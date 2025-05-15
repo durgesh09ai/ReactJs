@@ -2,9 +2,40 @@ import React, { useEffect, useState } from "react";
 import { Box, Typography, Stack, Paper } from "@mui/material";
 import { researchStore } from "../../../stores/cip/ProtoweaveGenAiStore/ResearchStore";
 
+type TimelineSection = {
+  section: string;
+  items: {
+    percent: number;
+    message: string;
+    sub?: string;
+  }[];
+};
+
+// Mapping steps to human-friendly labels
+const STEP_LABELS: Record<string, string> = {
+  searching: "Searching",
+  selecting_papers: "Selecting Papers",
+  analyzing_paper: "Analyzing Papers",
+  synthesizing_research: "Synthesizing Research",
+  generating_report: "Generating Report",
+  completed: "Completed",
+  error: "Error",
+};
+
+// Order to show steps in the UI
+const ORDERED_STEPS = [
+  "searching",
+  "selecting_papers",
+  "analyzing_paper",
+  "synthesizing_research",
+  "generating_report",
+  "completed",
+  "error",
+];
+
 const ThinkingProcess = () => {
   const [loadingDots, setLoadingDots] = useState("");
-  const data = researchStore.thinkingData;
+  const rawData = researchStore.thinkingData || [];
 
   useEffect(() => {
     if (researchStore.isResearching) {
@@ -17,35 +48,72 @@ const ThinkingProcess = () => {
     }
   }, [researchStore.isResearching]);
 
-  const formatThinkingStep = (step: string) => {
-    return step
-      .replace(/_/g, " ")
-      .split(" ")
-      .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
-      .join(" ");
-  };
+  // ✅ Transform thinkingData into step-wise grouped sections
+  const transformedData: TimelineSection[] = ORDERED_STEPS.map((stepKey) => {
+    const filtered = rawData.filter((item) => item.step === stepKey);
+    if (filtered.length === 0) return null;
 
-  const getStepLabel = (step: string, progress: number | null) => {
-    const percent = progress !== null ? ` (${Math.round(progress)}%)` : "";
-    switch (step) {
-      case "searching":
-        return "Searching Queries" + percent;
-      case "selecting_papers":
-        return "Selecting Papers" + percent;
-      case "analyzing_paper":
-        return "Analyzing Papers" + percent;
-      case "synthesizing_research":
-        return "Synthesizing Research" + percent;
-      case "generating_report":
-        return "Generating Report" + percent;
-      case "completed":
-        return "Research Completed";
-      case "error":
-        return "An Error Occurred";
-      default:
-        return formatThinkingStep(step) + percent;
-    }
-  };
+    const sectionItems = filtered.map((item) => {
+      const details = item.details || {};
+
+      let message = "";
+      let sub = "";
+
+      switch (stepKey) {
+        case "searching":
+          message = details.query || "Searching...";
+          sub =
+            details.query_index != null && details.total_queries != null
+              ? `Query ${details.query_index + 1} of ${details.total_queries}`
+              : "";
+          break;
+
+        case "selecting_papers":
+          message = details.paper_title || "Selecting relevant papers...";
+          sub = details.source || "";
+          break;
+
+        case "analyzing_paper":
+          message = details.analysis_point || "Analyzing paper...";
+          sub = details.paper_id ? `Paper ID: ${details.paper_id}` : "";
+          break;
+
+        case "synthesizing_research":
+          message = details.topic || "Synthesizing research...";
+          sub = details.sub_topic || "";
+          break;
+
+        case "generating_report":
+          message = details.section || "Generating report section...";
+          sub = details.status || "";
+          break;
+
+        case "completed":
+          message = details.summary || "Research complete.";
+          sub = details.timestamp || "";
+          break;
+
+        case "error":
+          message = details.error_message || "An error occurred.";
+          sub = details.code ? `Code: ${details.code}` : "";
+          break;
+
+        default:
+          message = "Processing...";
+      }
+
+      return {
+        percent: Math.round(item.progress || 0),
+        message,
+        sub,
+      };
+    });
+
+    return {
+      section: STEP_LABELS[stepKey] || stepKey,
+      items: sectionItems,
+    };
+  }).filter(Boolean) as TimelineSection[];
 
   return (
     <>
@@ -96,29 +164,18 @@ const ThinkingProcess = () => {
             p: 2,
           }}
         >
-          {/* Vertical Line */}
-          <Box
-            sx={{
-              width: "2px",
-              display: "flex",
-              justifyContent: "center",
-              position: "relative",
-            }}
-          >
-            <Box
-              sx={{
-                position: "absolute",
-                top: 0,
-                bottom: 0,
-                left: "50%",
-                transform: "translateX(-50%)",
-              }}
-            />
-          </Box>
+          <Box sx={{ width: "2px", display: "flex", justifyContent: "center", position: "relative" }} />
 
-          {/* Content */}
           <Box sx={{ flex: 1 }}>
-            {data.map((item, sIndex) => (
+            {transformedData.length === 0 && !researchStore.report && !researchStore.isResearching && (
+              <Box sx={{ height: 400 }}>
+                <Typography variant="caption" sx={{ color: "#999", display: "block", mt: 0.5 }}>
+                  The research process will be shown here once started.
+                </Typography>
+              </Box>
+            )}
+
+            {transformedData.map((section, sIndex) => (
               <Box key={sIndex} sx={{ mb: 3 }}>
                 <Typography
                   variant="subtitle2"
@@ -134,12 +191,13 @@ const ThinkingProcess = () => {
                     mb: 1,
                   }}
                 >
-                  {formatThinkingStep(item.step)}
+                  {section.section}
                 </Typography>
 
-                <Stack spacing={0}>
-                  {item.details && item.details.messages && (
+                <Stack spacing={1}>
+                  {section.items.map((item, index) => (
                     <Box
+                      key={index}
                       sx={{
                         borderLeft: "2px solid #ccc",
                         backgroundColor: "#e4e4e533",
@@ -147,7 +205,6 @@ const ThinkingProcess = () => {
                       }}
                     >
                       <Box sx={{ display: "flex", alignItems: "flex-start" }}>
-                        {/* Dot + line */}
                         <Box
                           sx={{
                             width: 24,
@@ -184,46 +241,34 @@ const ThinkingProcess = () => {
                           />
                         </Box>
 
-                        {/* Text content */}
                         <Box sx={{ flex: 1, ml: 1 }}>
-                          {item.progress !== null && (
-                            <Typography
-                              variant="subtitle2"
-                              sx={{
-                                fontSize: "0.8rem",
-                                color: "#636262",
-                                fontWeight: 500,
-                                mb: 0.5,
-                                pt: 1,
-                              }}
-                            >
-                              {getStepLabel(item.step, item.progress)}
-                            </Typography>
-                          )}
+                          <Typography
+                            variant="subtitle2"
+                            sx={{
+                              fontSize: "0.8rem",
+                              color: "#636262",
+                              fontWeight: 500,
+                              mb: 0.5,
+                              pt: 1,
+                            }}
+                          >
+                            Progress: {item.percent}%
+                          </Typography>
 
-                          {item.details.messages.map((msg: any, index: number) => (
-                            <Paper
-                              key={index}
-                              elevation={0}
-                              sx={{ p: 1.5, backgroundColor: "#fff", mb: 1 }}
-                            >
-                              <Typography variant="body2" sx={{ fontSize: "0.85rem" }}>
-                                {msg.message}
+                          <Paper elevation={0} sx={{ p: 1.5, backgroundColor: "#fff" }}>
+                            <Typography variant="body2" sx={{ fontSize: "0.85rem" }}>
+                              {item.message}
+                            </Typography>
+                            {item.sub && (
+                              <Typography variant="caption" sx={{ color: "#999", display: "block", mt: 0.5 }}>
+                                {item.sub}
                               </Typography>
-                              {msg.sub && (
-                                <Typography
-                                  variant="caption"
-                                  sx={{ color: "#999", display: "block", mt: 0.5 }}
-                                >
-                                  {msg.sub}
-                                </Typography>
-                              )}
-                            </Paper>
-                          ))}
+                            )}
+                          </Paper>
                         </Box>
                       </Box>
                     </Box>
-                  )}
+                  ))}
                 </Stack>
               </Box>
             ))}
