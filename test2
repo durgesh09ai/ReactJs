@@ -1,0 +1,243 @@
+import React, { useEffect, useState } from "react";
+import { Box, Typography, Stack, Paper } from "@mui/material";
+import { researchStore } from "../../../stores/cip/ProtoweaveGenAiStore/ResearchStore";
+
+type TimelineSection = {
+  section: string;
+  items: {
+    percent: number;
+    message: string;
+    sub?: string;
+  }[];
+};
+
+// Label map for clean section headings
+const STEP_LABELS: Record<string, string> = {
+  searching: "Searching",
+  selecting_papers: "Selecting Papers",
+  analyzing_paper: "Analyzing Papers",
+  synthesizing_research: "Synthesizing Research",
+  generating_report: "Generating Report",
+  completed: "Completed",
+  error: "Error",
+};
+
+const ORDERED_STEPS = [
+  "searching",
+  "selecting_papers",
+  "analyzing_paper",
+  "synthesizing_research",
+  "generating_report",
+  "completed",
+  "error",
+];
+
+const ThinkingProcess = () => {
+  const [loadingDots, setLoadingDots] = useState("");
+  const rawData = researchStore.thinkingData || [];
+
+  useEffect(() => {
+    if (researchStore.isResearching) {
+      const intervalId = setInterval(() => {
+        setLoadingDots((prevDots) => (prevDots.length < 3 ? prevDots + "." : ""));
+      }, 500);
+      return () => clearInterval(intervalId);
+    } else {
+      setLoadingDots("");
+    }
+  }, [researchStore.isResearching]);
+
+  // 🔁 Transform data based on your defined steps
+  const transformedData: TimelineSection[] = ORDERED_STEPS.map((stepKey) => {
+    const filtered = rawData.filter((item) => item.step === stepKey);
+    if (filtered.length === 0) return null;
+
+    const sectionItems = filtered.map((item) => {
+      const message =
+        stepKey === "searching"
+          ? item.details?.query || "Searching..."
+          : item.details?.title || item.details?.query || "Processing...";
+
+      const sub =
+        stepKey === "searching" && item.details?.query_index != null
+          ? `Query ${item.details.query_index} of ${item.details.total_queries}`
+          : item.details?.sub;
+
+      return {
+        percent: Math.round(item.progress || 0),
+        message,
+        sub,
+      };
+    });
+
+    return {
+      section: STEP_LABELS[stepKey] || stepKey,
+      items: sectionItems,
+    };
+  }).filter(Boolean) as TimelineSection[];
+
+  return (
+    <>
+      <Box
+        sx={{
+          borderRadius: "16px 16px 0 0",
+          backgroundColor: "#D9EDFF",
+          p: 0.6,
+          width: "100%",
+          maxWidth: 400,
+          mx: "auto",
+          mb: "1px",
+        }}
+      >
+        <Box
+          sx={{
+            borderRadius: "16px 16px 0 0",
+            backgroundColor: "#fff",
+            width: "100%",
+            p: 1,
+          }}
+        >
+          <Typography variant="h6" align="center" fontSize={14} fontWeight={400}>
+            Reasoning
+          </Typography>
+        </Box>
+      </Box>
+
+      <Box
+        sx={{
+          border: "1px solid #CFE3F3",
+          borderRadius: "0 0 16px 16px",
+          backgroundColor: "#D9EDFF",
+          p: 2,
+          width: "100%",
+          maxWidth: 400,
+          mx: "auto",
+        }}
+      >
+        <Box
+          sx={{
+            display: "flex",
+            flexDirection: "row",
+            position: "relative",
+            border: "1px solid #fff",
+            borderRadius: "16px",
+            backgroundColor: "#fff",
+            p: 2,
+          }}
+        >
+          <Box sx={{ width: "2px", display: "flex", justifyContent: "center", position: "relative" }} />
+
+          <Box sx={{ flex: 1 }}>
+            {transformedData.length === 0 && !researchStore.report && !researchStore.isResearching && (
+              <Box sx={{ height: 400 }}>
+                <Typography variant="caption" sx={{ color: "#999", display: "block", mt: 0.5 }}>
+                  The research process will be shown here once started.
+                </Typography>
+              </Box>
+            )}
+
+            {transformedData.map((section, sIndex) => (
+              <Box key={sIndex} sx={{ mb: 3 }}>
+                <Typography
+                  variant="subtitle2"
+                  sx={{
+                    display: "inline-block",
+                    backgroundColor: "rgba(18, 18, 21, 0.30)",
+                    color: "#fff",
+                    px: 1.5,
+                    py: 0.5,
+                    borderRadius: "0 8px 8px 0",
+                    fontWeight: 600,
+                    fontSize: "0.75rem",
+                    mb: 1,
+                  }}
+                >
+                  {section.section}
+                </Typography>
+
+                <Stack spacing={1}>
+                  {section.items.map((item, index) => (
+                    <Box
+                      key={index}
+                      sx={{
+                        borderLeft: "2px solid #ccc",
+                        backgroundColor: "#e4e4e533",
+                        p: 1,
+                      }}
+                    >
+                      <Box sx={{ display: "flex", alignItems: "flex-start" }}>
+                        <Box
+                          sx={{
+                            width: 24,
+                            height: 24,
+                            position: "relative",
+                            flexShrink: 0,
+                            mt: 1,
+                          }}
+                        >
+                          <Box
+                            sx={{
+                              position: "absolute",
+                              top: "50%",
+                              right: "-15%",
+                              transform: "translate(-50%, -50%)",
+                              width: 8,
+                              height: 8,
+                              borderRadius: "50%",
+                              backgroundColor: "#ccc",
+                              zIndex: 1,
+                            }}
+                          />
+                          <Box
+                            sx={{
+                              position: "absolute",
+                              top: "50%",
+                              right: "35%",
+                              height: 2,
+                              width: "100%",
+                              backgroundColor: "#B0BEC5",
+                              transform: "translateY(-50%)",
+                              zIndex: 0,
+                            }}
+                          />
+                        </Box>
+
+                        <Box sx={{ flex: 1, ml: 1 }}>
+                          <Typography
+                            variant="subtitle2"
+                            sx={{
+                              fontSize: "0.8rem",
+                              color: "#636262",
+                              fontWeight: 500,
+                              mb: 0.5,
+                              pt: 1,
+                            }}
+                          >
+                            Progress: {item.percent}%
+                          </Typography>
+
+                          <Paper elevation={0} sx={{ p: 1.5, backgroundColor: "#fff" }}>
+                            <Typography variant="body2" sx={{ fontSize: "0.85rem" }}>
+                              {item.message}
+                            </Typography>
+                            {item.sub && (
+                              <Typography variant="caption" sx={{ color: "#999", display: "block", mt: 0.5 }}>
+                                {item.sub}
+                              </Typography>
+                            )}
+                          </Paper>
+                        </Box>
+                      </Box>
+                    </Box>
+                  ))}
+                </Stack>
+              </Box>
+            ))}
+          </Box>
+        </Box>
+      </Box>
+    </>
+  );
+};
+
+export default ThinkingProcess;
