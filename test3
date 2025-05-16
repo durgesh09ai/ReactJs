@@ -1,0 +1,23 @@
+updateWorkspace = async (id: string, updates: { name: string; description: string }) => {
+  try {
+    const res = await fetch(`${this.apiUrl}/updateworkspace/${id}`, {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(updates),
+    });
+
+    if (!res.ok) throw new Error("Failed to update workspace");
+
+    const updatedWorkspace = await res.json();
+    runInAction(() => {
+      const index = this.workspaceList.findIndex((ws) => ws.id === id);
+      if (index !== -1) {
+        this.workspaceList[index] = updatedWorkspace;
+      }
+    });
+  } catch (e: any) {
+    runInAction(() => {
+      this.error = e.message;
+    });
+  }
+};
