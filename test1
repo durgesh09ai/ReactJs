@@ -280,3 +280,38 @@ const ThinkingProcess = () => {
 };
 
 export default ThinkingProcess;
+
+
+
+
+
+
+
+-------------------------------
+
+
+import ReactMarkdown from "react-markdown";
+import remarkGfm from "remark-gfm";
+
+const blockTags = ["pre", "h1", "h2", "h3", "h4", "h5", "h6", "ul", "ol", "table"];
+
+<ReactMarkdown
+  remarkPlugins={[remarkGfm]}
+  components={{
+    p({ node, children }) {
+      const firstChild = node?.children?.[0];
+
+      // If the first child is a block element, avoid wrapping in <p>
+      if (
+        firstChild?.type === "element" &&
+        blockTags.includes((firstChild as any).tagName)
+      ) {
+        return <>{children}</>;
+      }
+
+      return <p>{children}</p>;
+    },
+  }}
+>
+  {report.markdown}
+</ReactMarkdown>
