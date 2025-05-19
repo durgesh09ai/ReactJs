@@ -1,0 +1,54 @@
+async sendMessageToResearchSession(
+  topic: string,
+  researchId: string,
+  answers: Record<string, string>
+) {
+  try {
+    const payload = {
+      topic,
+      messages: this.messages, // full messages, including questions
+      answers,                 // current answers to questions
+    };
+
+    const response = await fetch(`${this.apiUrl}/research/${researchId}`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(payload),
+    });
+
+    const data = await response.json();
+
+    runInAction(() => {
+      this.messages.push({ role: "user", content: topic });
+      if (data.questions) {
+        this.messages.push({
+          role: "assistant",
+          content: "Thanks! Here's what I need next:",
+          questions: data.questions,
+        });
+        this.currentEditableIndex = this.messages.length - 1;
+      }
+    });
+  } catch (error) {
+    console.error("Error sending message:", error);
+  }
+}
+----------------------------------------------------
+
+async loadResearchSession(researchId: string) {
+  try {
+    const response = await fetch(`${this.apiUrl}/research/${researchId}`, {
+      method: "GET",
+    });
+    const data = await response.json();
+
+    runInAction(() => {
+      this.sessionId = researchId;
+      this.messages = data.messages || [];
+      this.report = data.report ? { markdown: data.report, docx: data.docx } : null;
+      this.isResearching = false;
+    });
+  } catch (error) {
+    console.error("Failed to load research session:", error);
+  }
+}
