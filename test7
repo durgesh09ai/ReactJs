@@ -1,58 +1,37 @@
-versionList: string[] = [];
-
-fetchVersionList = async () => {
+versionOptions: { key: string; value: string }[] = [];
+async fetchVersionOptions() {
   try {
-    this.loading = true;
-    const res = await fetch(`${this.apiUrl}/versions`); // <-- adjust your endpoint
-    if (!res.ok) throw new Error("Failed to fetch versions");
-    const data = await res.json(); // should be something like: ["v1", "v2", "v3"]
-    runInAction(() => {
-      this.versionList = data;
-      this.loading = false;
-    });
-  } catch (e: any) {
-    runInAction(() => {
-      this.error = e.message || "Unknown error";
-      this.loading = false;
-    });
+    const response = await fetch(`${this.apiUrl}/your-version-endpoint`); // replace with your real endpoint
+    const data = await response.json();
+
+    if (Array.isArray(data) && data.length > 0 && typeof data[0] === "object") {
+      const parsed = Object.entries(data[0]).map(([key, value]) => ({
+        key,
+        value,
+      }));
+
+      runInAction(() => {
+        this.versionOptions = parsed;
+      });
+    }
+  } catch (error) {
+    console.error("Error fetching version options:", error);
   }
-};
------------------------------------
+}
 
-import { useEffect, useState } from "react";
-import { observer } from "mobx-react-lite";
-import { FormControl, Select, MenuItem } from "@mui/material";
-import { dataProtoweaveGenAiStore } from "@/stores/ProtoweaveGenAiStore";
 
-const VersionSelector = observer(() => {
-  const [version, setVersion] = useState("");
+-----------------------
 
-  useEffect(() => {
-    dataProtoweaveGenAiStore.fetchVersionList();
-  }, []);
+useEffect(() => {
+  researchStore.fetchVersionOptions();
+}, []);
 
-  const handleChange = (e) => {
-    const selectedVersion = e.target.value;
-    setVersion(selectedVersion);
-    dataProtoweaveGenAiStore.fetchVersionData(selectedVersion); // optional, if needed
-  };
+______________________________
 
-  const versions = dataProtoweaveGenAiStore.versionList;
-
-  return (
-    <FormControl fullWidth size="small">
-      <Select value={version} onChange={handleChange} displayEmpty>
-        <MenuItem value="" disabled>
-          Select Version
-        </MenuItem>
-        {versions.map((v) => (
-          <MenuItem key={v} value={v}>
-            version {v}
-          </MenuItem>
-        ))}
-      </Select>
-    </FormControl>
-  );
-});
-
-export default VersionSelector;
+<Select value={version} onChange={(e) => setVersion(e.target.value)}>
+  {researchStore.versionOptions.map((opt) => (
+    <MenuItem key={opt.key} value={opt.value}>
+      {opt.key}
+    </MenuItem>
+  ))}
+</Select>
