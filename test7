@@ -23,15 +23,33 @@ async fetchVersionOptions() {
 -----------------------
 
 useEffect(() => {
-  researchStore.fetchVersionOptions();
-}, []);
+  if (researchStore.versionOptions.length > 0) {
+    setVersion(researchStore.versionOptions[0].value);
+  } else {
+    setVersion(fallbackVersion.value);
+  }
+}, [researchStore.versionOptions]);
+
 
 ______________________________
 
-<Select value={version} onChange={(e) => setVersion(e.target.value)}>
-  {researchStore.versionOptions.map((opt) => (
-    <MenuItem key={opt.key} value={opt.value}>
-      {opt.key}
-    </MenuItem>
-  ))}
-</Select>
+<FormControl fullWidth size="small">
+  <Select
+    value={version}
+    onChange={(e) => setVersion(e.target.value)}
+  >
+    {researchStore.versionOptions.length > 0
+      ? researchStore.versionOptions.map((option) => (
+          <MenuItem key={option.key} value={option.value}>
+            {option.key}
+          </MenuItem>
+        ))
+      : (
+        <MenuItem key={fallbackVersion.key} value={fallbackVersion.value}>
+          {fallbackVersion.key}
+        </MenuItem>
+      )
+    }
+  </Select>
+</FormControl>
+
