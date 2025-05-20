@@ -1,15 +1,13 @@
-fetchVersionData = async (version: string) => {
+versionList: string[] = [];
+
+fetchVersionList = async () => {
   try {
     this.loading = true;
-    const res = await fetch(`${this.apiUrl}/version-data/${version}`);
-    if (!res.ok) throw new Error("Failed to fetch version data");
-    const data = await res.json();
-
+    const res = await fetch(`${this.apiUrl}/versions`); // <-- adjust your endpoint
+    if (!res.ok) throw new Error("Failed to fetch versions");
+    const data = await res.json(); // should be something like: ["v1", "v2", "v3"]
     runInAction(() => {
-      // Store or process the data here
-      console.log("Fetched version data:", data);
-      // For example:
-      // this.versionData = data;
+      this.versionList = data;
       this.loading = false;
     });
   } catch (e: any) {
@@ -19,28 +17,39 @@ fetchVersionData = async (version: string) => {
     });
   }
 };
-________________________________________________________
+-----------------------------------
 
+import { useEffect, useState } from "react";
 import { observer } from "mobx-react-lite";
-import { useState } from "react";
 import { FormControl, Select, MenuItem } from "@mui/material";
 import { dataProtoweaveGenAiStore } from "@/stores/ProtoweaveGenAiStore";
 
 const VersionSelector = observer(() => {
-  const [version, setVersion] = useState("v1");
+  const [version, setVersion] = useState("");
+
+  useEffect(() => {
+    dataProtoweaveGenAiStore.fetchVersionList();
+  }, []);
 
   const handleChange = (e) => {
     const selectedVersion = e.target.value;
     setVersion(selectedVersion);
-    dataProtoweaveGenAiStore.fetchVersionData(selectedVersion);
+    dataProtoweaveGenAiStore.fetchVersionData(selectedVersion); // optional, if needed
   };
+
+  const versions = dataProtoweaveGenAiStore.versionList;
 
   return (
     <FormControl fullWidth size="small">
-      <Select value={version} onChange={handleChange}>
-        <MenuItem value="v1">version v1</MenuItem>
-        <MenuItem value="v2">version v2</MenuItem>
-        <MenuItem value="v3">version v3</MenuItem>
+      <Select value={version} onChange={handleChange} displayEmpty>
+        <MenuItem value="" disabled>
+          Select Version
+        </MenuItem>
+        {versions.map((v) => (
+          <MenuItem key={v} value={v}>
+            version {v}
+          </MenuItem>
+        ))}
       </Select>
     </FormControl>
   );
