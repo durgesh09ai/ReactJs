@@ -1,0 +1,49 @@
+fetchVersionData = async (version: string) => {
+  try {
+    this.loading = true;
+    const res = await fetch(`${this.apiUrl}/version-data/${version}`);
+    if (!res.ok) throw new Error("Failed to fetch version data");
+    const data = await res.json();
+
+    runInAction(() => {
+      // Store or process the data here
+      console.log("Fetched version data:", data);
+      // For example:
+      // this.versionData = data;
+      this.loading = false;
+    });
+  } catch (e: any) {
+    runInAction(() => {
+      this.error = e.message || "Unknown error";
+      this.loading = false;
+    });
+  }
+};
+________________________________________________________
+
+import { observer } from "mobx-react-lite";
+import { useState } from "react";
+import { FormControl, Select, MenuItem } from "@mui/material";
+import { dataProtoweaveGenAiStore } from "@/stores/ProtoweaveGenAiStore";
+
+const VersionSelector = observer(() => {
+  const [version, setVersion] = useState("v1");
+
+  const handleChange = (e) => {
+    const selectedVersion = e.target.value;
+    setVersion(selectedVersion);
+    dataProtoweaveGenAiStore.fetchVersionData(selectedVersion);
+  };
+
+  return (
+    <FormControl fullWidth size="small">
+      <Select value={version} onChange={handleChange}>
+        <MenuItem value="v1">version v1</MenuItem>
+        <MenuItem value="v2">version v2</MenuItem>
+        <MenuItem value="v3">version v3</MenuItem>
+      </Select>
+    </FormControl>
+  );
+});
+
+export default VersionSelector;
