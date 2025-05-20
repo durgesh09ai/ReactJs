@@ -1,0 +1,60 @@
+
+Welcome to the demo of EXL Proto Weave, an AI solution designed to revolutionize protocol suggestion.
+
+To start a reach we have to create a Research name by clicking on the plus icon and after that click on the Research title to bigin the final reseach and experiment process, Here we have maintain Research History also so that any one can use it later on.
+
+Let's begin by entering a healthcare research topic for this demonstration.
+After submitting, the planning agent will initiate.
+
+The planning agent requires some initial inputs to fully understand the user's query and requirement.
+This human in the loop interaction ensures a better output.
+
+Let's enter the responses.
+This is where the user may also guide the AI for narrowing down the scope of research or protocol.
+
+After filling the responses, user approves the plan for the research.
+
+Following this, the research agent is initiated.
+
+On the right hand side of the screen, we can see the progress of the research agent.
+
+This agent utilizes various tools and works asynchronously in the background, actively searching for papers, articles, and journals from different online providers like Europe, PMC, and Pub Med.
+
+The research agent successfully identifies relevant papers based on the query and then selects them for further analysis.
+
+The research agent then begins analyzing each paper 1 by 1.
+
+This thinking process helps in understanding how the agents are working in the background and how the LLM is orchestrating the entire workflow.
+
+Once the research is complete, it generates A comprehensive report.
+
+You can view the generated report on the left hand side panel.
+
+The report is properly structured with different sections like introduction and methodology.
+
+You can also see the inclusion and exclusion criteria sections and so on.
+
+You can also Scroll down and skip to all the other relevant sections of the report.
+
+The report also contains the gaps present in the current studies along with the final conclusion of the research.
+
+Finally, on the basis of those gaps, the generated report contains the recommendations made by the research agent.
+
+The recommendations contains proposed protocols along with their rationale, title, primary and secondary objective, study design, inclusion and exclusion criteria for the participants of the study, data sources and collection methods, sample size, data analysis method, and so on and so forth.
+
+Finally, after you have reviewed the report, you have options to  export  the report for further editing and manual tweaking.
+
+And with your report ready to go.
+
+further we get the input from the generated report for the dataBrick to further process the Experiment, Now after getting the input we create a panel where we can see that input for any manual alteration for the dataBrick for further Analysis, there is a button to start the Experiment 
+
+You've seen how EXL Proto Weave dot AI's agentic AI approach doesn't just find information.
+
+It conducts deep, structured research specific to the healthcare domain.
+
+Move beyond simple searches and leverage true AI agents for your research needs.
+
+Discover the EXL Proto weave AI difference.
+We appreciate you watching.
+
+Thanks for joining us.
