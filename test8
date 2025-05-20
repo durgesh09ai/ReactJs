@@ -1,0 +1,62 @@
+const handleSubmitAnswers = async (approved: boolean) => {
+  await researchStore.handleSubmitAnswers(answers, approved);
+
+  if (approved) {
+    setPlanDecided(true);
+
+    if (researchStore.versionOptions.length > 0) {
+      await researchStore.insertMessageArray(
+        researchStore.researchId,
+        version,
+        researchStore.messages
+      );
+    } else {
+      await researchStore.updateMessageArray(researchStore.messages);
+    }
+  }
+};
+
+-------------------------
+
+async insertMessageArray(researchId: string, version: string, messageArray: any[]) {
+  try {
+    const response = await fetch(`${this.apiUrl}/research/insert-messages`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        research_id: researchId,
+        version,
+        messages: messageArray,
+      }),
+    });
+
+    if (!response.ok) throw new Error("Failed to insert messages");
+
+    const data = await response.json();
+    console.log("Inserted messages:", data);
+  } catch (error) {
+    console.error("Error inserting messages:", error);
+  }
+}
+----------------------------------------------
+
+async updateMessageArray(messageArray: any[]) {
+  try {
+    const response = await fetch(`${this.apiUrl}/research/update-messages/${this.sessionId}`, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ messages: messageArray }),
+    });
+
+    if (!response.ok) throw new Error("Failed to update messages");
+
+    const data = await response.json();
+    console.log("Updated messages:", data);
+  } catch (error) {
+    console.error("Error updating messages:", error);
+  }
+}
