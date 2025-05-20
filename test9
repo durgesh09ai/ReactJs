@@ -1,0 +1,25 @@
+[
+    {
+        "role": "user",
+        "content": "Study effectiveness and safety of Farxiga (Dapagliflozin) in Type 2 Diabetes Mellitus Management for senior population."
+    },
+    {
+        "role": "assistant",
+        "content": "I need some clarification to better understand your research needs:",
+        "questions": [
+            "Are there specific cardiovascular, renal, or glycemic outcomes of particular interest when evaluating the effectiveness of Farxiga in elderly T2DM patients?",
+            "Is the target audience for this research other researchers, clinicians, policymakers, or patients, and how will this influence the level of detail required?",
+            "Beyond efficacy and adverse events, should the research also consider patient-reported outcomes, quality of life, or healthcare costs associated with Farxiga use in this population?",
+            "Are there any specific subgroups within the senior population (e.g., based on age, comorbidities, frailty) that should be prioritized in the analysis?",
+            "Are you interested in comparing Farxiga to specific alternative treatments or standard care approaches currently used in elderly T2DM patients?"
+        ]
+    },
+    {
+        "role": "user",
+        "content": "I approve this research plan."
+    },
+    {
+        "role": "assistant",
+        "content": "Thank you! I'll start the research process now. You can see my progress on the right panel."
+    }
+]
