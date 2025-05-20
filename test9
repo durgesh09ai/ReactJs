@@ -67,3 +67,102 @@
         }
     ]
 }
+----------------------
+
+[
+    {
+        "type": "missing",
+        "loc": [
+            "body",
+            "research_id"
+        ],
+        "msg": "Field required",
+        "input": {
+            "version": "1",
+            "chat_history": [
+                {
+                    "role": "user",
+                    "content": "Study effectiveness and safety of Farxiga (Dapagliflozin) in Type 2 Diabetes Mellitus Management for senior population."
+                },
+                {
+                    "role": "assistant",
+                    "content": "I need some clarification to better understand your research needs:",
+                    "questions": [
+                        "Are there specific cardiovascular, renal, or other co-morbid conditions within the senior T2DM population that the research should prioritize?",
+                        "Is the primary outcome of interest HbA1c reduction, hospitalization rates, adverse events, or a combination of factors?",
+                        "What is the preferred study design: randomized controlled trial, observational study, meta-analysis, or other?",
+                        "Are there specific subgroups within the senior population (e.g., based on age, frailty, cognitive function) that should be analyzed separately?",
+                        "Are there specific safety concerns or drug interactions unique to seniors taking dapagliflozin that the research should address?"
+                    ]
+                },
+                {
+                    "role": "user",
+                    "content": "I approve this research plan."
+                },
+                {
+                    "role": "assistant",
+                    "content": "Thank you! I'll start the research process now. You can see my progress on the right panel."
+                }
+            ]
+        }
+    },
+    {
+        "type": "string_type",
+        "loc": [
+            "body",
+            "chat_history",
+            0
+        ],
+        "msg": "Input should be a valid string",
+        "input": {
+            "role": "user",
+            "content": "Study effectiveness and safety of Farxiga (Dapagliflozin) in Type 2 Diabetes Mellitus Management for senior population."
+        }
+    },
+    {
+        "type": "string_type",
+        "loc": [
+            "body",
+            "chat_history",
+            1
+        ],
+        "msg": "Input should be a valid string",
+        "input": {
+            "role": "assistant",
+            "content": "I need some clarification to better understand your research needs:",
+            "questions": [
+                "Are there specific cardiovascular, renal, or other co-morbid conditions within the senior T2DM population that the research should prioritize?",
+                "Is the primary outcome of interest HbA1c reduction, hospitalization rates, adverse events, or a combination of factors?",
+                "What is the preferred study design: randomized controlled trial, observational study, meta-analysis, or other?",
+                "Are there specific subgroups within the senior population (e.g., based on age, frailty, cognitive function) that should be analyzed separately?",
+                "Are there specific safety concerns or drug interactions unique to seniors taking dapagliflozin that the research should address?"
+            ]
+        }
+    },
+    {
+        "type": "string_type",
+        "loc": [
+            "body",
+            "chat_history",
+            2
+        ],
+        "msg": "Input should be a valid string",
+        "input": {
+            "role": "user",
+            "content": "I approve this research plan."
+        }
+    },
+    {
+        "type": "string_type",
+        "loc": [
+            "body",
+            "chat_history",
+            3
+        ],
+        "msg": "Input should be a valid string",
+        "input": {
+            "role": "assistant",
+            "content": "Thank you! I'll start the research process now. You can see my progress on the right panel."
+        }
+    }
+]
