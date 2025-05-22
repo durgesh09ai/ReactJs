@@ -1,0 +1,91 @@
+import React, { useEffect, useRef, useState } from "react";
+import { useParams } from "react-router-dom";
+import { Box } from "@mui/material";
+import { ResearchInterface } from "../../../../components/ProtoweaveGenAi/Research/ResearchInterface";
+import { observer } from "mobx-react-lite";
+import ThinkingProcess from "../../../../components/ProtoweaveGenAi/Research/ThinkingProcess";
+import { researchStore } from "../../../../stores/cip/ProtoweaveGenAiStore/ResearchStore";
+
+const DashBoard = () => {
+  const { sessionId,versionOptions ,fetchChatVersionList} = researchStore;
+  const { id:researchId } = useParams();
+  const [version, setVersion] = useState("");
+
+  useEffect(() => {
+     if(researchId){
+       fetchChatVersionList(researchId);
+     }
+  }, [researchId,sessionId]);
+
+  useEffect(() => {
+    if (versionOptions.length > 0) {
+      setVersion(versionOptions[0]);
+    }else{
+      setVersion(sessionId);
+    } 
+  }, [versionOptions,researchId,sessionId]);
+
+
+
+  const thinScrollbarStyles = {
+    "&::-webkit-scrollbar": {
+      width: "6px",
+    },
+    "&::-webkit-scrollbar-track": {
+      backgroundColor: "#f1f1f1",
+    },
+    "&::-webkit-scrollbar-thumb": {
+      backgroundColor: "#c1c1c1",
+      borderRadius: "3px",
+    },
+    scrollbarWidth: "thin", // For Firefox
+    scrollbarColor: "#c1c1c1 #f1f1f1", // For Firefox
+  };
+
+  return (
+    <Box
+      sx={{
+        display: "flex",
+        flexDirection: { xs: "column", md: "row" },
+        gap: 2,
+        width: "100%",
+        height: "90vh",
+        overflow: "hidden",
+      }}
+    >
+      {/* Left: Main Research Interface */}
+      <Box
+        sx={{
+          flexGrow: 1,
+          minWidth: 0,
+          overflow: "auto",
+          ...thinScrollbarStyles, // 👈 Apply thin scrollbar here
+        }}
+      >
+        <ResearchInterface researchId={researchId} sessionId={sessionId} setVersion={setVersion}/>  
+    </Box>
+
+      {/* Right: StatsPanel with internal scroll */}
+      <Box
+        sx={{
+          width: "350px",
+          flexShrink: 0,
+          overflow: "hidden",
+        }}
+      >
+        <Box
+          sx={{
+            height: "100%",
+            overflowY: "auto",
+            pr: 1,
+            ...thinScrollbarStyles, // 👈 Apply thin scrollbar here too
+          }}
+        >
+          <ThinkingProcess />
+        </Box>
+      </Box>
+    </Box>
+  );
+};
+
+export default observer(DashBoard);
