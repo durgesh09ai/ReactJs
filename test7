@@ -1,55 +1,46 @@
-versionOptions: { key: string; value: string }[] = [];
-async fetchVersionOptions() {
-  try {
-    const response = await fetch(`${this.apiUrl}/your-version-endpoint`); // replace with your real endpoint
-    const data = await response.json();
-
-    if (Array.isArray(data) && data.length > 0 && typeof data[0] === "object") {
-      const parsed = Object.entries(data[0]).map(([key, value]) => ({
-        key,
-        value,
-      }));
-
-      runInAction(() => {
-        this.versionOptions = parsed;
-      });
-    }
-  } catch (error) {
-    console.error("Error fetching version options:", error);
-  }
-}
-
-
------------------------
-
-useEffect(() => {
-  if (researchStore.versionOptions.length > 0) {
-    setVersion(researchStore.versionOptions[0].value);
-  } else {
-    setVersion(fallbackVersion.value);
-  }
-}, [researchStore.versionOptions]);
-
-
-______________________________
-
-<FormControl fullWidth size="small">
-  <Select
-    value={version}
-    onChange={(e) => setVersion(e.target.value)}
-  >
-    {researchStore.versionOptions.length > 0
-      ? researchStore.versionOptions.map((option) => (
-          <MenuItem key={option.key} value={option.value}>
-            {option.key}
-          </MenuItem>
-        ))
-      : (
-        <MenuItem key={fallbackVersion.key} value={fallbackVersion.value}>
-          {fallbackVersion.key}
-        </MenuItem>
-      )
-    }
-  </Select>
-</FormControl>
-
+        {/* Tabular code_table display */}
+        <Box mt={2}>
+          <Typography fontWeight={600} mb={1}>
+            Diagnosis Code Table
+          </Typography>
+          <Box sx={{ overflowX: "auto" }}>
+            <table style={{ width: "100%", borderCollapse: "collapse" }}>
+              <thead>
+                <tr>
+                  {Object.keys(code_table[0]).map((key) => (
+                    <th
+                      key={key}
+                      style={{
+                        border: "1px solid #ccc",
+                        padding: "8px",
+                        backgroundColor: "#e0f2ff",
+                        fontWeight: "600",
+                        textAlign: "left"
+                      }}
+                    >
+                      {key}
+                    </th>
+                  ))}
+                </tr>
+              </thead>
+              <tbody>
+                {code_table.map((row, index) => (
+                  <tr key={index}>
+                    {Object.values(row).map((value, i) => (
+                      <td
+                        key={i}
+                        style={{
+                          border: "1px solid #ccc",
+                          padding: "8px",
+                          backgroundColor: index % 2 === 0 ? "#fff" : "#f9f9f9"
+                        }}
+                      >
+                        {value}
+                      </td>
+                    ))}
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </Box>
+        </Box>
