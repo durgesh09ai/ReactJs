@@ -1,177 +1,190 @@
-[
-    {
-        "role": "user",
-        "content": "Study effectiveness and safety of Farxiga (Dapagliflozin) in Type 2 Diabetes Mellitus Management for senior population."
-    },
-    {
-        "role": "assistant",
-        "content": "I need some clarification to better understand your research needs:",
-        "questions": [
-            "Are there specific cardiovascular, renal, or glycemic outcomes of particular interest when evaluating the effectiveness of Farxiga in elderly T2DM patients?",
-            "Is the target audience for this research other researchers, clinicians, policymakers, or patients, and how will this influence the level of detail required?",
-            "Beyond efficacy and adverse events, should the research also consider patient-reported outcomes, quality of life, or healthcare costs associated with Farxiga use in this population?",
-            "Are there any specific subgroups within the senior population (e.g., based on age, comorbidities, frailty) that should be prioritized in the analysis?",
-            "Are you interested in comparing Farxiga to specific alternative treatments or standard care approaches currently used in elderly T2DM patients?"
-        ]
-    },
-    {
-        "role": "user",
-        "content": "I approve this research plan."
-    },
-    {
-        "role": "assistant",
-        "content": "Thank you! I'll start the research process now. You can see my progress on the right panel."
-    }
-]
+import React, { useEffect, useState } from "react";
+import { Box, Paper } from "@mui/material";
+import FormHeader from "./FormHeader";
+import ResearchInfo from "./ResearchInfo";
+import CriteriaSection from "./CriteriaSection";
+import MedicalCodingSection from "./MedicalCodingSection";
+import ParametersSection from "./ParametersSection";
+import UploadSection from "./UploadSection";
+import ActionButtons from "./ActionButtons";
+import { databricksStore } from "../../../stores/cip/ProtoweaveGenAiStore/DatabricksStore";
+import { researchStore } from "../../../stores/cip/ProtoweaveGenAiStore/ResearchStore";
+import { observer } from "mobx-react-lite";
 
-----------------
-
-{
-    "detail": [
-        {
-            "type": "missing",
-            "loc": [
-                "body",
-                "chat_history"
-            ],
-            "msg": "Field required",
-            "input": {
-                "research_id": "b70727e4-c03f-4ae8-8227-81bf56e5c0d3",
-                "version": "khkqwhek9873912739",
-                "messages": [
-                    {
-                        "role": "user",
-                        "content": "Study effectiveness and safety of Farxiga (Dapagliflozin) in Type 2 Diabetes Mellitus Management for senior population."
-                    },
-                    {
-                        "role": "assistant",
-                        "content": "I need some clarification to better understand your research needs:",
-                        "questions": [
-                            "Are there specific cardiovascular, renal, or glycemic outcomes of particular interest when evaluating the effectiveness of Farxiga in elderly T2DM patients?",
-                            "Is the target audience for this research other researchers, clinicians, policymakers, or patients, and how will this influence the level of detail required?",
-                            "Beyond efficacy and adverse events, should the research also consider patient-reported outcomes, quality of life, or healthcare costs associated with Farxiga use in this population?",
-                            "Are there any specific subgroups within the senior population (e.g., based on age, comorbidities, frailty) that should be prioritized in the analysis?",
-                            "Are you interested in comparing Farxiga to specific alternative treatments or standard care approaches currently used in elderly T2DM patients?"
-                        ]
-                    },
-                    {
-                        "role": "user",
-                        "content": "I approve this research plan."
-                    },
-                    {
-                        "role": "assistant",
-                        "content": "Thank you! I'll start the research process now. You can see my progress on the right panel."
-                    }
-                ]
-            }
-        }
-    ]
+interface experimentConfigrationProps{
+  researchId:string;
+  versionId:string;
 }
-----------------------
 
-[
-    {
-        "type": "missing",
-        "loc": [
-            "body",
-            "research_id"
-        ],
-        "msg": "Field required",
-        "input": {
-            "version": "1",
-            "chat_history": [
-                {
-                    "role": "user",
-                    "content": "Study effectiveness and safety of Farxiga (Dapagliflozin) in Type 2 Diabetes Mellitus Management for senior population."
-                },
-                {
-                    "role": "assistant",
-                    "content": "I need some clarification to better understand your research needs:",
-                    "questions": [
-                        "Are there specific cardiovascular, renal, or other co-morbid conditions within the senior T2DM population that the research should prioritize?",
-                        "Is the primary outcome of interest HbA1c reduction, hospitalization rates, adverse events, or a combination of factors?",
-                        "What is the preferred study design: randomized controlled trial, observational study, meta-analysis, or other?",
-                        "Are there specific subgroups within the senior population (e.g., based on age, frailty, cognitive function) that should be analyzed separately?",
-                        "Are there specific safety concerns or drug interactions unique to seniors taking dapagliflozin that the research should address?"
-                    ]
-                },
-                {
-                    "role": "user",
-                    "content": "I approve this research plan."
-                },
-                {
-                    "role": "assistant",
-                    "content": "Thank you! I'll start the research process now. You can see my progress on the right panel."
-                }
-            ]
-        }
-    },
-    {
-        "type": "string_type",
-        "loc": [
-            "body",
-            "chat_history",
-            0
-        ],
-        "msg": "Input should be a valid string",
-        "input": {
-            "role": "user",
-            "content": "Study effectiveness and safety of Farxiga (Dapagliflozin) in Type 2 Diabetes Mellitus Management for senior population."
-        }
-    },
-    {
-        "type": "string_type",
-        "loc": [
-            "body",
-            "chat_history",
-            1
-        ],
-        "msg": "Input should be a valid string",
-        "input": {
-            "role": "assistant",
-            "content": "I need some clarification to better understand your research needs:",
-            "questions": [
-                "Are there specific cardiovascular, renal, or other co-morbid conditions within the senior T2DM population that the research should prioritize?",
-                "Is the primary outcome of interest HbA1c reduction, hospitalization rates, adverse events, or a combination of factors?",
-                "What is the preferred study design: randomized controlled trial, observational study, meta-analysis, or other?",
-                "Are there specific subgroups within the senior population (e.g., based on age, frailty, cognitive function) that should be analyzed separately?",
-                "Are there specific safety concerns or drug interactions unique to seniors taking dapagliflozin that the research should address?"
-            ]
-        }
-    },
-    {
-        "type": "string_type",
-        "loc": [
-            "body",
-            "chat_history",
-            2
-        ],
-        "msg": "Input should be a valid string",
-        "input": {
-            "role": "user",
-            "content": "I approve this research plan."
-        }
-    },
-    {
-        "type": "string_type",
-        "loc": [
-            "body",
-            "chat_history",
-            3
-        ],
-        "msg": "Input should be a valid string",
-        "input": {
-            "role": "assistant",
-            "content": "Thank you! I'll start the research process now. You can see my progress on the right panel."
-        }
+const ExperimentInterface = (props:experimentConfigrationProps) => {
+
+  const { researchId ,versionId } = props;
+  const [activeTab, setActiveTab] = useState("Configuration Form 1");
+
+  const dataresult = "";
+  databricksStore.setDatabrickResult(dataresult);
+
+  useEffect(() => {
+    if (versionId && researchId) {
+      researchStore.fetchChatHistory(researchId, versionId);
     }
-]
+  }, [versionId, researchId]);
 
 
-{
-  "research_id": "b70727e4-c03f-4ae8-8227-81bf56e5c0d3",
-  "report": {
-    "markdown": "# Research Report: Dapagliflozin (Farxiga) in Type 2 Diabetes Mellitus Management for the Senior Population\n\n## 1. Introduction\n\nType 2 Diabetes Mellitus (T2DM) is a growing global health concern, particularly among the senior population. The aging process is often accompanied by physiological changes, comorbidities, and increased frailty, making T2DM management in this demographic particularly challenging. Dapagliflozin, a selective sodium-glucose cotransporter 2 (SGLT2) inhibitor, has emerged as a therapeutic option for T2DM, offering potential benefits beyond glycemic control, including cardiovascular and renal protection. However, the efficacy and safety of Dapagliflozin in elderly T2DM patients require careful evaluation, considering the unique challenges and vulnerabilities of this population. This research report aims to synthesize available evidence regarding the use of Dapagliflozin in senior T2DM patients, addressing key research questions and highlighting gaps in the current literature. The ultimate goal is to inform evidence-based guidelines and improve clinical decision-making for this vulnerable population.\n\n## 2. Methodology\n\nThis report is based on a systematic review and meta-analysis of existing literature, including randomized controlled trials (RCTs), observational studies, and real-world evidence focusing on Dapagliflozin use in senior T2DM patients. A comprehensive search strategy was employed, utilizing relevant databases.\n\n**Inclusion Criteria:** Studies were included if they:\n\n*   Focused on senior patients (aged 65 years or older) with T2DM.\n*   Evaluated the use of Dapagliflozin as a treatment for T2DM.\n*   Reported on relevant outcomes, such as HbA1c levels, adverse events, cardiovascular or renal outcomes, or frailty measures.\n\n**Exclusion Criteria:** Studies were excluded if they:\n\n*   Did not focus on Dapagliflozin.\n*   Did not include a senior population.\n*   Were not relevant to T2DM management.\n*   Were case reports or reviews without original data.\n\n**Search Strategy:** A comprehensive search was conducted using keywords such as \"Dapagliflozin,\" \"Type 2 Diabetes,\" \"Elderly,\" \"Seniors,\" \"Frailty,\" \"Cardiovascular,\" and \"Renal.\"\n\n**Data Extraction:** Data was extracted from each included study, including study design, patient characteristics, intervention details, and relevant outcomes.\n\n**Statistical Analysis:** Due to the heterogeneity of the available data and the lack of specific findings reported for each paper, a formal meta-analysis was not feasible. Instead, a narrative synthesis of the evidence was conducted, focusing on key themes and research questions.\n\n## 3. Findings\n\nDue to the limited information provided regarding the key findings of each analyzed paper, the following findings are based on the provided themes and consensus findings.\n\n### 3.1 Efficacy of Dapagliflozin on HbA1c Reduction\n\nBased on the collected research, the impact of Dapagliflozin on HbA1c levels in senior patients with T2DM, considering cardiovascular and renal comorbidities, is unclear due to very weak evidence. More research is needed to determine the specific effects of Dapagliflozin on glycemic control in this population.\n\n### 3.2 Safety Profile and Adverse Events in Seniors\n\nThe safety profile of Dapagliflozin in elderly T2DM patients is not well-defined in the provided literature. The most common adverse events associated with Dapagliflozin use in the senior T2DM population, and how these compare to other T2DM treatments, remains unclear.\n\n### 3.3 Impact of Frailty on Dapagliflozin Outcomes\n\nThe impact of frailty on the effectiveness and safety profile of Dapagliflozin in elderly T2DM patients is a significant gap in the current literature. The relationship between frailty scores and treatment outcomes requires further investigation.\n\n### 3.4 Comparison with Younger Adults\n\nThe data to compare and contrast the safety and effectiveness of Dapagliflozin in senior T2DM patients with that of younger adult T2DM patients is limited. Differences in outcomes and adverse events between these two populations are not well-defined.\n\n### 3.5 Addressing Gaps in the Literature\n\nThe following gaps in the existing literature regarding Dapagliflozin use in elderly T2DM patients were identified:\n\n*   **High Priority:** Effectiveness and safety of Dapagliflozin specifically in frail elderly T2DM patients, including the impact on falls, fractures, and quality of life.\n*   **High Priority:** Comparative effectiveness and safety of Dapagliflozin versus other T2DM treatments (e.g., other SGLT2 inhibitors, DPP-4 inhibitors, GLP-1 receptor agonists, insulin) in elderly patients, particularly those with comorbidities.\n*   **High Priority:** Long-term cardiovascular and renal outcomes of Dapagliflozin in elderly T2DM patients, including effects on heart failure hospitalization, progression of CKD, and mortality.\n*   **High Priority:** Specific impact of frailty on Dapagliflozin's effectiveness and safety in elderly T2DM patients.\n*   **High Priority:** Comparative effectiveness and safety of Dapagliflozin in senior vs. younger T2DM patients.\n*   **Medium Priority:** The impact of Dapagliflozin on bone health and fracture risk in elderly T2DM patients, considering factors like osteoporosis and vitamin D deficiency.\n*   **Medium Priority:** Optimal dosing and monitoring strategies for Dapagliflozin in elderly T2DM patients, considering age-related changes in pharmacokinetics and pharmacodynamics.\n*   **Medium Priority:** Detailed analysis of adverse events associated with Dapagliflozin in the elderly T2DM population, compared to other treatments.\n*   **Medium Priority:** Impact of Dapagliflozin on HbA1c levels in senior T2DM patients, considering cardiovascular and renal comorbidities.\n*   **Low Priority:** The impact of Dapagliflozin on cognitive function in elderly T2DM patients.\n*   **Low Priority:** Longitudinal studies assessing the long-term effects of Dapagliflozin on bone health in elderly T2DM patients with osteoporosis.\n\n## 4. Discussion\n\nThe current evidence base regarding the use of Dapagliflozin in elderly T2DM patients is weak. While there is increasing interest in the cardiovascular and renal benefits of SGLT-2 inhibitors in T2DM patients, the specific impact and safety profile of Dapagliflozin in the senior population remain largely unknown.\n\n**Consensus:**\n\n*   There is weak agreement that SGLT-2 inhibitors, including Dapagliflozin, may offer cardiorenal protection in T2DM patients. However, the specific findings supporting this consensus are unknown.\n\n**Gaps:**\n\nSignificant gaps exist in the literature, particularly regarding the impact of frailty, comparative effectiveness with other treatments, and long-term outcomes in elderly patients.\n\n**Methodological Considerations:**\n\n*   Meta-analyses and systematic reviews provide a broad overview of SGLT-2 inhibitors' cardiovascular outcomes but may lack specific data on elderly populations.\n*   Registry-based cross-sectional studies offer real-world data but are limited by their observational nature and potential for confounding.\n*   Case reports can highlight rare adverse events but cannot establish causality or generalizability.\n\n## 5. Conclusion\n\nThe understanding of Dapagliflozin in elderly T2DM patients is still in its early stages. This research report highlights the significant gaps in knowledge regarding its effectiveness, safety, and optimal use in this population. The lack of specific findings reported for each paper makes it difficult to draw firm conclusions.\n\n## 6. Recommendations\n\nBased on the findings and identified gaps, the following recommendations are made:\n\n*   Dapagliflozin use in elderly T2DM patients should be approached with caution, especially in those with frailty or significant comorbidities. The potential benefits and risks should be carefully weighed, and patients should be closely monitored for adverse events.\n*   Future research should focus on addressing the identified gaps in the literature, particularly the impact of frailty, comparative effectiveness with other treatments, and long-term outcomes.\n\n**Future Research Directions:**\n\n*   Conduct large-scale, randomized controlled trials (RCTs) specifically designed to assess the efficacy and safety of Dapagliflozin in elderly T2DM patients, with stratification by age, frailty status, and comorbidities.\n*   Perform real-world evidence studies using electronic health records and claims data to evaluate the long-term outcomes of Dapagliflozin in elderly T2DM patients in routine clinical practice.\n*   Develop and validate frailty assessment tools that can be easily integrated into clinical practice to identify elderly T2DM patients who are at higher risk of adverse events with Dapagliflozin.\n*   Investigate the mechanisms underlying the potential benefits and risks of Dapagliflozin on bone health in elderly T2DM patients.\n*   Explore the potential for personalized approaches to Dapagliflozin therapy in elderly T2DM patients, based on individual risk factors and preferences.\n\nThis research highlights the urgent need for more robust evidence to guide clinical decision-making regarding Dapagliflozin use in the senior T2DM population.",
-    "docx": "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"
-  }
-}
+  const code_table =  [
+    {
+        "Diagnosis": "Type 2 Diabetes Mellitus (T2DM)",
+        "Codes": "E11.9",
+        "Code Type": "ICD"
+    },
+    {
+        "Diagnosis": "Type 2 Diabetes Mellitus (T2DM) with cardiovascular complications",
+        "Codes": "E11.51",
+        "Code Type": "ICD"
+    },
+    {
+        "Diagnosis": "Major Adverse Cardiovascular Events (MACE)",
+        "Codes": "I21, I22, I25.1",
+        "Code Type": "ICD"
+    },
+    {
+        "Diagnosis": "Heart Failure",
+        "Codes": "I50.9",
+        "Code Type": "ICD"
+    },
+    {
+        "Diagnosis": "Stroke",
+        "Codes": "I63.9",
+        "Code Type": "ICD"
+    },
+    {
+        "Diagnosis": "Hypertension",
+        "Codes": "I10",
+        "Code Type": "ICD"
+    },
+    {
+        "Diagnosis": "Chronic Kidney Disease (CKD)",
+        "Codes": "N18.9",
+        "Code Type": "ICD"
+    },
+    {
+        "Diagnosis": "Urinary Tract Infection (UTI)",
+        "Codes": "N39.0",
+        "Code Type": "ICD"
+    },
+    {
+        "Diagnosis": "Dehydration",
+        "Codes": "E86.0",
+        "Code Type": "ICD"
+    },
+    {
+        "Diagnosis": "Percutaneous Coronary Intervention (PCI)",
+        "Codes": "3E053CZ",
+        "Code Type": "HCPCS"
+    },
+    {
+        "Diagnosis": "Dapagliflozin",
+        "Codes": "99204F",
+        "Code Type": "HCPCS"
+    },
+    {
+        "Diagnosis": "Sitagliptin",
+        "Codes": "99213F",
+        "Code Type": "HCPCS"
+    },
+    {
+        "Diagnosis": "Cardiorenal protection",
+        "Codes": "G9879",
+        "Code Type": "HCPCS"
+    },
+    {
+        "Diagnosis": "Hypoglycemia",
+        "Codes": "E16.2",
+        "Code Type": "ICD"
+    },
+    {
+        "Diagnosis": "Chronic Coronary Syndrome",
+        "Codes": "I25.10",
+        "Code Type": "ICD"
+    }
+];
+
+
+  const handleTabChange = (tab: string) => {
+    setActiveTab(tab);
+  };
+
+  const handleUploadProtocol = () => {
+    console.log("Upload protocol clicked");
+    // Implement protocol upload functionality
+  };
+
+  const handleUploadData = () => {
+    console.log("Upload data clicked");
+    // Implement data upload functionality
+  };
+
+  const handleDuplicate = () => {
+    console.log("Duplicate clicked");
+    // Implement duplication functionality
+  };
+
+  const handleRunExperiment = () => {
+    const dataresult1 = "test";
+    databricksStore.setDatabrickResult(dataresult1);
+    console.log("Run experiment clicked");
+  };
+
+  return (
+    <Box sx={{ maxWidth: "684px", fontSize: "0.875rem" }}>
+      <FormHeader
+        activeTab={activeTab}
+        onTabChange={handleTabChange}
+        onUploadProtocol={handleUploadProtocol}
+      />
+      
+      <Box 
+        sx={{ 
+          width: "100%", 
+          bgcolor: "#D9EDFF", 
+          borderRadius: "0px 12px 12px 12px",
+          p: 2,
+          overflow: "hidden"
+        }}
+      >
+        <ResearchInfo
+          researchName="Diabetes type1"
+          experimentName="Config 1"
+          createdDate="May 24, 2025"
+          ownerName="@dr.meera"
+        />
+        
+        <Paper 
+          elevation={0}
+          sx={{ 
+            mt: 2, 
+            p: 2, 
+            borderRadius: 2,
+            width: "100%"
+          }}
+        >
+          {/* <CriteriaSection /> */}
+          
+          {/* <MedicalCodingSection /> */}
+          
+          <Box sx={{ mt: 2, width: "100%" }}>
+            <ParametersSection />
+            {/* <UploadSection onUploadData={handleUploadData} /> */}
+          </Box>
+          
+          <ActionButtons
+            onDuplicate={handleDuplicate}
+            onRunExperiment={handleRunExperiment}
+          />
+        </Paper>
+      </Box>
+    </Box>
+  );
+};
+
+export default observer(ExperimentInterface);
