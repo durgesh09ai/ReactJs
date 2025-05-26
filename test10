@@ -1,35 +1,40 @@
-addResearchItem = async (data: { research_name: string; description: string; workspace_id: string }) => {
-  try {
-    const res = await fetch(`${this.apiUrl}/research_dashboard/create_research`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(data),
-    });
+<Box display="flex" alignItems="center" gap={2} mt={2}>
+  <Typography fontSize="14px">
+    Do you want diagnosis codes as well?
+  </Typography>
+  <Button
+    onClick={onStartSimulation}
+    sx={{
+      bgcolor: "#4CAF50",
+      color: "white",
+      fontWeight: 500,
+      px: 2,
+      py: 0.75,
+      borderRadius: 1.5,
+      textTransform: "none",
+      "&:hover": {
+        bgcolor: "#3d9140",
+      },
+    }}
+  >
+    Yes
+  </Button>
 
-    if (!res.ok) {
-      throw new Error("Failed to add research item");
-    }
-
-    const newResearchItem = await res.json(); // expects: { id: string, title: string }
-
-    runInAction(() => {
-      // Find the workspace by workspace_id
-      const workspace = this.sidebarData.workspacelist.find(w => w.id === data.workspace_id);
-      if (workspace) {
-        // Find the "Research" item
-        const researchItem = workspace.items.find(item => item.researchname === "Research");
-        if (researchItem && Array.isArray(researchItem.data)) {
-          researchItem.data.push({
-            id: newResearchItem.id,
-            title: newResearchItem.title || data.research_name
-          });
-        } 
-      }
-    });
-
-  } catch (e: any) {
-    runInAction(() => {
-      this.error = e.message || "Unknown error";
-    });
-  }
-};
+  <Button
+    onClick={displayMessage}
+    sx={{
+      bgcolor: "#4CAF50",
+      color: "white",
+      fontWeight: 500,
+      px: 2,
+      py: 0.75,
+      borderRadius: 1.5,
+      textTransform: "none",
+      "&:hover": {
+        bgcolor: "#3d9140",
+      },
+    }}
+  >
+    No
+  </Button>
+</Box>
