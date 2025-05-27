@@ -1,243 +1,468 @@
 import React, { useEffect, useState } from "react";
-import { Box, Typography, Stack, Paper } from "@mui/material";
+import { Box, MenuItem, Paper, Select, TextField, Typography } from "@mui/material";
+import FormHeader from "./FormHeader";
+import ResearchInfo from "./ResearchInfo";
+import CriteriaSection from "./CriteriaSection";
+import MedicalCodingSection from "./MedicalCodingSection";
+import ParametersSection from "./ParametersSection";
+import UploadSection from "./UploadSection";
+import ActionButtons from "./ActionButtons";
+import { databricksStore } from "../../../stores/cip/ProtoweaveGenAiStore/DatabricksStore";
 import { researchStore } from "../../../stores/cip/ProtoweaveGenAiStore/ResearchStore";
+import { observer } from "mobx-react-lite";
 
-type TimelineSection = {
-  section: string;
-  items: {
-    percent: number;
-    message: string;
-    sub?: string;
-  }[];
-};
+import { DatePicker } from "@mui/x-date-pickers/DatePicker";
+import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
+import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFns";
 
-// Label map for clean section headings
-const STEP_LABELS: Record<string, string> = {
-  searching: "Searching",
-  selecting_papers: "Selecting Papers",
-  analyzing_paper: "Analyzing Papers",
-  synthesizing_research: "Synthesizing Research",
-  generating_report: "Generating Report",
-  completed: "Completed",
-  error: "Error",
-};
+interface experimentConfigrationProps{
+  researchId:string;
+  versionId:string;
+}
 
-const ORDERED_STEPS = [
-  "searching",
-  "selecting_papers",
-  "analyzing_paper",
-  "synthesizing_research",
-  "generating_report",
-  "completed",
-  "error",
+const ExperimentInterface = () => {
+
+  // const { researchId ,versionId } = props;
+  const [activeTab, setActiveTab] = useState("Configuration Form 1");
+  const [startDate, setStartDate] = useState<Date | null>(new Date());
+  const [endDate, setEndDate] = useState<Date | null>(new Date());
+
+
+  
+  // const dataresult = "";
+  // databricksStore.setDatabrickResult(dataresult);
+
+  // useEffect(() => {
+  //   if (versionId && researchId) {
+  //     researchStore.fetchChatHistory(researchId, versionId);
+  //   }
+  // }, [versionId, researchId]);
+
+
+  const code_table =  [
+    {
+        "Diagnosis": "Type 2 Diabetes Mellitus (T2DM)",
+        "Codes": "E11.9",
+        "Code Type": "ICD"
+    },
+    {
+        "Diagnosis": "Type 2 Diabetes Mellitus (T2DM) with cardiovascular complications",
+        "Codes": "E11.51",
+        "Code Type": "ICD"
+    },
+    {
+        "Diagnosis": "Major Adverse Cardiovascular Events (MACE)",
+        "Codes": "I21, I22, I25.1",
+        "Code Type": "ICD"
+    },
+    {
+        "Diagnosis": "Heart Failure",
+        "Codes": "I50.9",
+        "Code Type": "ICD"
+    },
+    {
+        "Diagnosis": "Stroke",
+        "Codes": "I63.9",
+        "Code Type": "ICD"
+    },
+    {
+        "Diagnosis": "Hypertension",
+        "Codes": "I10",
+        "Code Type": "ICD"
+    },
+    {
+        "Diagnosis": "Chronic Kidney Disease (CKD)",
+        "Codes": "N18.9",
+        "Code Type": "ICD"
+    },
+    {
+        "Diagnosis": "Urinary Tract Infection (UTI)",
+        "Codes": "N39.0",
+        "Code Type": "ICD"
+    },
+    {
+        "Diagnosis": "Dehydration",
+        "Codes": "E86.0",
+        "Code Type": "ICD"
+    },
+    {
+        "Diagnosis": "Percutaneous Coronary Intervention (PCI)",
+        "Codes": "3E053CZ",
+        "Code Type": "HCPCS"
+    },
+    {
+        "Diagnosis": "Dapagliflozin",
+        "Codes": "99204F",
+        "Code Type": "HCPCS"
+    },
+    {
+        "Diagnosis": "Sitagliptin",
+        "Codes": "99213F",
+        "Code Type": "HCPCS"
+    },
+    {
+        "Diagnosis": "Cardiorenal protection",
+        "Codes": "G9879",
+        "Code Type": "HCPCS"
+    },
+    {
+        "Diagnosis": "Hypoglycemia",
+        "Codes": "E16.2",
+        "Code Type": "ICD"
+    },
+    {
+        "Diagnosis": "Chronic Coronary Syndrome",
+        "Codes": "I25.10",
+        "Code Type": "ICD"
+    }
 ];
 
-const ThinkingProcess = () => {
-  const [loadingDots, setLoadingDots] = useState("");
-  const rawData = researchStore.thinkingData || [];
 
-  useEffect(() => {
-    if (researchStore.isResearching) {
-      const intervalId = setInterval(() => {
-        setLoadingDots((prevDots) => (prevDots.length < 3 ? prevDots + "." : ""));
-      }, 500);
-      return () => clearInterval(intervalId);
-    } else {
-      setLoadingDots("");
-    }
-  }, [researchStore.isResearching]);
+  // const handleTabChange = (tab: string) => {
+  //   setActiveTab(tab);
+  // };
 
-  // 🔁 Transform data based on your defined steps
-  const transformedData: TimelineSection[] = ORDERED_STEPS.map((stepKey) => {
-    const filtered = rawData.filter((item) => item.step === stepKey);
-    if (filtered.length === 0) return null;
+  const handleUploadProtocol = () => {
+    console.log("Upload protocol clicked");
+    // Implement protocol upload functionality
+  };
 
-    const sectionItems = filtered.map((item) => {
-      const message =
-        stepKey === "searching"
-          ? item.details?.query || "Searching..."
-          : item.details?.title || item.details?.query || "Processing...";
+  const handleUploadData = () => {
+    console.log("Upload data clicked");
+    // Implement data upload functionality
+  };
 
-      const sub =
-        stepKey === "searching" && item.details?.query_index != null
-          ? `Query ${item.details.query_index} of ${item.details.total_queries}`
-          : item.details?.sub;
+  const handleDuplicate = () => {
+    console.log("Duplicate clicked");
+    // Implement duplication functionality
+  };
 
-      return {
-        percent: Math.round(item.progress || 0),
-        message,
-        sub,
-      };
-    });
+  const handleRunExperiment = () => {
+    const dataresult1 = "test";
+    databricksStore.setDatabrickResult(dataresult1);
+    console.log("Run experiment clicked");
+  };
 
-    return {
-      section: STEP_LABELS[stepKey] || stepKey,
-      items: sectionItems,
-    };
-  }).filter(Boolean) as TimelineSection[];
+  const labelStyle = {
+  width: "200px",
+  fontSize: 14,
+  color: "black",
+  mt: 1
+};
+
+const fieldStyle = {
+  flex: 1,
+  minWidth: 100
+};
+
+const rowStyle = {
+  display: "flex",
+  alignItems: "center",
+  gap: 2,
+  mb: 2
+};
+
+   const Row = ({ label, children }: { label: string, children: React.ReactNode }) => (
+    <Box sx={{ display: "flex", alignItems: "center", mb: 2 }}>
+      <Box sx={{ minWidth: 150 }}>
+        <Typography sx={{ fontSize: 14, color: "black" }}>{label}</Typography>
+      </Box>
+      <Box>{children}</Box>
+    </Box>
+  );
 
   return (
-    <>
-      <Box
-        sx={{
-          borderRadius: "16px 16px 0 0",
-          backgroundColor: "#D9EDFF",
-          p: 0.6,
-          width: "100%",
-          maxWidth: 400,
-          mx: "auto",
-          mb: "1px",
-        }}
-      >
-        <Box
-          sx={{
-            borderRadius: "16px 16px 0 0",
-            backgroundColor: "#fff",
-            width: "100%",
-            p: 1,
-          }}
-        >
-          <Typography variant="h6" align="center" fontSize={14} fontWeight={400}>
-            Reasoning
-          </Typography>
-        </Box>
-      </Box>
-
-      <Box
-        sx={{
-          border: "1px solid #CFE3F3",
-          borderRadius: "0 0 16px 16px",
-          backgroundColor: "#D9EDFF",
+    <Box sx={{ maxWidth: "684px", fontSize: "0.875rem" }}>
+      {/* <FormHeader
+        activeTab={activeTab}
+        onTabChange={handleTabChange}
+        onUploadProtocol={handleUploadProtocol}
+      /> */}
+      
+      <Box 
+        sx={{ 
+          width: "100%", 
+          bgcolor: "#D9EDFF", 
+          borderRadius: "0px 12px 12px 12px",
           p: 2,
-          width: "100%",
-          maxWidth: 400,
-          mx: "auto",
+          overflow: "hidden"
         }}
       >
-        <Box
+        <ResearchInfo
+          researchName="Diabetes type1"
+          experimentName="Config 1"
+          createdDate="May 24, 2025"
+          ownerName="@dr.meera"
+        />
+        
+     <LocalizationProvider dateAdapter={AdapterDateFns}>
+      <Paper
+        elevation={0}
+        sx={{
+          mt: 2,
+          p: 2,
+          borderRadius: 2,
+          width: "100%"
+        }}
+      >
+        <Typography
           sx={{
-            display: "flex",
-            flexDirection: "row",
-            position: "relative",
-            border: "1px solid #fff",
-            borderRadius: "16px",
-            backgroundColor: "#fff",
-            p: 2,
+            fontWeight: "bold",
+            fontSize: 14,
+            color: "black",
+            lineHeight: 1.2,
+            mb: 2
           }}
         >
-          <Box sx={{ width: "2px", display: "flex", justifyContent: "center", position: "relative" }} />
+          Cohost Identification
+        </Typography>
 
-          <Box sx={{ flex: 1 }}>
-            {transformedData.length === 0 && !researchStore.report && !researchStore.isResearching && (
-              <Box sx={{ height: 400 }}>
-                <Typography variant="caption" sx={{ color: "#999", display: "block", mt: 0.5 }}>
-                  The research process will be shown here once started.
-                </Typography>
-              </Box>
-            )}
+        {/* Age at Index */}
+        <Box sx={rowStyle}>
+          <Typography sx={labelStyle}>Age at Index:</Typography>
+          <Select
+            value="40"
+            size="small"
+            sx={{ ...fieldStyle, bgcolor: "white", borderRadius: 1 }}
+          >
+            <MenuItem value="10">10</MenuItem>
+            <MenuItem value="20">20</MenuItem>
+            <MenuItem value="40">40</MenuItem>
+          </Select>
+        </Box>
 
-            {transformedData.map((section, sIndex) => (
-              <Box key={sIndex} sx={{ mb: 3 }}>
-                <Typography
-                  variant="subtitle2"
-                  sx={{
-                    display: "inline-block",
-                    backgroundColor: "rgba(18, 18, 21, 0.30)",
-                    color: "#fff",
-                    px: 1.5,
-                    py: 0.5,
-                    borderRadius: "0 8px 8px 0",
-                    fontWeight: 600,
-                    fontSize: "0.75rem",
-                    mb: 1,
-                  }}
-                >
-                  {section.section}
-                </Typography>
+        {/* Race / Ethnicity */}
+        <Box sx={rowStyle}>
+          <Typography sx={labelStyle}>Race / Ethnicity:</Typography>
+          <Select
+            value="10"
+            size="small"
+            sx={{ ...fieldStyle, bgcolor: "white", borderRadius: 1 }}
+          >
+            <MenuItem value="10">Race1</MenuItem>
+            <MenuItem value="20">Race2</MenuItem>
+            <MenuItem value="40">Race3</MenuItem>
+          </Select>
+        </Box>
 
-                <Stack spacing={1}>
-                  {section.items.map((item, index) => (
-                    <Box
-                      key={index}
-                      sx={{
-                        borderLeft: "2px solid #ccc",
-                        backgroundColor: "#e4e4e533",
-                        p: 1,
-                      }}
-                    >
-                      <Box sx={{ display: "flex", alignItems: "flex-start" }}>
-                        <Box
-                          sx={{
-                            width: 24,
-                            height: 24,
-                            position: "relative",
-                            flexShrink: 0,
-                            mt: 1,
-                          }}
-                        >
-                          <Box
-                            sx={{
-                              position: "absolute",
-                              top: "50%",
-                              right: "-15%",
-                              transform: "translate(-50%, -50%)",
-                              width: 8,
-                              height: 8,
-                              borderRadius: "50%",
-                              backgroundColor: "#ccc",
-                              zIndex: 1,
-                            }}
-                          />
-                          <Box
-                            sx={{
-                              position: "absolute",
-                              top: "50%",
-                              right: "35%",
-                              height: 2,
-                              width: "100%",
-                              backgroundColor: "#B0BEC5",
-                              transform: "translateY(-50%)",
-                              zIndex: 0,
-                            }}
-                          />
-                        </Box>
+        {/* Region */}
+        <Box sx={rowStyle}>
+          <Typography sx={labelStyle}>Region:</Typography>
+          <Select
+            value="40"
+            size="small"
+            sx={{ ...fieldStyle, bgcolor: "white", borderRadius: 1 }}
+          >
+            <MenuItem value="10">Region1</MenuItem>
+            <MenuItem value="20">Region2</MenuItem>
+            <MenuItem value="40">Region3</MenuItem>
+          </Select>
+        </Box>
 
-                        <Box sx={{ flex: 1, ml: 1 }}>
-                          <Typography
-                            variant="subtitle2"
-                            sx={{
-                              fontSize: "0.8rem",
-                              color: "#636262",
-                              fontWeight: 500,
-                              mb: 0.5,
-                              pt: 1,
-                            }}
-                          >
-                            Progress: {item.percent}%
-                          </Typography>
+        {/* SDOH */}
+        <Box sx={rowStyle}>
+          <Typography sx={labelStyle}>SDOH:</Typography>
+          <Select
+            value="10"
+            size="small"
+            sx={{ ...fieldStyle, bgcolor: "white", borderRadius: 1 }}
+          >
+            <MenuItem value="10">SDOH1</MenuItem>
+            <MenuItem value="20">SDOH2</MenuItem>
+            <MenuItem value="40">SDOH3</MenuItem>
+          </Select>
+        </Box>
 
-                          <Paper elevation={0} sx={{ p: 1.5, backgroundColor: "#fff" }}>
-                            <Typography variant="body2" sx={{ fontSize: "0.85rem" }}>
-                              {item.message}
-                            </Typography>
-                            {item.sub && (
-                              <Typography variant="caption" sx={{ color: "#999", display: "block", mt: 0.5 }}>
-                                {item.sub}
-                              </Typography>
-                            )}
-                          </Paper>
-                        </Box>
-                      </Box>
-                    </Box>
-                  ))}
-                </Stack>
-              </Box>
-            ))}
+        {/* Period of Interest */}
+      <Box sx={{ display: "flex", alignItems: "center", mb: 2 }}>
+          <Box sx={{ width: 180 }}>
+            <Typography sx={{ fontSize: 14, color: "black" }}>
+              Period of Interest:
+            </Typography>
+          </Box>
+          <Box sx={{ display: "flex", gap: 4,ml:4 }}>
+            <DatePicker
+              label="Start Date"
+              value={startDate}
+              onChange={(newDate) => setStartDate(newDate)}
+              format="yyyy-MM-dd"
+              slotProps={{
+                textField: {
+                  size: "small",
+                  sx: { width: 180 }
+                }
+              }}
+            />
+            <DatePicker
+              label="End Date"
+              value={endDate}
+              onChange={(newDate) => setEndDate(newDate)}
+              format="yyyy-MM-dd"
+              slotProps={{
+                textField: {
+                  size: "small",
+                  sx: { width: 180 }
+                }
+              }}
+            />
           </Box>
         </Box>
+      </Paper>
+    </LocalizationProvider>
+
+      <Paper
+      elevation={0}
+      sx={{
+        mt: 2,
+        p: 2,
+        borderRadius: 2,
+        width: "100%"
+      }}
+      >
+      <Typography
+        sx={{
+          fontWeight: "bold",
+          fontSize: 14,
+          color: "black",
+          lineHeight: 1.2,
+          mb: 2
+        }}
+      >
+        Clinical Characteristic
+      </Typography>
+
+      {/* Age at Index */}
+      <Box sx={rowStyle}>
+        <Typography sx={labelStyle}>Comorbidities:</Typography>
+        <Select
+          value="40"
+          size="small"
+          sx={{ ...fieldStyle, bgcolor: "white", borderRadius: 1 }}
+        >
+          <MenuItem value="10">Hypertension and Diabetes</MenuItem>
+          <MenuItem value="20">Chronic Lung Disease and Heart Disease</MenuItem>
+          <MenuItem value="40">Mental Health and Substance Use</MenuItem>
+        </Select>
       </Box>
-    </>
+
+      {/* Race / Ethnicity */}
+      <Box sx={rowStyle}>
+        <Typography sx={labelStyle}>Disease Specific Severity Measure:</Typography>
+        <Select
+          value="10"
+          size="small"
+          sx={{ ...fieldStyle, bgcolor: "white", borderRadius: 1 }}
+        >
+          <MenuItem value="10">Disease1</MenuItem>
+          <MenuItem value="20">Disease2</MenuItem>
+          <MenuItem value="40">Disease3</MenuItem>
+        </Select>
+      </Box>
+
+      {/* Region */}
+      <Box sx={rowStyle}>
+        <Typography sx={labelStyle}>Biomarkers/Labs:</Typography>
+        <Select
+          value="40"
+          size="small"
+          sx={{ ...fieldStyle, bgcolor: "white", borderRadius: 1 }}
+        >
+          <MenuItem value="10">Labs1</MenuItem>
+          <MenuItem value="20">Labs2</MenuItem>
+          <MenuItem value="40">Labs3</MenuItem>
+        </Select>
+      </Box>
+
+      {/* SDOH */}
+      <Box sx={rowStyle}>
+        <Typography sx={labelStyle}>Baseline Diagnosis:</Typography>
+        <Select
+          value="10"
+          size="small"
+          sx={{ ...fieldStyle, bgcolor: "white", borderRadius: 1 }}
+        >
+          <MenuItem value="10">Diagnosis1</MenuItem>
+          <MenuItem value="20">Diagnosis2</MenuItem>
+          <MenuItem value="40">Diagnosis3</MenuItem>
+        </Select>
+      </Box>
+      </Paper>
+
+        <Paper 
+          elevation={0}
+          sx={{ 
+            mt: 2, 
+            p: 2, 
+            borderRadius: 2,
+            width: "100%"
+          }}
+        >
+          <CriteriaSection />
+          <MedicalCodingSection />
+        
+        </Paper>
+
+      <Paper
+      elevation={0}
+      sx={{
+        mt: 2,
+        p: 2,
+        borderRadius: 2,
+        width: "100%"
+      }}
+      >
+      <Typography
+        sx={{
+          fontWeight: "bold",
+          fontSize: 14,
+          color: "black",
+          lineHeight: 1.2,
+          mb: 2
+        }}
+      >
+       Inclusion / Exclusion Criteria
+
+      </Typography>
+
+      {/* Age at Index */}
+      <Box sx={rowStyle}>
+        <Typography sx={labelStyle}>Disease Diagnosis:</Typography>
+        <Select
+          value="40"
+          size="small"
+          sx={{ ...fieldStyle, bgcolor: "white", borderRadius: 1 }}
+        >
+          <MenuItem value="10">Hypertension and Diabetes</MenuItem>
+          <MenuItem value="20">Chronic Lung Disease and Heart Disease</MenuItem>
+          <MenuItem value="40">Mental Health and Substance Use</MenuItem>
+        </Select>
+      </Box>
+
+      {/* Race / Ethnicity */}
+      <Box sx={rowStyle}>
+        <Typography sx={labelStyle}>Deceased:</Typography>
+        <Select
+          value="10"
+          size="small"
+          sx={{ ...fieldStyle, bgcolor: "white", borderRadius: 1 }}
+        >
+          <MenuItem value="10">yes</MenuItem>
+          <MenuItem value="20">No</MenuItem>
+        </Select>
+      </Box>
+
+         <ActionButtons
+        onDuplicate={handleDuplicate}
+        onRunExperiment={handleRunExperiment}
+        />
+      </Paper>
+
+
+
+
+      </Box>
+    </Box>
   );
 };
 
-export default ThinkingProcess;
+export default observer(ExperimentInterface);
