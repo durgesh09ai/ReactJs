@@ -627,3 +627,31 @@ const ExperimentInterface = (props:experimentConfigrationProps) => {
 };
 
 export default observer(ExperimentInterface);
+
+
+--------------------------------
+
+  postDataToDataBrick = async (data: {
+    codeTable: any[];
+    startDate: string;
+    endDate: string;
+    experimentId: string;
+    researchId: string;
+  }) => {
+    try {
+        const res = await fetch(`${this.apiUrl}/research_dashboard/test`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(data),
+      });
+     if (!res.ok) {
+        throw new Error("Failed to send data to Data Brick");
+      }
+      } catch (e: any) {
+      runInAction(() => {
+        this.error = e.message || "Unknown error";
+      });
+    }
+  };
