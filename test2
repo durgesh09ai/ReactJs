@@ -223,3 +223,17 @@ useEffect(() => {
       </MenuItem>
     ))}
 </Select>
+
+No overload matches this call.
+  Overload 1 of 3, '(props: { href: string; } & MenuItemOwnProps & Omit<ButtonBaseOwnProps, "classes"> & CommonProps & Omit<DetailedHTMLProps<AnchorHTMLAttributes<HTMLAnchorElement>, HTMLAnchorElement>, "children" | ... 20 more ... | "divider">): Element', gave the following error.
+    Type 'unknown' is not assignable to type 'ReactNode'.
+  Overload 2 of 3, '(props: { component: ElementType<any, keyof IntrinsicElements>; } & MenuItemOwnProps & Omit<ButtonBaseOwnProps, "classes"> & CommonProps & Omit<...>): Element', gave the following error.
+    Type 'unknown' is not assignable to type 'ReactNode'.
+  Overload 3 of 3, '(props: DefaultComponentProps<ExtendButtonBaseTypeMap<MenuItemTypeMap<{}, "li">>>): Element', gave the following error.
+    Type 'unknown' is not assignable to type 'ReactNode'.ts(2769)
+ButtonBase.d.ts(23, 3): The expected type comes from property 'children' which is declared here on type 'IntrinsicAttributes & { href: string; } & MenuItemOwnProps & Omit<ButtonBaseOwnProps, "classes"> & CommonProps & Omit<...>'
+ButtonBase.d.ts(23, 3): The expected type comes from property 'children' which is declared here on type 'IntrinsicAttributes & { component: ElementType<any, keyof IntrinsicElements>; } & MenuItemOwnProps & Omit<...> & CommonProps & Omit<...>'
+ButtonBase.d.ts(23, 3): The expected type comes from property 'children' which is declared here on type 'IntrinsicAttributes & MenuItemOwnProps & Omit<ButtonBaseOwnProps, "classes"> & CommonProps & Omit<...>'
+(parameter) title: unknown
+No quick fixes available
+
