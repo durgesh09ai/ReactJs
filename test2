@@ -133,4 +133,12 @@
     </TableCell>
   );
 })}
+-----------------------------
+
+useEffect(() => {
+  const data = toJS(researchStore.experimentData);
+  if (data && Array.isArray(data)) {
+    setEditableCodeTable(data);
+  }
+}, [researchStore.experimentData]);
 
