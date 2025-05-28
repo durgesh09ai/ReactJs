@@ -142,3 +142,48 @@ useEffect(() => {
   }
 }, [researchStore.experimentData]);
 
+
+-----------------------------------------
+
+   <Select
+              value={selectedResearch}
+              onChange={(e) => setSelectedResearch(e.target.value)}
+              fullWidth
+              size="small"
+              displayEmpty
+              sx={{
+                fontSize: 12, 
+                bgcolor: "white",
+                "& .MuiSelect-icon": { fontSize: 20 },
+                "& fieldset": { borderColor: "#0F4977" },
+              }}
+              MenuProps={{
+                PaperProps: {
+                  sx: {
+                    "& .MuiMenuItem-root": {
+                      fontSize: 12, 
+                      py: 0.5,
+                    },
+                  },
+                },
+              }}
+            >
+          <MenuItem value="" disabled>
+            Select research
+          </MenuItem>
+         {researchData.length > 0
+            && researchData.map((key,value) => (
+            <MenuItem key={key} value={value}>
+              {value}
+            </MenuItem>
+           ))}
+            </Select>
+
+-------------------------------
+[
+    {
+        "3c8003a8-052e-447e-b09b-0bf39b4bf563": "Safety of Farxiga",
+        "b0565f0d-a680-4bfe-8776-11ee9a1db686": " Dapagliflozin in Type 2 Diabetes "
+    }
+]
+
