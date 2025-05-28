@@ -112,3 +112,25 @@
     "_attachments": "attachments/",
     "_ts": 1748362905
 }
+
+
+-----------------
+
+{Object.entries(row).map(([key, value]) => {
+  const cellValue = value as React.ReactNode;
+  return (
+    <TableCell key={key}>
+      {editingRowIndex === rowIndex ? (
+        <TextField
+          value={String(value)}
+          size="small"
+          fullWidth
+          onChange={(e) => handleCellChange(rowIndex, key, e.target.value)}
+        />
+      ) : (
+        cellValue
+      )}
+    </TableCell>
+  );
+})}
+
