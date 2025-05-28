@@ -216,10 +216,10 @@ useEffect(() => {
   </MenuItem>
 
   {researchData.length > 0 &&
+    typeof researchData[0] === "object" &&
     Object.entries(researchData[0]).map(([id, title]) => (
       <MenuItem key={id} value={id}>
-        {title}
+        {title || "Untitled"}
       </MenuItem>
     ))}
 </Select>
-
