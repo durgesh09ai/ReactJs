@@ -186,4 +186,40 @@ useEffect(() => {
         "b0565f0d-a680-4bfe-8776-11ee9a1db686": " Dapagliflozin in Type 2 Diabetes "
     }
 ]
+-------------------------------
+
+<Select
+  value={selectedResearch}
+  onChange={(e) => setSelectedResearch(e.target.value)}
+  fullWidth
+  size="small"
+  displayEmpty
+  sx={{
+    fontSize: 12,
+    bgcolor: "white",
+    "& .MuiSelect-icon": { fontSize: 20 },
+    "& fieldset": { borderColor: "#0F4977" },
+  }}
+  MenuProps={{
+    PaperProps: {
+      sx: {
+        "& .MuiMenuItem-root": {
+          fontSize: 12,
+          py: 0.5,
+        },
+      },
+    },
+  }}
+>
+  <MenuItem value="" disabled>
+    Select research
+  </MenuItem>
+
+  {researchData.length > 0 &&
+    Object.entries(researchData[0]).map(([id, title]) => (
+      <MenuItem key={id} value={id}>
+        {title}
+      </MenuItem>
+    ))}
+</Select>
 
