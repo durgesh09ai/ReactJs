@@ -40,3 +40,20 @@ import { Box, Typography } from "@mui/material";
     </Box>
   </Box>
 </Box>
+
+-----------------------------------------------
+
+{
+    "params": {
+        "study_start_date": "2022-05-29",
+        "study_end_date": "2025-05-29",
+        "pipeline_name": "Generate_data_using_python_pyspark",
+        "treatment": "Type 2 Diabetes Mellitus, Urinary Tract Infection, Hypotension, Falls, Acute Kidney Injury, Heart Failure, Myocardial Infarction, Stroke, Cardiovascular Death, Frailty, Genitourinary infection",
+        "codes": "[('Type 2 Diabetes Mellitus', 'E11', 'icd10'), ('Urinary Tract Infection', 'N39.0', 'icd10'), ('Hypotension', 'I95', 'icd10'), ('Falls', 'W00-W19', 'icd10'), ('Acute Kidney Injury', 'N17.9', 'icd10'), ('Heart Failure', 'I50.9', 'icd10'), ('Myocardial Infarction', 'I21', 'icd10'), ('Stroke', 'I63', 'icd10'), ('Cardiovascular Death', 'I46.1', 'icd10'), ('Frailty', 'R54', 'icd10'), ('Genitourinary infection', 'A50-A64', 'icd10')]",
+        "transactionId": "1ba19dc2-d7b9-4429-a673-4660f39d61b3"
+    },
+    "job_data": {
+        "run_id": 404502995505815,
+        "number_in_job": 404502995505815
+    }
+}
