@@ -1,23 +1,31 @@
-updateWorkspace = async (id: string, updates: { name: string; description: string }) => {
-  try {
-    const res = await fetch(`${this.apiUrl}/updateworkspace/${id}`, {
-      method: "PUT",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(updates),
-    });
+<RefreshIcon
+  sx={{ fontSize: 18 }}
+  onClick={() => {
+    const jsonData = {
+      diagnoses: [
+        { label: "Type 2 Diabetes Mellitus", code: "E11", system: "ICD-10" },
+        { label: "Urinary Tract Infection", code: "N39.0", system: "ICD-10" },
+        { label: "Stroke", code: "I63", system: "ICD-10" }
+      ]
+    };
+    databricksStore.setResult(jsonData);
+  }}
+/>
+_______________
 
-    if (!res.ok) throw new Error("Failed to update workspace");
-
-    const updatedWorkspace = await res.json();
-    runInAction(() => {
-      const index = this.workspaceList.findIndex((ws) => ws.id === id);
-      if (index !== -1) {
-        this.workspaceList[index] = updatedWorkspace;
-      }
-    });
-  } catch (e: any) {
-    runInAction(() => {
-      this.error = e.message;
-    });
-  }
-};
+{databricksStore.databrickResult?.diagnoses ? (
+  <Box>
+    <Typography variant="h6" fontSize={14} fontWeight={500}>Diagnoses:</Typography>
+    {databricksStore.databrickResult.diagnoses.map((item: any, index: number) => (
+      <Box key={index} sx={{ mb: 1 }}>
+        <Typography fontSize={14}><b>Label:</b> {item.label}</Typography>
+        <Typography fontSize={14}><b>Code:</b> {item.code}</Typography>
+        <Typography fontSize={14}><b>System:</b> {item.system}</Typography>
+      </Box>
+    ))}
+  </Box>
+) : (
+  <Typography variant="h6" align="center" fontSize={14} fontWeight={400}>
+    Output will be come here
+  </Typography>
+)}
