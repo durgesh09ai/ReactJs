@@ -1,239 +1,29 @@
-{
-    "id": "82ecff50-2306-460d-8513-63ec87359c64",
-    "research_id": "3c8003a8-052e-447e-b09b-0bf39b4bf563",
-    "workspace_id": "681b77fe-b97c-8013-8a40-199103902612",
-    "configuration_name": "Configration",
-    "code_table": [
-        {
-            "Diagnosis": "Type 2 Diabetes Mellitus (T2DM)",
-            "Codes": "E11",
-            "Code Type": "ICD-10"
-        },
-        {
-            "Diagnosis": "Hyperglycemia",
-            "Codes": "R73.9",
-            "Code Type": "ICD-10"
-        },
-        {
-            "Diagnosis": "Hypoglycemia",
-            "Codes": "E16.2",
-            "Code Type": "ICD-10"
-        },
-        {
-            "Diagnosis": "Albuminuria",
-            "Codes": "R80",
-            "Code Type": "ICD-10"
-        },
-        {
-            "Diagnosis": "Heart Failure",
-            "Codes": "I50.9",
-            "Code Type": "ICD-10"
-        },
-        {
-            "Diagnosis": "Stroke",
-            "Codes": "I63.9",
-            "Code Type": "ICD-10"
-        },
-        {
-            "Diagnosis": "Myocardial Infarction",
-            "Codes": "I21.9",
-            "Code Type": "ICD-10"
-        },
-        {
-            "Diagnosis": "Chronic Kidney Disease (CKD)",
-            "Codes": "N18.9",
-            "Code Type": "ICD-10"
-        },
-        {
-            "Diagnosis": "Dehydration",
-            "Codes": "E86.0",
-            "Code Type": "ICD-10"
-        },
-        {
-            "Diagnosis": "Frailty",
-            "Codes": "R54",
-            "Code Type": "ICD-10"
-        },
-        {
-            "Diagnosis": "Cognitive Decline",
-            "Codes": "R41.82",
-            "Code Type": "ICD-10"
-        },
-        {
-            "Diagnosis": "Hemolytic anemia",
-            "Codes": "D59.9",
-            "Code Type": "ICD-10"
-        },
-        {
-            "Diagnosis": "Dapagliflozin (Farxiga)",
-            "Codes": "J8456",
-            "Code Type": "HCPCS"
-        },
-        {
-            "Diagnosis": "HbA1c test",
-            "Codes": "83036",
-            "Code Type": "CPT"
-        },
-        {
-            "Diagnosis": "Fasting Plasma Glucose test",
-            "Codes": "82947",
-            "Code Type": "CPT"
-        },
-        {
-            "Diagnosis": "eGFR measurement",
-            "Codes": "80069",
-            "Code Type": "CPT"
-        },
-        {
-            "Diagnosis": "SF-36 Quality of Life Assessment",
-            "Codes": "M1042",
-            "Code Type": "HCPCS"
-        },
-        {
-            "Diagnosis": "EQ-5D Quality of Life Assessment",
-            "Codes": "99072",
-            "Code Type": "CPT"
-        },
-        {
-            "Diagnosis": "Office visit, Level 3",
-            "Codes": "99213",
-            "Code Type": "CPT"
-        },
-        {
-            "Diagnosis": "Medication reconciliation",
-            "Codes": "99497",
-            "Code Type": "CPT"
-        }
-    ],
-    "created_at": 1748343103,
-    "_rid": "KZ9tAI6G2H8HAAAAAAAAAA==",
-    "_self": "dbs/KZ9tAA==/colls/KZ9tAI6G2H8=/docs/KZ9tAI6G2H8HAAAAAAAAAA==/",
-    "_etag": "\"12008d79-0000-4d00-0000-6835e6990000\"",
-    "_attachments": "attachments/",
-    "_ts": 1748362905
-}
-
-
------------------
-
-{Object.entries(row).map(([key, value]) => {
-  const cellValue = value as React.ReactNode;
-  return (
-    <TableCell key={key}>
-      {editingRowIndex === rowIndex ? (
-        <TextField
-          value={String(value)}
-          size="small"
-          fullWidth
-          onChange={(e) => handleCellChange(rowIndex, key, e.target.value)}
-        />
-      ) : (
-        cellValue
-      )}
-    </TableCell>
-  );
-})}
------------------------------
-
-useEffect(() => {
-  const data = toJS(researchStore.experimentData);
-  if (data && Array.isArray(data)) {
-    setEditableCodeTable(data);
-  }
-}, [researchStore.experimentData]);
-
-
------------------------------------------
-
-   <Select
-              value={selectedResearch}
-              onChange={(e) => setSelectedResearch(e.target.value)}
-              fullWidth
-              size="small"
-              displayEmpty
-              sx={{
-                fontSize: 12, 
-                bgcolor: "white",
-                "& .MuiSelect-icon": { fontSize: 20 },
-                "& fieldset": { borderColor: "#0F4977" },
-              }}
-              MenuProps={{
-                PaperProps: {
-                  sx: {
-                    "& .MuiMenuItem-root": {
-                      fontSize: 12, 
-                      py: 0.5,
-                    },
-                  },
-                },
-              }}
-            >
-          <MenuItem value="" disabled>
-            Select research
-          </MenuItem>
-         {researchData.length > 0
-            && researchData.map((key,value) => (
-            <MenuItem key={key} value={value}>
-              {value}
-            </MenuItem>
-           ))}
-            </Select>
-
--------------------------------
-[
-    {
-        "3c8003a8-052e-447e-b09b-0bf39b4bf563": "Safety of Farxiga",
-        "b0565f0d-a680-4bfe-8776-11ee9a1db686": " Dapagliflozin in Type 2 Diabetes "
-    }
-]
--------------------------------
-
-<Select
-  value={selectedResearch}
-  onChange={(e) => setSelectedResearch(e.target.value)}
-  fullWidth
-  size="small"
-  displayEmpty
+<Box
   sx={{
-    fontSize: 12,
-    bgcolor: "white",
-    "& .MuiSelect-icon": { fontSize: 20 },
-    "& fieldset": { borderColor: "#0F4977" },
-  }}
-  MenuProps={{
-    PaperProps: {
-      sx: {
-        "& .MuiMenuItem-root": {
-          fontSize: 12,
-          py: 0.5,
-        },
-      },
-    },
+    borderRadius: "16px 16px 0 0",
+    backgroundColor: "#D9EDFF",
+    p: 0.6,
+    width: "100%",
+    maxWidth: 300,
+    mx: "auto",
+    mb: "1px",
   }}
 >
-  <MenuItem value="" disabled>
-    Select research
-  </MenuItem>
-
-  {researchData.length > 0 &&
-    typeof researchData[0] === "object" &&
-    Object.entries(researchData[0]).map(([id, title]) => (
-      <MenuItem key={id} value={id}>
-        {title || "Untitled"}
-      </MenuItem>
-    ))}
-</Select>
-
-No overload matches this call.
-  Overload 1 of 3, '(props: { href: string; } & MenuItemOwnProps & Omit<ButtonBaseOwnProps, "classes"> & CommonProps & Omit<DetailedHTMLProps<AnchorHTMLAttributes<HTMLAnchorElement>, HTMLAnchorElement>, "children" | ... 20 more ... | "divider">): Element', gave the following error.
-    Type 'unknown' is not assignable to type 'ReactNode'.
-  Overload 2 of 3, '(props: { component: ElementType<any, keyof IntrinsicElements>; } & MenuItemOwnProps & Omit<ButtonBaseOwnProps, "classes"> & CommonProps & Omit<...>): Element', gave the following error.
-    Type 'unknown' is not assignable to type 'ReactNode'.
-  Overload 3 of 3, '(props: DefaultComponentProps<ExtendButtonBaseTypeMap<MenuItemTypeMap<{}, "li">>>): Element', gave the following error.
-    Type 'unknown' is not assignable to type 'ReactNode'.ts(2769)
-ButtonBase.d.ts(23, 3): The expected type comes from property 'children' which is declared here on type 'IntrinsicAttributes & { href: string; } & MenuItemOwnProps & Omit<ButtonBaseOwnProps, "classes"> & CommonProps & Omit<...>'
-ButtonBase.d.ts(23, 3): The expected type comes from property 'children' which is declared here on type 'IntrinsicAttributes & { component: ElementType<any, keyof IntrinsicElements>; } & MenuItemOwnProps & Omit<...> & CommonProps & Omit<...>'
-ButtonBase.d.ts(23, 3): The expected type comes from property 'children' which is declared here on type 'IntrinsicAttributes & MenuItemOwnProps & Omit<ButtonBaseOwnProps, "classes"> & CommonProps & Omit<...>'
-(parameter) title: unknown
-No quick fixes available
-
+  <Box
+    sx={{
+      display:"flex",
+      flexDirection:"row",
+      borderRadius: "16px 16px 0 0",
+      backgroundColor: "#fff",
+      width: "100%",
+      p:1
+    }}
+  >
+    <Typography variant="h6" align="center" fontSize={14} fontWeight={400}>
+      Console
+    </Typography>
+    <Typography  align="right" >
+    <RefreshIcon/>
+    </Typography>
+  </Box>
+</Box>
