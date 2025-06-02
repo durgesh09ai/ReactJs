@@ -1,59 +1,7 @@
-<RefreshIcon
-  sx={{ fontSize: 18 }}
-  onClick={() => {
-    const jsonData = {
-      diagnoses: [
-        { label: "Type 2 Diabetes Mellitus", code: "E11", system: "ICD-10" },
-        { label: "Urinary Tract Infection", code: "N39.0", system: "ICD-10" },
-        { label: "Stroke", code: "I63", system: "ICD-10" }
-      ]
-    };
-    databricksStore.setResult(jsonData);
-  }}
-/>
-_______________
+// src/config/api.ts
 
-{databricksStore.databrickResult?.diagnoses ? (
-  <Box>
-    <Typography variant="h6" fontSize={14} fontWeight={500}>Diagnoses:</Typography>
-    {databricksStore.databrickResult.diagnoses.map((item: any, index: number) => (
-      <Box key={index} sx={{ mb: 1 }}>
-        <Typography fontSize={14}><b>Label:</b> {item.label}</Typography>
-        <Typography fontSize={14}><b>Code:</b> {item.code}</Typography>
-        <Typography fontSize={14}><b>System:</b> {item.system}</Typography>
-      </Box>
-    ))}
-  </Box>
-) : (
-  <Typography variant="h6" align="center" fontSize={14} fontWeight={400}>
-    Output will be come here
-  </Typography>
-)}
-__________________________
+export const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8002";
 
-import InfoOutlinedIcon from '@mui/icons-material/InfoOutlined';
-import { Box, ListItem, ListItemText, Typography } from '@mui/material';
 
-<Box px={1} py={2}>
-  <ListItem
-    sx={{
-      px: 1,
-      py: 1,
-      borderRadius: 1,
-      alignItems: "flex-start",
-      flexDirection: "column",
-      "&:hover": { backgroundColor: "#f5f5f5" },
-    }}
-  >
-    <Box display="flex" alignItems="center" width="100%">
-      <InfoOutlinedIcon fontSize="small" sx={{ mr: 1 }} />
-      <ListItemText
-        primary="Information"
-        primaryTypographyProps={{ fontSize: "14px", fontWeight: 500 }}
-      />
-    </Box>
-    <Typography variant="caption" sx={{ mt: 0.5, ml: 4 }}>
-      Let me know if you’d like to also make it sticky on mobile views or collapse the sidebar!
-    </Typography>
-  </ListItem>
-</Box>
+import { API_BASE_URL } from "@/config/api"; // Adjust the path based on your folder structure
+  apiUrl: string = API_BASE_URL;
