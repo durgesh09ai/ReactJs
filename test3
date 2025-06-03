@@ -1,7 +1,0 @@
-// src/config/api.ts
-
-export const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8002";
-
-
-import { API_BASE_URL } from "@/config/api"; // Adjust the path based on your folder structure
-  apiUrl: string = API_BASE_URL;
