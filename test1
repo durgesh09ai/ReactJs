@@ -1,0 +1,249 @@
+import React from "react";
+import {
+  Box,
+  Typography,
+  Avatar,
+} from "@mui/material";
+import NavItem from "./NavItem";
+
+
+
+
+interface SidebarProps {
+  collapsed?: boolean;
+}
+
+
+
+const Sidebar: React.FC<SidebarProps> = ({ collapsed = false }) => {
+  return (
+    <Box
+      display="flex"
+      flexDirection="column"
+      height="90vh"
+      px={2}
+      fontFamily="Montserrat, sans-serif"
+      fontSize="14px"
+      color="#343434"
+      sx={{ borderRight: '1px solid rgba(0,0,0,0.1)' }}
+    >
+      {/* Top Section */}
+      <Box flexGrow={1}>
+        {/* Header */}
+        <Box
+          display="flex"
+          alignItems="center"
+          justifyContent="space-between"
+          px={2}
+          py={1.5}
+          borderBottom="1px solid rgba(0,0,0,0.1)"
+        >
+          <Typography
+            variant="h6"
+            sx={{
+              fontSize: "28px",
+              fontWeight: 600,
+              color: "#e7552b",
+              whiteSpace: "nowrap",
+            }}
+          >
+            {!collapsed && "EXL"}
+          </Typography>
+          {!collapsed && (
+            <Avatar
+              src="https://cdn.builder.io/api/v1/image/assets/b22a1f591db946d8a5b6fadc33b7c231/9df66a2e096fffaa4eec49ff70db980f5326516a?placeholderIfAbsent=true"
+              alt="Logo"
+              sx={{ width: 24, height: 24 }}
+              variant="square"
+            />
+          )}
+        </Box>
+
+        {/* Navigation Items */}
+        <Box display="flex" flexDirection="column" sx={{ mt: 2 }}>
+          {/* Example Static Section Title */}
+          {!collapsed && (
+            <Typography
+              sx={{
+                fontSize: "12px",
+                textTransform: "uppercase",
+                color: "#888",
+                px: 2,
+                py: 1,
+              }}
+            >
+              Home
+            </Typography>
+          )}
+
+          <NavItem
+            icon="https://cdn.builder.io/api/v1/image/assets/b22a1f591db946d8a5b6fadc33b7c231/b628d78a4baec2798a453ffd9a4bcf1d35c8e6d6?placeholderIfAbsent=true"
+            label="Quality and Compliance"
+            collapsed={collapsed}
+            subItems={[
+              { label: "Quality Reports", count: 5, href: "/quality-reports" },
+              { label: "Compliance Dashboard",
+                count: 8,
+                href: "/compliance-dashboard",
+              },
+              { label: "Audit Logs", count: 7, href: "/audit-logs" },
+            ]}
+          />
+
+          <NavItem
+            icon="https://cdn.builder.io/api/v1/image/assets/b22a1f591db946d8a5b6fadc33b7c231/051c15b961652ad186fe0257c1a414a1ffc91dc0?placeholderIfAbsent=true"
+            label="Data and analytics LOB"
+            collapsed={collapsed}
+            subItems={[
+              { label: "Data Insights", count: 10, href: "/data-insights" },
+              {
+                label: "Analytics Dashboard",
+                count: 10,
+                href: "/analytics-dashboard",
+              },
+            ]}
+          />
+
+          <NavItem
+            icon="https://cdn.builder.io/api/v1/image/assets/b22a1f591db946d8a5b6fadc33b7c231/4ef76a64142b66e6d38acbd0f1522f8f190fc5d1?placeholderIfAbsent=true"
+            label="Life Science LOB"
+            collapsed={collapsed}
+          />
+
+          <NavItem
+            icon="https://cdn.builder.io/api/v1/image/assets/b22a1f591db946d8a5b6fadc33b7c231/d90d47cac85a8af782e6618e8ecae6037f193310?placeholderIfAbsent=true"
+            label="Risk Quality Measures"
+            collapsed={collapsed}
+          />
+        </Box>
+      </Box>
+
+      {/* Footer Items pinned to bottom */}
+      {!collapsed && (
+        <Box mt={2}>
+          <NavItem
+            icon="https://cdn.builder.io/api/v1/image/assets/b22a1f591db946d8a5b6fadc33b7c231/3904791a901d558c2c5d7347a0090cb8906978c9?placeholderIfAbsent=true"
+            label="Bookmarked"
+            showCount={false}
+            collapsed={collapsed}
+          />
+          <NavItem
+            icon="https://cdn.builder.io/api/v1/image/assets/b22a1f591db946d8a5b6fadc33b7c231/9ff595e8aeb1d76299e427e0b5390f825a7dd6d5?placeholderIfAbsent=true"
+            label="Settings"
+            showCount={false}
+            collapsed={collapsed}
+          />
+        </Box>
+      )}
+    </Box>
+  );
+};
+
+export default Sidebar;
+
+---------------
+
+import React from "react";
+import {
+  ListItemIcon,
+  ListItemText,
+  Box,
+  Collapse,
+  List,
+  ListItemButton,
+  Typography,
+} from "@mui/material";
+import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
+import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
+
+interface SubItem {
+  label: string;
+  count?: number;
+  href?: string;
+}
+
+interface NavItemProps {
+  icon: string;
+  label: string;
+  collapsed?: boolean;
+  subItems?: SubItem[];
+  showCount?: boolean;
+}
+
+const NavItem: React.FC<NavItemProps> = ({
+  icon,
+  label,
+  collapsed,
+  subItems = [],
+  showCount = false,
+}) => {
+  const [open, setOpen] = React.useState(false);
+
+  return (
+    <Box>
+      <ListItemButton onClick={() => setOpen(!open)}>
+        <ListItemIcon sx={{ minWidth: 32, mr: 1 }}>
+          <img src={icon} alt={label} width={20} height={20} />
+        </ListItemIcon>
+        {!collapsed && (
+          <>
+            <ListItemText
+              primary={
+                <Typography sx={{ fontSize: "14px" }}>
+                  {label}
+                </Typography>
+              }
+            />
+            {subItems.length > 0 &&
+              (open ? (
+                <KeyboardArrowUpIcon fontSize="small" />
+              ) : (
+                <KeyboardArrowDownIcon fontSize="small" />
+              ))}
+          </>
+        )}
+      </ListItemButton>
+
+      {/* Subitems */}
+      {!collapsed && subItems.length > 0 && (
+        <Collapse in={open} timeout="auto" unmountOnExit>
+          <List component="div" disablePadding>
+            {subItems.map((item, index) => (
+              <ListItemButton
+                key={index}
+                sx={{ pl: 4 }}
+                component="a"
+                href={item.href}
+              >
+                <ListItemText
+                  primary={
+                    <Typography sx={{ fontSize: "14px" }}>
+                      {item.label}
+                    </Typography>
+                  }
+                />
+                {item.count !== undefined && (
+                  <Typography
+                    sx={{
+                      bgcolor: "rgba(243,250,255,1)",
+                      color: "#0F4977",
+                      borderRadius: "4px",
+                      px: 1,
+                      ml: 1,
+                      fontSize: "12px",
+                      fontWeight: 800,
+                    }}
+                  >
+                    {item.count}
+                  </Typography>
+                )}
+              </ListItemButton>
+            ))}
+          </List>
+        </Collapse>
+      )}
+    </Box>
+  );
+};
+
+export default NavItem;
