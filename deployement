@@ -1,0 +1,81 @@
+trigger:
+  branches:
+    include:
+      - main  # or your main branch name
+
+pool:
+  vmImage: 'ubuntu-latest'
+
+variables:
+  NODE_VERSION: '18.x'  # or your preferred Node.js version
+  NEXT_PUBLIC_ENV: 'production'  # can be used in Next.js as env var
+
+steps:
+  - task: NodeTool@0
+    inputs:
+      versionSpec: '$(NODE_VERSION)'
+    displayName: 'Install Node.js'
+
+  - script: |
+      npm install
+    displayName: 'Install dependencies'
+
+  - script: |
+      npm run build
+    displayName: 'Build Next.js app'
+
+  - script: |
+      npm run export
+    displayName: 'Export static site (if using static export)'
+
+  # Optional: Copy to artifact staging directory
+  - task: CopyFiles@2
+    inputs:
+      contents: '.next/**'
+      targetFolder: '$(Build.ArtifactStagingDirectory)/.next'
+    displayName: 'Copy build files to staging'
+
+  - task: PublishBuildArtifacts@1
+    inputs:
+      pathToPublish: '$(Build.ArtifactStagingDirectory)'
+      artifactName: 'nextjs-build'
+    displayName: 'Publish Artifact'
+
+  # Optional: Deploy to Azure Web App (Linux)
+  - task: AzureWebApp@1
+    inputs:
+      azureSubscription: '<your-service-connection-name>'
+      appName: '<your-app-name>'
+      package: '$(Build.ArtifactStagingDirectory)'
+    displayName: 'Deploy to Azure Web App'
+-----------------------------------------------------------------------
+
+trigger:
+  branches:
+    include:
+      - main
+
+pool:
+  vmImage: 'ubuntu-latest'
+
+steps:
+  - task: UseNode@1
+    inputs:
+      version: '18.x'
+
+  - script: |
+      npm install -g supabase
+    displayName: 'Install Supabase CLI'
+
+  - script: |
+      supabase --version
+    displayName: 'Check Supabase CLI version'
+
+  - script: |
+      supabase start
+    displayName: 'Start Supabase locally'
+
+  - script: |
+      npm ci
+      npm run build
+    displayName: 'Install and Build Next.js'
