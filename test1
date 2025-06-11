@@ -1,6 +1,5 @@
 import React from "react";
 import { Box, Chip, Stack, Typography } from "@mui/material";
-import { StatisticItem } from "./StatisticItem"; // adjust path as needed
 
 interface StatisticProps {
   change: string;
@@ -14,8 +13,7 @@ interface StatisticsCardProps {
   statistics: StatisticProps[];
 }
 
-const tags =  ["Payer", "Underwriting"];
-
+const tags = ["Payer", "Underwriting"];
 
 export const StatisticsCard: React.FC<StatisticsCardProps> = ({
   title,
@@ -24,69 +22,86 @@ export const StatisticsCard: React.FC<StatisticsCardProps> = ({
 }) => {
   return (
     <Box width="100%">
+      {/* Header */}
       <Box
         bgcolor="white"
-        border="1px solid"
-        borderColor="#F4F4F5"
+        border="1px solid #F4F4F5"
         borderRadius="10px"
         px={4}
         py={2}
         display="flex"
-        flexDirection="column"
+        justifyContent="space-between"
+        alignItems="center"
         fontWeight={500}
       >
-        <Box
-          display="flex"
-          justifyContent="space-between"
-          alignItems="center"
-          width="100%"
-        >
-          <Typography
-            sx={{ color: "#151718", fontSize: "16px", fontWeight: 600 }}
-          >
-            {title}
-          </Typography>
-        </Box>
+        <Typography sx={{ color: "#151718", fontSize: "16px", fontWeight: 600 }}>
+          {title}
+        </Typography>
+        <Typography sx={{ color: "#888", fontSize: "12px" }}>
+          {timeframe}
+        </Typography>
       </Box>
 
+      {/* Content */}
       <Box
         display="flex"
-        justifyContent="center"
-        alignItems="center"
-        gap={10}
-        mt={4}
-        textAlign="center"
         flexWrap="wrap"
+        gap={3}
+        mt={4}
       >
         {statistics.map((stat, index) => (
-          <Box display="flex" flexDirection="column" width="100%">
-            <Box  display="flex" flexDirection="row" width="100%">
-            <Box><img src="./project_image.png" width={"100px"} height={"60px"}/></Box>
-            <Box display="flex" flexDirection="column">
-              <Typography>ProtoWeave</Typography>
-            <Typography>Streamline collection, validation, and maintenance of provider information effortlessly.</Typography>
-            <Stack direction="row" spacing={1} mt={1} flexWrap="wrap">
-        {tags.map((tag, index) => (
-          <Chip
+          <Box
             key={index}
-            label={tag}
-            size="small"
-            sx={{
-              fontSize: 12,
-              fontWeight:500,
-              bgcolor: index === 0 ? "rgba(233,243,249,1)" : "rgba(15,73,119,0.1)",
-              color: "rgba(15,73,119,1)",
-              borderRadius: "999px",
-              height: 20,
-            }}
-          />
-        ))}
-      </Stack>
+            display="flex"
+            width="100%"
+            maxWidth="500px"
+            border="1px solid #f0f0f0"
+            borderRadius="10px"
+            p={2}
+            gap={2}
+            bgcolor="white"
+          >
+            {/* Image */}
+            <Box minWidth="100px">
+              <img
+                src="./project_image.png"
+                alt="Project"
+                width="100%"
+                height="60px"
+                style={{ objectFit: "cover", borderRadius: "6px" }}
+              />
             </Box>
 
+            {/* Text Content */}
+            <Box display="flex" flexDirection="column" flexGrow={1}>
+              <Typography fontWeight={600} fontSize="14px" mb={0.5}>
+                ProtoWeave
+              </Typography>
+              <Typography fontSize="13px" color="text.secondary">
+                Streamline collection, validation, and maintenance of provider information effortlessly.
+              </Typography>
+
+              {/* Tags */}
+              <Stack direction="row" spacing={1} mt={1} flexWrap="wrap">
+                {tags.map((tag, tagIndex) => (
+                  <Chip
+                    key={tagIndex}
+                    label={tag}
+                    size="small"
+                    sx={{
+                      fontSize: 12,
+                      fontWeight: 500,
+                      bgcolor:
+                        tagIndex === 0 ? "rgba(233,243,249,1)" : "rgba(15,73,119,0.1)",
+                      color: "rgba(15,73,119,1)",
+                      borderRadius: "999px",
+                      height: 20,
+                    }}
+                  />
+                ))}
+              </Stack>
             </Box>
-          </Box>  
-          // <StatisticItem key={index} {...stat} />
+          </Box>
         ))}
       </Box>
     </Box>
