@@ -1,21 +1,94 @@
-<?xml version="1.0" encoding="utf-8"?>
-<configuration>
-  <system.webServer>
-    <rewrite>
-      <rules>
-        <rule name="React Routes" stopProcessing="true">
-          <match url=".*" />
-          <conditions logicalGrouping="MatchAll">
-            <add input="{REQUEST_FILENAME}" matchType="IsFile" negate="true" />
-            <add input="{REQUEST_FILENAME}" matchType="IsDirectory" negate="true" />
-            <add input="{REQUEST_URI}" pattern="\.json$" negate="true" /> <!-- ✅ This is the important line -->
-          </conditions>
-          <action type="Rewrite" url="/index.html" />
-        </rule>
-      </rules>
-    </rewrite>
-    <staticContent>
-      <mimeMap fileExtension=".json" mimeType="application/json" />
-    </staticContent>
-  </system.webServer>
-</configuration>
+import React from "react";
+import { Box, Chip, Stack, Typography } from "@mui/material";
+import { StatisticItem } from "./StatisticItem"; // adjust path as needed
+
+interface StatisticProps {
+  change: string;
+  label: string;
+  value: string;
+}
+
+interface StatisticsCardProps {
+  title: string;
+  timeframe: string;
+  statistics: StatisticProps[];
+}
+
+const tags =  ["Payer", "Underwriting"];
+
+
+export const StatisticsCard: React.FC<StatisticsCardProps> = ({
+  title,
+  timeframe,
+  statistics,
+}) => {
+  return (
+    <Box width="100%">
+      <Box
+        bgcolor="white"
+        border="1px solid"
+        borderColor="#F4F4F5"
+        borderRadius="10px"
+        px={4}
+        py={2}
+        display="flex"
+        flexDirection="column"
+        fontWeight={500}
+      >
+        <Box
+          display="flex"
+          justifyContent="space-between"
+          alignItems="center"
+          width="100%"
+        >
+          <Typography
+            sx={{ color: "#151718", fontSize: "16px", fontWeight: 600 }}
+          >
+            {title}
+          </Typography>
+        </Box>
+      </Box>
+
+      <Box
+        display="flex"
+        justifyContent="center"
+        alignItems="center"
+        gap={10}
+        mt={4}
+        textAlign="center"
+        flexWrap="wrap"
+      >
+        {statistics.map((stat, index) => (
+          <Box display="flex" flexDirection="column" width="100%">
+            <Box  display="flex" flexDirection="row" width="100%">
+            <Box><img src="./project_image.png" width={"100px"} height={"60px"}/></Box>
+            <Box display="flex" flexDirection="column">
+              <Typography>ProtoWeave</Typography>
+            <Typography>Streamline collection, validation, and maintenance of provider information effortlessly.</Typography>
+            <Stack direction="row" spacing={1} mt={1} flexWrap="wrap">
+        {tags.map((tag, index) => (
+          <Chip
+            key={index}
+            label={tag}
+            size="small"
+            sx={{
+              fontSize: 12,
+              fontWeight:500,
+              bgcolor: index === 0 ? "rgba(233,243,249,1)" : "rgba(15,73,119,0.1)",
+              color: "rgba(15,73,119,1)",
+              borderRadius: "999px",
+              height: 20,
+            }}
+          />
+        ))}
+      </Stack>
+            </Box>
+
+            </Box>
+          </Box>  
+          // <StatisticItem key={index} {...stat} />
+        ))}
+      </Box>
+    </Box>
+  );
+};
