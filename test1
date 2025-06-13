@@ -129,3 +129,30 @@
         }
     }
 }
+
+
+----------------------
+
+
+{!collapsed && (
+  <Box display="flex" flexDirection="column" sx={{ mt: 2 }}>
+    {Object.entries(sidebarData).map(([mainLabel, section]) => (
+      <NavItem
+        key={section.id}
+        icon="./menuIcon.svg"
+        label={mainLabel}
+        collapsed={collapsed}
+        subItems={
+          section.SubCategoryList
+            ? Object.entries(section.SubCategoryList).map(([subLabel, subItem]) => ({
+                label: subLabel,
+                count: subItem.count,
+                href: `/sub/${subItem.id}`, // You can customize this route
+              }))
+            : []
+        }
+      />
+    ))}
+  </Box>
+)}
+
