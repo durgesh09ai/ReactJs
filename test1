@@ -132,27 +132,24 @@
 
 
 ----------------------
-
-
-{!collapsed && (
+{!collapsed && sidebarData && (
   <Box display="flex" flexDirection="column" sx={{ mt: 2 }}>
-    {Object.entries(sidebarData).map(([mainLabel, section]) => (
+    {Object.entries(sidebarData).map(([sectionLabel, sectionData]) => (
       <NavItem
-        key={section.id}
+        key={sectionData.id}
         icon="./menuIcon.svg"
-        label={mainLabel}
+        label={sectionLabel}
         collapsed={collapsed}
         subItems={
-          section.SubCategoryList
-            ? Object.entries(section.SubCategoryList).map(([subLabel, subItem]) => ({
-                label: subLabel,
-                count: subItem.count,
-                href: `/sub/${subItem.id}`, // You can customize this route
-              }))
-            : []
+          Object.entries(sectionData.SubCategoryList || {}).map(
+            ([subLabel, subData]) => ({
+              label: subLabel,
+              count: subData.count,
+              href: `/sub/${subData.id}`,
+            })
+          )
         }
       />
     ))}
   </Box>
 )}
-
