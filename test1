@@ -1,278 +1,397 @@
-[
-  {
-    "id": "5481fb7c-7e77-4270-b115-af4953bd3dfa",
-    "name": "PySpark"
-  },
-  {
-    "id": "bed62fdd-2c21-4886-a586-04d7d5d6af23",
-    "name": "Statistical Analysis System"
-  },
-  {
-    "id": "b78bdc8f-b7c9-4b3d-a19d-03597567fc05",
-    "name": "R"
-  },
-  {
-    "id": "58f67c2e-a8ae-488a-8a7a-025560f8012e",
-    "name": "MS Excel"
-  },
-  {
-    "id": "1a01c669-4340-46d8-aca6-f5629db0cbc6",
-    "name": "Visual Basic Application"
-  },
-  {
-    "id": "44b5cd9e-3b9a-47bf-92af-2144394b9856",
-    "name": "Microsoft .Net"
-  },
-  {
-    "id": "9a1b9dc3-dbdc-408f-aef5-50b8dbc02a79",
-    "name": "Oracle"
-  },
-  {
-    "id": "b01c01a9-0cc3-471f-b833-2c64d3a08ee4",
-    "name": "Python"
-  },
-  {
-    "id": "fa96489a-010f-425c-9ba8-735cdf3f7d6e",
-    "name": "Microsoft SQL Server"
-  },
-  {
-    "id": "c5003f17-74b0-4a3e-8b8c-e098e2c1f911",
-    "name": "Power BI"
-  },
-  {
-    "id": "c52c77bb-5332-4f67-92c4-513e042a4ff7",
-    "name": "Webservice"
-  },
-  {
-    "id": "65b92e09-076d-47e3-84af-a8271388c926",
-    "name": "Tableau"
-  },
-  {
-    "id": "6f971895-44d9-48a4-9076-4aa859e708ab",
-    "name": "AWS"
-  },
-  {
-    "id": "025a95bf-579c-472d-9444-f6d4e59628a5",
-    "name": "IBM APIC"
-  },
-  {
-    "id": "594bbd21-6e63-497b-8acf-47f42b7fd5d6",
-    "name": "React"
-  },
-  {
-    "id": "aab413a7-7359-492e-aa9e-bd4c39350f5d",
-    "name": "Java SpringBoot"
-  },
-  {
-    "id": "3dc2be7b-c17e-4e35-9be2-86dbccc8ba16",
-    "name": "IBM Operational Decision Manager"
-  },
-  {
-    "id": "c7e4aa10-52f8-4050-8cef-6f6f94c98b65",
-    "name": "Angular"
-  },
-  {
-    "id": "354610e0-d30d-4eb9-b740-07e63c2c6ceb",
-    "name": "Postgres SQL"
-  },
-  {
-    "id": "e28300b3-3639-4168-8b82-bc313c6a47dd",
-    "name": "IBM Business Object"
-  },
-  {
-    "id": "b4b51633-14ca-4ecc-92a8-9fd68905dba1",
-    "name": "Hive"
-  },
-  {
-    "id": "5dac29b9-ab93-4183-b47c-510b1fcbb191",
-    "name": "C#"
-  },
-  {
-    "id": "5ffcbe58-74fd-47ba-9078-8999e24c8010",
-    "name": "SQLDBM"
-  },
-  {
-    "id": "dd2ac45b-8b84-46ac-8ca8-8551082d9def",
-    "name": "Snowflake"
-  },
-  {
-    "id": "71d25ef6-f6c5-4f87-b452-5a66d916ba92",
-    "name": "Salesforce Health Cloud"
-  },
-  {
-    "id": "7f1b0ac5-2c07-4a95-b89f-f4cf75dcb427",
-    "name": "Mulesoft"
-  },
-  {
-    "id": "f740df94-c861-4781-a5e5-f4c05951bee2",
-    "name": "Secure File Transfer Protocol"
-  },
-  {
-    "id": "166e7afe-3b31-48d9-ad4e-9f9957a8e89e",
-    "name": "Matillion"
-  },
-  {
-    "id": "841bfb9f-7c53-4a9c-bbf4-b4ef795ad4e9",
-    "name": "Automate"
-  },
-  {
-    "id": "e62542c4-e901-40a2-a1de-49c32d3c53d2",
-    "name": "Congnos"
-  },
-  {
-    "id": "f75d18c5-d6ea-4429-a711-f43f0a44e227",
-    "name": "SSIS"
-  },
-  {
-    "id": "5b368f3f-8d9e-4e7c-a3aa-17077ecf52f3",
-    "name": "Java"
-  },
-  {
-    "id": "f49987a9-9bba-4211-89c8-ba81c007d37e",
-    "name": "Oracle Application Development Framework"
-  },
-  {
-    "id": "43ad2711-a904-494b-8c32-2786f356c509",
-    "name": "Azure"
-  },
-  {
-    "id": "109eb004-0b78-43cd-ab21-4ad5412bb51a",
-    "name": "Impala"
-  },
-  {
-    "id": "e9b7419c-8fa6-4de5-99af-1f4b86371364",
-    "name": "PowerPoint"
-  },
-  {
-    "id": "0fdad45b-669b-47da-9f3e-1e0d8c45a123",
-    "name": "WebFocus"
-  },
-  {
-    "id": "1c443fa4-9c81-42e8-bb50-891e317ae858",
-    "name": "QlikSense"
-  },
-  {
-    "id": "5fbd56b6-8f29-49e1-a355-0c80bbb984af",
-    "name": "Podium"
-  },
-  {
-    "id": "073ba7ef-7457-4f05-b680-a715ecb9d6e0",
-    "name": "Unix"
-  },
-  {
-    "id": "6741f96c-3e66-48b4-b2a6-38d262642647",
-    "name": "Oozie"
-  },
-  {
-    "id": "8cdf85af-44d4-424b-9f78-02e0267f4b68",
-    "name": "MySQL"
-  },
-  {
-    "id": "ee630e7a-fdcd-4ea7-bccd-cabe68c95f6a",
-    "name": "Talend"
-  },
-  {
-    "id": "c7e91940-4a07-4332-8d30-06f381b06bec",
-    "name": "AWS RedShift"
-  },
-  {
-    "id": "a103bfeb-0c77-4f47-9382-a44bb60a543b",
-    "name": "Adobe AEM"
-  },
-  {
-    "id": "f1e48fbf-3042-47ed-9f2a-a248cef59210",
-    "name": "ReactJS"
-  },
-  {
-    "id": "411fcf5b-da64-475f-b39b-22c71a18f7eb",
-    "name": "Oracle BRMS"
-  },
-  {
-    "id": "6fc50134-4847-4a4b-85e4-e3c56e913438",
-    "name": "AngularJS"
-  },
-  {
-    "id": "069427f0-21da-4c41-91df-3e99df8fad26",
-    "name": "Sprintboot"
-  },
-  {
-    "id": "bb1affbf-bdb4-4ea9-9d52-683610f52251",
-    "name": "DataStage"
-  },
-  {
-    "id": "679350aa-1a3c-403e-a5ac-439054b07764",
-    "name": "AWS Lex"
-  },
-  {
-    "id": "ab5015cf-4637-48b1-a7da-ef01862cdd2d",
-    "name": "AWS API Gateway"
-  },
-  {
-    "id": "a9cbaadb-32e0-4b14-96df-c85c93698d21",
-    "name": "MS PowerApps"
-  },
-  {
-    "id": "a7d8aa24-a4c4-4136-8da9-9cc48e17d7fd",
-    "name": "ADF"
-  },
-  {
-    "id": "4c1f4fcd-bfd1-4a75-9f3f-bda2400eec8e",
-    "name": "eGRC Archer"
-  },
-  {
-    "id": "b0e51fb4-558f-4474-a4b3-b70f2cb9f28c",
-    "name": "IONIC"
-  },
-  {
-    "id": "7086e49b-05a6-4c5d-bce7-de951bcb53bb",
-    "name": "NodeJS"
-  },
-  {
-    "id": "6e3e5ee0-68bb-40fe-a03b-500c1aa88e03",
-    "name": ".Net"
-  },
-  {
-    "id": "f95870d0-7577-4913-bc39-3492de45315f",
-    "name": ".Net"
-  },
-  {
-    "id": "a5799d4f-06c0-4712-a3f9-e2d5ec35c43d",
-    "name": ".NET"
-  },
-  {
-    "id": "3971980b-19f3-4e60-bc7c-a04bea1d36d8",
-    "name": "Hadoop"
-  },
-  {
-    "id": "13a3bf58-2577-49b9-aed6-8fac88195d67",
-    "name": "SAS"
-  },
-  {
-    "id": "019ab73d-3659-4826-b642-1a11914116b8",
-    "name": "Excel"
-  },
-  {
-    "id": "a8ff254b-6446-44fe-8047-1dd890953361",
-    "name": "VBA"
-  },
-  {
-    "id": "b31bd857-51f6-46e8-b001-845fcf7d4ca4",
-    "name": "SQL"
-  },
-  {
-    "id": "d3942828-2c1c-4082-a3ed-159ea807d9cc",
-    "name": "MS SQL"
-  },
-  {
-    "id": "c44d3815-0638-4a1f-8acd-a4dd16d0773a",
-    "name": "R/Hadoop"
-  },
-  {
-    "id": "8c6b6ce8-70b1-4aa1-8bb8-7517731ce609",
-    "name": ".net"
-  },
-  {
-    "id": "c4ca5587-3e0a-42b8-aaab-e8392aaa8965",
-    "name": "PowerBI"
-  }
-]
+
+import React, { useEffect, useState } from "react";
+import { observer } from "mobx-react-lite";
+import { 
+  Box, 
+  Button, 
+  Typography, 
+  Paper,
+  FormControl,
+  FormLabel,
+  Stack,
+  MenuItem,
+  Select
+} from "@mui/material";
+import AddIcon from '@mui/icons-material/Add';
+import FilterDropdown from "../ui/dashboard/FilterDropdown";
+import DataCard from "../ui/dashboard/DataCard";
+import DetailStatCard from "../ui/dashboard/DetailStatCard";
+import EmojiEventsIcon from "@mui/icons-material/EmojiEvents";
+import { useNavigate } from "react-router-dom";
+import { mainPageStore } from "../../stores/MainPageStore";
+import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
+
+const DetailContent = () => {
+  const navigate = useNavigate();
+  const userId = "admin@gmail.com";
+  const { fetchStatData,
+    statData,
+    fetchByTypeOptions,
+    fetchByTechnologyOptions,
+    fetchByClientOptions,
+    fetchByAnalyticsOptions,
+    typeOptionsList,
+    technologyOptionsList,
+    clientOptionsList,
+    analyticsOptionsList,
+   }  = mainPageStore;
+
+  useEffect(() => {
+    fetchStatData(userId);
+    fetchByTypeOptions();
+    fetchByTechnologyOptions();
+    fetchByClientOptions();
+  }, [userId]);
+
+
+  useEffect(() => {
+    fetchByAnalyticsOptions();
+  }, [userId]);
+
+
+  const handleClick = () => {
+    navigate("/dashboarddetail");
+  };
+
+  const addSolution = () => {
+    navigate("/addasolution");
+  };
+ const [selectedTech, setSelectedTech] = useState();
+
+// const handleTechChange = (event: React.ChangeEvent<{ value: string }>) => {
+//   setSelectedTech(event.target.value);
+// };
+
+  return (
+    <Box sx={{ 
+      display: 'flex', 
+      flexDirection: 'column', 
+      flexGrow: 1, 
+      minWidth: '240px'
+    }}>
+
+<Box 
+  sx={{ 
+    display: "flex", 
+    justifyContent: "flex-end", 
+    gap: 2 // Adjust the spacing between buttons
+  }}
+>
+  <Button 
+   onClick={addSolution}
+    variant="outlined" 
+    startIcon={<AddIcon />} 
+    sx={{ 
+      color: "#0F4977", 
+      borderColor: "#0F4977",
+      fontSize: "12px", // Smaller text
+      boxShadow: "0px 1px 3px 0px rgba(96,108,128,0.05)",
+      height:'40px',
+      borderRadius: '8px',
+      "&:hover": {
+        borderColor: "#0F4977",
+        backgroundColor: "rgba(15, 73, 119, 0.04)"
+      }
+    }}
+  >
+    Add New Solution
+  </Button>
+
+  <Button 
+  onClick={handleClick}
+    variant="contained" 
+    startIcon={<EmojiEventsIcon />} // Champion icon for "My Stat and Rank"
+    sx={{ 
+      color: "#FFF", 
+      borderColor: "#0F4977",
+      fontSize: "14px", 
+      borderRadius: '8px',
+      boxShadow: "0px 1px 3px 0px rgba(96,108,128,0.05)",
+    }}
+  >
+    My Stat and Rank
+  </Button>
+</Box>
+
+
+<Stack
+  direction="row"
+  spacing={2}
+  sx={{
+    mt: 2,
+    flexWrap: 'wrap',
+    justifyContent: 'space-between',
+  }}
+>
+  {['Team', 'Total Demos', 'Total Active Projects','Most liked'].map((items, idx) => (
+    <Box
+      key={idx}
+      sx={{
+        flex: '1 1 22%', // allows shrinking a bit to fit 4
+        minWidth: '200px', // fallback for mobile
+        maxWidth: '25%',
+      }}
+    >
+      <DetailStatCard
+        value="125"
+        label={`${items}`}
+        icon="./team1.svg"
+        trend="+12%"
+        trendIcon="./arrow.svg"
+        trendText="Since last month"
+      />
+    </Box>
+  ))}
+</Stack>
+
+
+
+      <Box sx={{ width: '100%', mt: 4 }}>
+        <Box sx={{ width: '100%' }}>
+          <Box sx={{ 
+            display: 'flex',
+            justifyContent: 'space-between',
+            alignItems: 'center',
+            height: '48px'
+          }}>
+            
+            <Typography variant="h6" component="h2" sx={{ fontWeight: 600 }}>
+              Value Delivered Across the Payer Value Chain.
+            </Typography>
+          </Box>
+
+<Paper
+  sx={{
+    p: 3,
+    mt: 2,
+    borderRadius: 2,
+    border: 'none',
+    boxShadow: 'none',
+  }}
+>
+  <Stack
+    direction="row"
+    spacing={2}
+    sx={{
+      flexWrap: 'nowrap',
+      minWidth: '100%',
+    }}
+  >
+    {/* [ 'By Type', 'By Technology', 'By Client', 'By Digital & Analytics' ] */}
+
+
+      <Box
+        key="By Type"
+        sx={{
+          flex: '1 1 22%',
+          minWidth: '200px',
+          maxWidth: '25%',
+        }}
+      >
+      <FormControl fullWidth>
+      <FormLabel  sx={{ 
+          mb: 1, 
+          color: '#000', 
+          fontSize: '14px', 
+          fontStyle: 'normal', 
+          fontWeight: 400, 
+          lineHeight: 'normal'
+        }}> By Type
+        </FormLabel>
+      <FilterDropdown label="By Type" />
+      </FormControl>
+      </Box>
+
+       <Box
+        key="By Technology"
+        sx={{
+          flex: '1 1 22%',
+          minWidth: '200px',
+          maxWidth: '25%',
+        }}
+      >
+      <FormControl fullWidth>
+      <FormLabel  sx={{ 
+          mb: 1, 
+          color: '#000', 
+          fontSize: '14px', 
+          fontStyle: 'normal', 
+          fontWeight: 400, 
+          lineHeight: 'normal'
+        }}> By Technology
+        </FormLabel>
+ <Select
+  value={selectedTech}
+  displayEmpty
+  IconComponent={KeyboardArrowDownIcon}
+  sx={{
+    bgcolor: 'background.paper',
+    borderRadius: '8px',
+    '.MuiOutlinedInput-notchedOutline': {
+      borderColor: 'rgba(211,209,209,0.4)',
+    },
+    '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
+      borderColor: 'rgba(211,209,209,0.6)',
+    },
+    '& .MuiSelect-select': {
+      backgroundColor: 'white',
+    },
+    '& .MuiPaper-root': {
+      backgroundColor: 'white',
+      zIndex: 9999,
+    }
+  }}
+  MenuProps={{
+    PaperProps: {
+      sx: {
+        bgcolor: 'white',
+        zIndex: 9999,
+      }
+    }
+  }}
+>
+  {/* Placeholder */}
+  <MenuItem value="" disabled>
+    Select Technology
+  </MenuItem>
+
+  {/* Dynamically generated list */}
+  {technologyOptionsList.map(opt => (
+    <MenuItem key={opt.id} value={opt.id}>
+      {opt.name}
+    </MenuItem>
+  ))}
+</Select>
+
+
+
+
+      </FormControl>
+      </Box>
+      
+      <Box
+        key="By Client"
+        sx={{
+          flex: '1 1 22%',
+          minWidth: '200px',
+          maxWidth: '25%',
+        }}
+      >
+      <FormControl fullWidth>
+      <FormLabel  sx={{ 
+          mb: 1, 
+          color: '#000', 
+          fontSize: '14px', 
+          fontStyle: 'normal', 
+          fontWeight: 400, 
+          lineHeight: 'normal'
+        }}> By Client
+        </FormLabel>
+      <FilterDropdown label="By Client" />
+      </FormControl>
+      </Box>
+
+      <Box
+        key="By Digital & Analytics"
+        sx={{
+          flex: '1 1 22%',
+          minWidth: '200px',
+          maxWidth: '25%',
+        }}
+      >
+      <FormControl fullWidth>
+      <FormLabel  sx={{ 
+          mb: 1, 
+          color: '#000', 
+          fontSize: '14px', 
+          fontStyle: 'normal', 
+          fontWeight: 400, 
+          lineHeight: 'normal'
+        }}> By Digital & Analytics
+        </FormLabel>
+      <FilterDropdown label="By Digital & Analytics" />
+      </FormControl>
+      </Box>
+    
+  </Stack>
+</Paper>
+
+
+        {/* Cards Section */}
+    <Box sx={{ mt: 2 }}>
+      <Box
+        sx={{
+          display: 'grid',
+          gridTemplateColumns: {
+            xs: '1fr',
+            sm: 'repeat(2, 1fr)',
+            md: 'repeat(3, 1fr)',
+            lg: 'repeat(4, 1fr)',
+          },
+          gap: 2,
+        }}
+      >
+
+        {[
+          {
+            icon: "./actual.svg",
+            label: "Actuarial / Underwriting",
+            value: "6",
+          },
+          {
+            icon: "./benefits.svg",
+            label: "Benefits Design",
+            value: "8",
+          },
+          {
+            icon: "./claim.svg",
+            label: "Claims/Ops",
+            value: "2",
+          },
+          {
+            icon: "./clinical.svg",
+            label: "Clinical Management",
+            value: "12",
+          },
+          {
+            icon: "./cservices.svg",
+            label: "Clinical Services",
+            value: "1",
+          },
+          {
+            icon: "./custservices.svg",
+            label: "Customer Services",
+            value: "13",
+          },
+          {
+            icon: "./medicalcost.svg",
+            label: "Medical Cost Management",
+            value: "14",
+          },
+          {
+            icon: "./network.svg",
+            label: "Network Management",
+            value: "7",
+          },
+        ].map(({ icon, label, value }) => (
+          <Box key={label}>
+            <DataCard
+              icon={icon}
+              label={label}
+              value={value}
+              labelSx={{ fontWeight: 'bold', fontSize: '0.9rem' }}
+            />
+          </Box>
+        ))}
+      </Box>
+    </Box>
+
+        
+        </Box>
+      </Box>
+    </Box>
+  );
+};
+
+export default observer(DetailContent);
+
