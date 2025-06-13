@@ -1,23 +1,131 @@
-   <Box
-        sx={{
-          width: 28,
-          height: 28,
-          border:"1px solid",
-          borderColor:"#FDF4EE",
-          bgcolor: "#fff",
-          p: 3,
-          pt:3.5,
-          pb:3.5,  
-          borderRadius: "8px", 
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "center",
-        }}
-      >
-      <Box
-        component="img"
-        src={icon}
-        alt={label}
-        sx={{ width: 14, height: 14 }}
-      />
-    </Box>
+{
+    "Data and Analytics LOB": {
+        "id": "0a3ffa63-d631-4602-9ece-6ce000627d80",
+        "SubCategoryList": {
+            "Payer Analytics": {
+                "id": "0d33e0ab-66a5-445f-83e8-559a3e026791",
+                "count": 9
+            },
+            "Clinical Analytics": {
+                "id": "87054820-ae51-4c50-a542-2418cb28f2d5",
+                "count": 1
+            },
+            "Provider Analytics": {
+                "id": "59a198a9-fec8-49d8-b200-84ace2ba35ba",
+                "count": 4
+            },
+            "Data Management,Strategy...": {
+                "id": "1c79f499-d0d1-4341-88da-f706f40ff277",
+                "count": 9
+            },
+            "Digital Native Solutions": {
+                "id": "42216d4e-1647-479b-b101-026054082787",
+                "count": 0
+            },
+            "Group Reporting Analytics": {
+                "id": "6ce8da9a-250b-4b65-9f2a-a51a6499615e",
+                "count": 0
+            },
+            "HEOR": {
+                "id": "959ca031-1dd3-4f41-b829-554ad50b13a0",
+                "count": 0
+            },
+            "Pharmacy Analytics": {
+                "id": "c6403dcc-6ee9-4642-bd56-ad37513bde31",
+                "count": 0
+            },
+            "Risk and Quality Analytics": {
+                "id": "a70c804e-c9df-4b42-b432-c7f5dfe4f732",
+                "count": 1
+            }
+        }
+    },
+    "Clinical Services LOB": {
+        "id": "f8ac6aa4-a4af-4fb2-9b55-2921980d310c",
+        "SubCategoryList": {
+            "Quality and Compliance": {
+                "id": "bf9fa9c5-5070-4e7d-90f6-ef1b387fcd03",
+                "count": 4
+            },
+            "Utilization Management": {
+                "id": "3caf3587-db8c-4ffa-83f3-4e21c8fde313",
+                "count": 6
+            },
+            "Case Management": {
+                "id": "83dbd624-b4a9-4b2f-8b9f-646812d3bcb2",
+                "count": 4
+            },
+            "Member Services": {
+                "id": "796b6b6b-8565-4761-b7f7-605ac166b992",
+                "count": 3
+            },
+            "Platform": {
+                "id": "96244072-9c2d-4f99-a8bd-5a8335a93c2b",
+                "count": 0
+            },
+            "Provider Services": {
+                "id": "22bccb0d-4d22-4d75-b6aa-c6c84c5781dd",
+                "count": 0
+            }
+        }
+    },
+    "Life Sciences LOB": {
+        "id": "00c4e234-8f31-409f-aec3-c06ef1a30f03",
+        "SubCategoryList": {
+            "Analytics Services": {
+                "id": "b5066eef-d0ab-4a2c-9c48-80a82d74086d",
+                "count": 3
+            },
+            "Digital Patient Engagement": {
+                "id": "ecbb0063-dc8e-465c-9d7d-5ecd40f2b02d",
+                "count": 0
+            }
+        }
+    },
+    "Payment Services LOB": {
+        "id": "8c057383-8a71-4013-afef-dc3879025629",
+        "SubCategoryList": {
+            "Integrated Revenue...": {
+                "id": "ea211ff1-2b02-4eaf-932c-308236ac6ac3",
+                "count": 1
+            },
+            "Data Mining": {
+                "id": "9a2d125d-1097-49c4-8ab1-4c520abe95c6",
+                "count": 0
+            },
+            "Facility Audits": {
+                "id": "7b5cee1b-c2a4-458a-b640-65e78192b249",
+                "count": 0
+            }
+        }
+    },
+    "Risk Adjustment & Quality Measures": {
+        "id": "d283b2f6-2247-4701-bb77-9c81c23dc454",
+        "SubCategoryList": {
+            "Quality Measures": {
+                "id": "394a754a-b47e-47de-8da2-19d734203839",
+                "count": 2
+            },
+            "Data Management & Digitization": {
+                "id": "a8b9421b-8aa9-4c8e-9d12-a67d44d9fec0",
+                "count": 2
+            },
+            "Member Services - Analytics": {
+                "id": "b404eaaf-6d31-4d61-b154-9443b42de7df",
+                "count": 4
+            },
+            "Risk Adjustment": {
+                "id": "f6257c38-b0bf-4096-9492-81ebe0f2ac63",
+                "count": 2
+            },
+            "Consulting": {
+                "id": "687d35fa-26d6-4d15-ba63-31b714d6ed3b",
+                "count": 2
+            },
+            "Provider Engagement": {
+                "id": "91fcd9c7-e79e-479c-930a-063080121a6a",
+                "count": 4
+            }
+        }
+    }
+}
