@@ -1,8 +1,5 @@
-Type '(event: React.ChangeEvent<{    value: string;}>) => void' is not assignable to type '(event: SelectChangeEvent<string>, child: ReactNode) => void'.
-  Types of parameters 'event' and 'event' are incompatible.
-    Type 'SelectChangeEvent<string>' is not assignable to type 'ChangeEvent<{ value: string; }>'.
-      Type 'Event & { target: { value: string; name: string; }; }' is missing the following properties from type 'ChangeEvent<{ value: string; }>': nativeEvent, isDefaultPrevented, isPropagationStopped, persistts(2322)
-Select.d.ts(100, 3): The expected type comes from property 'onChange' which is declared here on type 'IntrinsicAttributes & SelectProps<string>'
-(property) onChange: (event: React.ChangeEvent<{
-    value: string;
-}>) => void
+import { SelectChangeEvent } from '@mui/material';
+
+const handleTechChange = (event: SelectChangeEvent<string>) => {
+  setSelectedTech(event.target.value);
+};
