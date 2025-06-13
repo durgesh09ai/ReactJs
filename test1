@@ -1,5 +1,15 @@
-Object.entries(sidebarData).map(([sectionName, sectionDataRaw]) => {
-  const sectionData = sectionDataRaw as {
+import React, { useEffect } from "react";
+import { observer } from "mobx-react-lite";
+import { Box, Typography, Avatar } from "@mui/material";
+import HomeIcon from "@mui/icons-material/Home";
+import { Link } from "react-router-dom";
+import NavItem from "./NavItem";
+import { mainPageStore } from "../../stores/MainPageStore";
+
+// Define the shape of sidebarData
+type SidebarData = Record<
+  string,
+  {
     id: string;
     SubCategoryList: Record<
       string,
@@ -8,23 +18,148 @@ Object.entries(sidebarData).map(([sectionName, sectionDataRaw]) => {
         count: number;
       }
     >;
+  }
+>;
+
+const Sidebar = observer(() => {
+  const loggedInUserId = "admin@gmail.com";
+  const {
+    sidebarCollapsed,
+    setSidebarCollapsed,
+    sidebarData,
+    fetchSideMenuData,
+    sidemenuloading,
+  } = mainPageStore;
+
+  useEffect(() => {
+    fetchSideMenuData();
+  }, [fetchSideMenuData]);
+
+  const collapsed = sidebarCollapsed;
+  const toggleSidebar = () => {
+    setSidebarCollapsed();
   };
 
-  const subItems =
-    sectionData?.SubCategoryList &&
-    Object.entries(sectionData.SubCategoryList).map(([subLabel, subData]) => ({
-      label: subLabel,
-      count: subData.count,
-      href: "/", // update as needed
-    }));
+  const typedSidebarData = sidebarData as SidebarData;
 
   return (
-    <NavItem
-      key={sectionData.id}
-      icon="./menuIcon.svg"
-      label={sectionName}
-      collapsed={collapsed}
-      subItems={subItems}
-    />
+    <Box
+      display="flex"
+      flexDirection="column"
+      height="90vh"
+      px={!collapsed ? 2 : 1}
+      fontFamily="Montserrat, sans-serif"
+      fontSize="14px"
+      color="#343434"
+    >
+      {/* Top Section */}
+      <Box flexGrow={1}>
+        {/* Header */}
+        <Box
+          display="flex"
+          alignItems="center"
+          justifyContent="space-between"
+          py={1.2}
+          borderBottom="1px solid rgba(0,0,0,0.1)"
+        >
+          <Typography
+            variant="h6"
+            sx={{
+              fontSize: "28px",
+              fontWeight: 600,
+              color: "#e7552b",
+              whiteSpace: "nowrap",
+              mr: "4px",
+            }}
+          >
+            EXL
+          </Typography>
+          <Avatar
+            src={!collapsed ? "./resize.svg" : "./openIcon.svg"}
+            alt="Logo"
+            sx={{ width: 24, height: 24, cursor: "pointer" }}
+            variant="square"
+            onClick={toggleSidebar}
+          />
+        </Box>
+
+        {/* Collapsed Home Icon */}
+        {collapsed && (
+          <Box display="flex" flexDirection="column" sx={{ mt: 2, textAlign: "center" }}>
+            <Link to="/" style={{ textDecoration: "none" }}>
+              <HomeIcon sx={{ color: "#888", fontSize: 20 }} />
+            </Link>
+          </Box>
+        )}
+
+        {/* Expanded Sidebar Navigation */}
+        {!collapsed && (
+          <Box display="flex" flexDirection="column" sx={{ mt: 2 }}>
+            {/* Static Home Section */}
+            <Typography
+              sx={{
+                fontSize: "12px",
+                textTransform: "uppercase",
+                color: "#888",
+                px: 2,
+                py: 1,
+              }}
+            >
+              Home
+            </Typography>
+            <NavItem
+              icon="./menuIcon.svg"
+              label="Dashboard"
+              collapsed={collapsed}
+              subItems={[
+                { label: "Overview", count: 3, href: "/" },
+                { label: "Reports", count: 2, href: "/" },
+              ]}
+            />
+
+            {/* Dynamic Sections */}
+            {Object.entries(typedSidebarData).map(([sectionName, sectionData]) => {
+              const subItems =
+                sectionData?.SubCategoryList &&
+                Object.entries(sectionData.SubCategoryList).map(([subLabel, subData]) => ({
+                  label: subLabel,
+                  count: subData.count,
+                  href: "/", // You can customize this
+                }));
+
+              return (
+                <NavItem
+                  key={sectionData.id}
+                  icon="./menuIcon.svg"
+                  label={sectionName}
+                  collapsed={collapsed}
+                  subItems={subItems}
+                />
+              );
+            })}
+          </Box>
+        )}
+      </Box>
+
+      {/* Footer Items pinned to bottom */}
+      {!collapsed && (
+        <Box mt={2}>
+          <NavItem
+            icon="./bookmark.svg"
+            label="Bookmarked"
+            showCount={false}
+            collapsed={collapsed}
+          />
+          <NavItem
+            icon="./setting.svg"
+            label="Settings"
+            showCount={false}
+            collapsed={collapsed}
+          />
+        </Box>
+      )}
+    </Box>
   );
 });
+
+export default Sidebar;
