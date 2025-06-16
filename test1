@@ -1,149 +1,578 @@
-import React, { useState } from "react";
-import {
-  Box,
+
+import React, { JSX, useEffect, useState } from "react";
+import { observer } from "mobx-react-lite";
+import { 
+  Box, 
+  Button, 
+  Typography, 
+  Paper,
   FormControl,
-  InputLabel,
+  FormLabel,
+  Stack,
   MenuItem,
   Select,
-  SelectChangeEvent,
-  ListSubheader,
+  ListSubheader
 } from "@mui/material";
-import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
+import AddIcon from '@mui/icons-material/Add';
+import FilterDropdown from "../ui/dashboard/FilterDropdown";
+import DataCard from "../ui/dashboard/DataCard";
+import DetailStatCard from "../ui/dashboard/DetailStatCard";
+import EmojiEventsIcon from "@mui/icons-material/EmojiEvents";
+import { useNavigate } from "react-router-dom";
+import { mainPageStore } from "../../stores/MainPageStore";
+import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
+import { SelectChangeEvent } from '@mui/material';
 
-// ---------- Type Definitions ----------
-type SubCategoryType = {
-  id: string;
-  name: string;
-};
-
-type SubCategory = {
-  SubCategoryTypeList: SubCategoryType[];
-};
-
-type LobObject = {
-  Lob: string;
-  SubCategoryList: {
-    [subCategoryName: string]: SubCategory;
-  };
-};
-
-type TypeOptionsList = {
-  [lobName: string]: LobObject;
-};
-
-// ---------- Component ----------
-const TypeDropdown: React.FC = () => {
+const DetailContent = () => {
+  const navigate = useNavigate();
   const [selectedType, setSelectedType] = useState<string>("");
+  const [selectedTech, setSelectedTech] = useState<string>("");
+  const [selectedClient, setSelectedClient] = useState<string>("");
+  const [selectedDigitalAnalytics, setSelectedDigitalAnalytics] = useState<string>("");
+
+
+  type SubCategoryType = {
+    id: string;
+    name: string;
+  };
+  
+  type SubCategory = {
+    SubCategoryTypeList: SubCategoryType[];
+  };
+  
+  type LobObject = {
+    Lob: string;
+    SubCategoryList: {
+      [subCategoryName: string]: SubCategory;
+    };
+  };
+  
+  type TypeOptionsList = {
+    [lobName: string]: LobObject;
+  };
+
+
+  const userId = "admin@gmail.com";
+  const { fetchStatData,
+    statData,
+    fetchByTypeOptions,
+    fetchByTechnologyOptions,
+    fetchByClientOptions,
+    fetchByAnalyticsOptions,
+    typeOptionsList,
+    technologyOptionsList,
+    clientOptionsList,
+    analyticsOptionsList,
+   }  = mainPageStore;
+
+  useEffect(() => {
+    fetchStatData(userId);
+    fetchByTypeOptions();
+    fetchByTechnologyOptions();
+    fetchByClientOptions();
+  }, [userId]);
+
+
+  useEffect(() => {
+    fetchByAnalyticsOptions();
+  }, [userId]);
+
+
+  const handleClick = () => {
+    navigate("/dashboarddetail");
+  };
+
+  const addSolution = () => {
+    navigate("/addasolution");
+  };
 
   const handleTypeChange = (event: SelectChangeEvent<string>) => {
     setSelectedType(event.target.value);
   };
 
-  // Sample mock data (replace with your real `typeOptionsList`)
-  const typeOptionsList: TypeOptionsList = {
-    LOB1: {
-      Lob: "LOB1",
-      SubCategoryList: {
-        SubCatA: {
-          SubCategoryTypeList: [
-            { id: "1", name: "Option A1" },
-            { id: "2", name: "Option A2" },
-          ],
-        },
-        SubCatB: {
-          SubCategoryTypeList: [
-            { id: "3", name: "Option B1" },
-            { id: "4", name: "Option B2" },
-          ],
-        },
-      },
-    },
-    LOB2: {
-      Lob: "LOB2",
-      SubCategoryList: {
-        SubCatC: {
-          SubCategoryTypeList: [
-            { id: "5", name: "Option C1" },
-            { id: "6", name: "Option C2" },
-          ],
-        },
-      },
-    },
-  };
+ const handleTechChange = (event: SelectChangeEvent<string>) => {
+   setSelectedTech(event.target.value);
+ };
 
-  const renderTypeOptionsDropdown = () => {
-    const options: JSX.Element[] = [];
+ const handleClientChange = (event: SelectChangeEvent<string>) => {
+  setSelectedClient(event.target.value);
+};
 
-    Object.entries(typeOptionsList).forEach(([lobName, lobObj]) => {
-      const subCategories = lobObj.SubCategoryList;
+const handleDigitalChange = (event: SelectChangeEvent<string>) => {
+  setSelectedDigitalAnalytics(event.target.value);
+};
 
-      Object.entries(subCategories).forEach(([subCatName, subCatObj]) => {
-        // Non-selectable header
+
+const renderTypeOptionsDropdown = () => {
+  const options: JSX.Element[] = [];
+
+  Object.entries(typeOptionsList).forEach(([lobName, lobObj]) => {
+    const subCategories = lobObj.SubCategoryList;
+
+    Object.entries(subCategories).forEach(([subCatName, subCatObj]) => {
+      options.push(
+        <ListSubheader key={`${lobName}-${subCatName}`}>
+          {subCatName}
+        </ListSubheader>
+      );
+
+      // Selectable options
+      subCatObj.SubCategoryTypeList.forEach((type) => {
         options.push(
-          <ListSubheader key={`${lobName}-${subCatName}`}>
-            {subCatName}
-          </ListSubheader>
+          <MenuItem key={type.id} value={type.id}>
+            {type.name}
+          </MenuItem>
         );
-
-        // Selectable options
-        subCatObj.SubCategoryTypeList.forEach((type) => {
-          options.push(
-            <MenuItem key={type.id} value={type.id}>
-              {type.name}
-            </MenuItem>
-          );
-        });
       });
     });
+  });
 
-    return options;
-  };
+  return options;
+};
+
 
   return (
-    <Box width={300}>
+    <Box sx={{ 
+      display: 'flex', 
+      flexDirection: 'column', 
+      flexGrow: 1, 
+      minWidth: '240px'
+    }}>
+
+<Box 
+  sx={{ 
+    display: "flex", 
+    justifyContent: "flex-end", 
+    gap: 2 // Adjust the spacing between buttons
+  }}
+>
+  <Button 
+   onClick={addSolution}
+    variant="outlined" 
+    startIcon={<AddIcon />} 
+    sx={{ 
+      color: "#0F4977", 
+      borderColor: "#0F4977",
+      fontSize: "12px", // Smaller text
+      boxShadow: "0px 1px 3px 0px rgba(96,108,128,0.05)",
+      height:'40px',
+      borderRadius: '8px',
+      "&:hover": {
+        borderColor: "#0F4977",
+        backgroundColor: "rgba(15, 73, 119, 0.04)"
+      }
+    }}
+  >
+    Add New Solution
+  </Button>
+
+  <Button 
+  onClick={handleClick}
+    variant="contained" 
+    startIcon={<EmojiEventsIcon />} // Champion icon for "My Stat and Rank"
+    sx={{ 
+      color: "#FFF", 
+      borderColor: "#0F4977",
+      fontSize: "14px", 
+      borderRadius: '8px',
+      boxShadow: "0px 1px 3px 0px rgba(96,108,128,0.05)",
+    }}
+  >
+    My Stat and Rank
+  </Button>
+</Box>
+
+
+<Stack
+  direction="row"
+  spacing={2}
+  sx={{
+    mt: 2,
+    flexWrap: 'wrap',
+    justifyContent: 'space-between',
+  }}
+>
+  {['Team', 'Total Demos', 'Total Active Projects','Most liked'].map((items, idx) => (
+    <Box
+      key={idx}
+      sx={{
+        flex: '1 1 22%', // allows shrinking a bit to fit 4
+        minWidth: '200px', // fallback for mobile
+        maxWidth: '25%',
+      }}
+    >
+      <DetailStatCard
+        value="125"
+        label={`${items}`}
+        icon="./team1.svg"
+        trend="+12%"
+        trendIcon="./arrow.svg"
+        trendText="Since last month"
+      />
+    </Box>
+  ))}
+</Stack>
+
+
+
+      <Box sx={{ width: '100%', mt: 4 }}>
+        <Box sx={{ width: '100%' }}>
+          <Box sx={{ 
+            display: 'flex',
+            justifyContent: 'space-between',
+            alignItems: 'center',
+            height: '48px'
+          }}>
+            
+            <Typography variant="h6" component="h2" sx={{ fontWeight: 600 }}>
+              Value Delivered Across the Payer Value Chain.
+            </Typography>
+          </Box>
+
+<Paper
+  sx={{
+    p: 3,
+    mt: 2,
+    borderRadius: 2,
+    border: 'none',
+    boxShadow: 'none',
+  }}
+>
+  <Stack
+    direction="row"
+    spacing={2}
+    sx={{
+      flexWrap: 'nowrap',
+      minWidth: '100%',
+    }}
+  >
+    {/* [ 'By Type', 'By Technology', 'By Client', 'By Digital & Analytics' ] */}
+
+      {/* // Type Dropdown  */}
+    <Box
+        key="By Type"
+        sx={{
+          flex: '1 1 22%',
+          minWidth: '200px',
+          maxWidth: '25%',
+        }}
+      >
       <FormControl fullWidth>
-        <InputLabel id="type-dropdown-label">Select Type</InputLabel>
-        <Select
-          labelId="type-dropdown-label"
-          value={selectedType}
-          onChange={handleTypeChange}
-          label="Select Type"
-          displayEmpty
-          IconComponent={KeyboardArrowDownIcon}
-          sx={{
-            bgcolor: "background.paper",
-            borderRadius: "8px",
-            ".MuiOutlinedInput-notchedOutline": {
-              borderColor: "rgba(211,209,209,0.4)",
-            },
-            "&.Mui-focused .MuiOutlinedInput-notchedOutline": {
-              borderColor: "rgba(211,209,209,0.6)",
-            },
-            "& .MuiSelect-select": {
-              backgroundColor: "white",
-            },
-            "& .MuiPaper-root": {
-              backgroundColor: "white",
+      <FormLabel  sx={{ 
+          mb: 1, 
+          color: '#000', 
+          fontSize: '14px', 
+          fontStyle: 'normal', 
+          fontWeight: 400, 
+          lineHeight: 'normal'
+        }}> By Type
+        </FormLabel>
+      <Select
+        value={selectedType}
+        onChange={handleTypeChange}
+        displayEmpty
+        IconComponent={KeyboardArrowDownIcon}
+        sx={{
+          bgcolor: 'background.paper',
+          borderRadius: '8px',
+          '.MuiOutlinedInput-notchedOutline': {
+            borderColor: 'rgba(211,209,209,0.4)',
+          },
+          '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
+            borderColor: 'rgba(211,209,209,0.6)',
+          },
+          '& .MuiSelect-select': {
+            backgroundColor: 'white',
+          },
+          '& .MuiPaper-root': {
+            backgroundColor: 'white',
+            zIndex: 9999,
+          }
+        }}
+        MenuProps={{
+          PaperProps: {
+            sx: {
+              bgcolor: 'white',
               zIndex: 9999,
-            },
-          }}
-          MenuProps={{
-            PaperProps: {
-              sx: {
-                bgcolor: "white",
-                zIndex: 9999,
-              },
-            },
-          }}
-        >
-          <MenuItem value="" disabled>
-            Select Type
+            }
+          }
+        }}
+      >
+        <MenuItem value="" disabled>
+          Select Type
+        </MenuItem>
+        {technologyOptionsList.map(opt => (
+          <MenuItem key={opt.id} value={opt.id}>
+            {opt.name}
           </MenuItem>
-          {renderTypeOptionsDropdown()}
-        </Select>
+        ))}
+      </Select>
       </FormControl>
+      </Box>
+
+      {/* // Technology Dropdown     */}
+      <Box
+              key="By Technology"
+              sx={{
+                flex: '1 1 22%',
+                minWidth: '200px',
+                maxWidth: '25%',
+              }}
+            >
+            <FormControl fullWidth>
+            <FormLabel  sx={{ 
+                mb: 1, 
+                color: '#000', 
+                fontSize: '14px', 
+                fontStyle: 'normal', 
+                fontWeight: 400, 
+                lineHeight: 'normal'
+              }}> By Technology
+              </FormLabel>
+      <Select
+        value={selectedTech}
+        onChange={handleTechChange}
+        displayEmpty
+        IconComponent={KeyboardArrowDownIcon}
+        sx={{
+          bgcolor: 'background.paper',
+          borderRadius: '8px',
+          '.MuiOutlinedInput-notchedOutline': {
+            borderColor: 'rgba(211,209,209,0.4)',
+          },
+          '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
+            borderColor: 'rgba(211,209,209,0.6)',
+          },
+          '& .MuiSelect-select': {
+            backgroundColor: 'white',
+          },
+          '& .MuiPaper-root': {
+            backgroundColor: 'white',
+            zIndex: 9999,
+          }
+        }}
+        MenuProps={{
+          PaperProps: {
+            sx: {
+              bgcolor: 'white',
+              zIndex: 9999,
+            }
+          }
+        }}
+      >
+        <MenuItem value="" disabled>
+          Select Technology
+        </MenuItem>
+        {technologyOptionsList.map(opt => (
+          <MenuItem key={opt.id} value={opt.id}>
+            {opt.name}
+          </MenuItem>
+        ))}
+      </Select>
+      </FormControl>
+      </Box>
+
+      {/* // Client Dropdown     */}
+    <Box
+            key="By Client"
+            sx={{
+              flex: '1 1 22%',
+              minWidth: '200px',
+              maxWidth: '25%',
+            }}
+          >
+          <FormControl fullWidth>
+          <FormLabel  sx={{ 
+              mb: 1, 
+              color: '#000', 
+              fontSize: '14px', 
+              fontStyle: 'normal', 
+              fontWeight: 400, 
+              lineHeight: 'normal'
+            }}> By Client
+            </FormLabel>
+    <Select
+      value={selectedClient}
+      onChange={handleClientChange}
+      displayEmpty
+      IconComponent={KeyboardArrowDownIcon}
+      sx={{
+        bgcolor: 'background.paper',
+        borderRadius: '8px',
+        '.MuiOutlinedInput-notchedOutline': {
+          borderColor: 'rgba(211,209,209,0.4)',
+        },
+        '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
+          borderColor: 'rgba(211,209,209,0.6)',
+        },
+        '& .MuiSelect-select': {
+          backgroundColor: 'white',
+        },
+        '& .MuiPaper-root': {
+          backgroundColor: 'white',
+          zIndex: 9999,
+        }
+      }}
+      MenuProps={{
+        PaperProps: {
+          sx: {
+            bgcolor: 'white',
+            zIndex: 9999,
+          }
+        }
+      }}
+    >
+      <MenuItem value="" disabled>
+        Select Client
+      </MenuItem>
+      {clientOptionsList.map(opt => (
+        <MenuItem key={opt.id} value={opt.id}>
+          {opt.name}
+        </MenuItem>
+      ))}
+    </Select>
+    </FormControl>
+    </Box>
+  {/* // By Digital & Analytics Dropdown     */}
+  <Box
+        key="By Digital & Analytics"
+        sx={{
+          flex: '1 1 22%',
+          minWidth: '200px',
+          maxWidth: '25%',
+        }}
+      >
+      <FormControl fullWidth>
+      <FormLabel  sx={{ 
+          mb: 1, 
+          color: '#000', 
+          fontSize: '14px', 
+          fontStyle: 'normal', 
+          fontWeight: 400, 
+          lineHeight: 'normal'
+        }}>By Digital & Analytics
+        </FormLabel>
+ <Select
+  value={selectedDigitalAnalytics}
+  onChange={handleDigitalChange}
+  displayEmpty
+  IconComponent={KeyboardArrowDownIcon}
+  sx={{
+    bgcolor: 'background.paper',
+    borderRadius: '8px',
+    '.MuiOutlinedInput-notchedOutline': {
+      borderColor: 'rgba(211,209,209,0.4)',
+    },
+    '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
+      borderColor: 'rgba(211,209,209,0.6)',
+    },
+    '& .MuiSelect-select': {
+      backgroundColor: 'white',
+    },
+    '& .MuiPaper-root': {
+      backgroundColor: 'white',
+      zIndex: 9999,
+    }
+  }}
+  MenuProps={{
+    PaperProps: {
+      sx: {
+        bgcolor: 'white',
+        zIndex: 9999,
+      }
+    }
+  }}
+>
+  <MenuItem value="" disabled>
+    Select Digital & Analytics
+  </MenuItem>
+  {analyticsOptionsList.map(opt => (
+    <MenuItem key={opt.id} value={opt.id}>
+      {opt.name}
+    </MenuItem>
+  ))}
+ </Select>
+ </FormControl>
+</Box>
+    
+  </Stack>
+</Paper>
+
+
+        {/* Cards Section */}
+    <Box sx={{ mt: 2 }}>
+      <Box
+        sx={{
+          display: 'grid',
+          gridTemplateColumns: {
+            xs: '1fr',
+            sm: 'repeat(2, 1fr)',
+            md: 'repeat(3, 1fr)',
+            lg: 'repeat(4, 1fr)',
+          },
+          gap: 2,
+        }}
+      >
+
+        {[
+          {
+            icon: "./actual.svg",
+            label: "Actuarial / Underwriting",
+            value: "6",
+          },
+          {
+            icon: "./benefits.svg",
+            label: "Benefits Design",
+            value: "8",
+          },
+          {
+            icon: "./claim.svg",
+            label: "Claims/Ops",
+            value: "2",
+          },
+          {
+            icon: "./clinical.svg",
+            label: "Clinical Management",
+            value: "12",
+          },
+          {
+            icon: "./cservices.svg",
+            label: "Clinical Services",
+            value: "1",
+          },
+          {
+            icon: "./custservices.svg",
+            label: "Customer Services",
+            value: "13",
+          },
+          {
+            icon: "./medicalcost.svg",
+            label: "Medical Cost Management",
+            value: "14",
+          },
+          {
+            icon: "./network.svg",
+            label: "Network Management",
+            value: "7",
+          },
+        ].map(({ icon, label, value }) => (
+          <Box key={label}>
+            <DataCard
+              icon={icon}
+              label={label}
+              value={value}
+              labelSx={{ fontWeight: 'bold', fontSize: '0.9rem' }}
+            />
+          </Box>
+        ))}
+      </Box>
+    </Box>
+
+        
+        </Box>
+      </Box>
     </Box>
   );
 };
 
-export default TypeDropdown;
+export default observer(DetailContent);
