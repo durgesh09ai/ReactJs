@@ -1,5 +1,392 @@
-import { SelectChangeEvent } from '@mui/material';
-
-const handleTechChange = (event: SelectChangeEvent<string>) => {
-  setSelectedTech(event.target.value);
-};
+{
+  "Data and Analytics LOB": {
+    "id": "0a3ffa63-d631-4602-9ece-6ce000627d80",
+    "SubCategoryList": {
+      "Payer Analytics": {
+        "id": "0d33e0ab-66a5-445f-83e8-559a3e026791",
+        "SubCategoryTypeList": [
+          {
+            "id": "60f8f1b9-54b6-4893-8fff-eac4600aae7e",
+            "name": "Outcomes Measurement & ROI"
+          },
+          {
+            "id": "31a4498c-dda8-4200-976f-4d77f7554ac2",
+            "name": "SDoH Analytics"
+          },
+          {
+            "id": "01b7b8ba-51b3-4cde-ac7b-a3a64521713c",
+            "name": "Telehealth Analytics"
+          },
+          {
+            "id": "417e322b-20fa-41ad-8133-bf5c384fd4fb",
+            "name": "Operational & Productivity Reporting"
+          },
+          {
+            "id": "18cf9619-8e20-48a1-b787-aee01720fafe",
+            "name": "Opioid Analytics"
+          },
+          {
+            "id": "7ac424aa-85f0-4381-9c2c-6630bbdca9fd",
+            "name": "Population Health Analytics & Reporting"
+          },
+          {
+            "id": "3bd711b0-08ff-4470-9c17-e76577cc69d2",
+            "name": "Lead Generation"
+          },
+          {
+            "id": "b2010607-f722-4399-b3c3-b8aa6db9b66b",
+            "name": "Broker & Member Digital Ecosystem"
+          },
+          {
+            "id": "21aba2e9-c75f-4d70-9b4e-40be01915395",
+            "name": "Call Center Analytics"
+          }
+        ]
+      },
+      "Clinical Analytics": {
+        "id": "87054820-ae51-4c50-a542-2418cb28f2d5",
+        "SubCategoryTypeList": [
+          {
+            "id": "821540e1-7f3e-4780-938e-f28cf902bb96",
+            "name": "Clinical Informatics Services"
+          }
+        ]
+      },
+      "Provider Analytics": {
+        "id": "59a198a9-fec8-49d8-b200-84ace2ba35ba",
+        "SubCategoryTypeList": [
+          {
+            "id": "6cf8aeb2-bed4-4bf5-9ca1-518848967ba9",
+            "name": "Value Based Analytics"
+          },
+          {
+            "id": "e3582452-61df-469a-aab4-8417ddb8644e",
+            "name": "Provider Score Cards"
+          },
+          {
+            "id": "35c7be82-3f56-4fcb-a610-b361381ecee9",
+            "name": "Provider Quality & Efficiency"
+          },
+          {
+            "id": "e690b14f-0d57-4c00-862e-9c26959b29e3",
+            "name": "Payer Provider Collaboration"
+          }
+        ]
+      },
+      "Data Management,Strategy...": {
+        "id": "1c79f499-d0d1-4341-88da-f706f40ff277",
+        "SubCategoryTypeList": [
+          {
+            "id": "8db22f29-230a-4564-be2c-bb2d60de954a",
+            "name": "Commercial"
+          },
+          {
+            "id": "27eba73e-0fea-41ab-8f0f-a61871cee404",
+            "name": "Data Acquisition, Intake Integration"
+          },
+          {
+            "id": "c022c0f5-43e9-4957-83bd-0bd48ca165e8",
+            "name": "Healthcare Data Model"
+          },
+          {
+            "id": "6e68c628-1d71-4e3e-b847-1bfd6124e932",
+            "name": "Data Visualization and Reporting"
+          },
+          {
+            "id": "723be46b-f011-4b37-b936-bf5edc0bc0f7",
+            "name": "Data Platform Modernization"
+          },
+          {
+            "id": "b188a31c-d10a-4778-bf82-c0bc4990ec4a",
+            "name": "Interoperability"
+          },
+          {
+            "id": "a7d01d51-f1aa-4202-8189-381f1a4b2980",
+            "name": "Data Quality"
+          },
+          {
+            "id": "895db5dd-af5b-4ef6-9ec9-91fa57354d5b",
+            "name": "Cloud migration"
+          },
+          {
+            "id": "e3f7cb0a-079c-4eb4-8534-dd9f17e2eb82",
+            "name": "Master / Reference Data Management"
+          }
+        ]
+      },
+      "Digital Native Solutions": {
+        "id": "42216d4e-1647-479b-b101-026054082787",
+        "SubCategoryTypeList": []
+      },
+      "Group Reporting Analytics": {
+        "id": "6ce8da9a-250b-4b65-9f2a-a51a6499615e",
+        "SubCategoryTypeList": []
+      },
+      "HEOR": {
+        "id": "959ca031-1dd3-4f41-b829-554ad50b13a0",
+        "SubCategoryTypeList": []
+      },
+      "Pharmacy Analytics": {
+        "id": "c6403dcc-6ee9-4642-bd56-ad37513bde31",
+        "SubCategoryTypeList": []
+      },
+      "Risk and Quality Analytics": {
+        "id": "a70c804e-c9df-4b42-b432-c7f5dfe4f732",
+        "SubCategoryTypeList": [
+          {
+            "id": "cc0d2066-149c-4676-a7fb-d0cf61392ad8",
+            "name": "COVID Analytics"
+          }
+        ]
+      }
+    }
+  },
+  "Clinical Services LOB": {
+    "id": "f8ac6aa4-a4af-4fb2-9b55-2921980d310c",
+    "SubCategoryList": {
+      "Quality and Compliance": {
+        "id": "bf9fa9c5-5070-4e7d-90f6-ef1b387fcd03",
+        "SubCategoryTypeList": [
+          {
+            "id": "e12ee2a3-01e0-46a7-912a-0ed2218f42bd",
+            "name": "Special Investigation Unit"
+          },
+          {
+            "id": "09c9fa58-f67d-438a-92b1-44a3165e37f9",
+            "name": "Gaps in Care Closure"
+          },
+          {
+            "id": "04109339-7e8c-4495-94bc-fbe8363a40f2",
+            "name": "End-to-end HEDIS solution"
+          },
+          {
+            "id": "63086085-163b-473f-b356-8209cfc3cf1c",
+            "name": "Medicare Star Rating Improvement"
+          }
+        ]
+      },
+      "Utilization Management": {
+        "id": "3caf3587-db8c-4ffa-83f3-4e21c8fde313",
+        "SubCategoryTypeList": [
+          {
+            "id": "bc5011f4-5406-4e41-9f40-a49f57977b5a",
+            "name": "Appeals & Denials Management"
+          },
+          {
+            "id": "6c332434-0c08-427f-89dc-9b746e782b8c",
+            "name": "Peer Review Support"
+          },
+          {
+            "id": "9e528b4f-6ca2-4d37-a5bc-0e571617b167",
+            "name": "Prospective, Concurrent and Retrospective Reviews"
+          },
+          {
+            "id": "bea4051f-a798-4d87-a933-ad7b7ec86c80",
+            "name": "Precertification and Prior Authorization"
+          },
+          {
+            "id": "0f428d89-c488-4c3c-906c-1ee909df9b3e",
+            "name": "Network Navigation"
+          },
+          {
+            "id": "019b3a5d-9151-4a3a-af3a-2fbfac21460d",
+            "name": "Benefit and Eligibility Checking"
+          }
+        ]
+      },
+      "Case Management": {
+        "id": "83dbd624-b4a9-4b2f-8b9f-646812d3bcb2",
+        "SubCategoryTypeList": [
+          {
+            "id": "b3a462c0-ddd1-4a07-a0dd-6a8352c3c433",
+            "name": "Case Set-up and screening"
+          },
+          {
+            "id": "76951a20-d2d1-44f4-ba79-96a2d1ec2b6a",
+            "name": "Transitions of Care & Care Coordination"
+          },
+          {
+            "id": "3f07df88-eaac-4b27-8214-bbdbb37570df",
+            "name": "Identification and stratification"
+          },
+          {
+            "id": "45f3990d-7d16-4c42-a312-440737928de2",
+            "name": "Assessments and surveys"
+          }
+        ]
+      },
+      "Member Services": {
+        "id": "796b6b6b-8565-4761-b7f7-605ac166b992",
+        "SubCategoryTypeList": [
+          {
+            "id": "ef6c0152-4187-4a0a-96b2-82fa73f3479b",
+            "name": "Claims"
+          },
+          {
+            "id": "511d05f8-529e-45cc-84e6-0cce3544a0d0",
+            "name": "Benefits and Eligibility"
+          },
+          {
+            "id": "ec5ace6d-9503-48a5-adf6-2270c3cc90ae",
+            "name": "Provider Search"
+          }
+        ]
+      },
+      "Platform": {
+        "id": "96244072-9c2d-4f99-a8bd-5a8335a93c2b",
+        "SubCategoryTypeList": []
+      },
+      "Provider Services": {
+        "id": "22bccb0d-4d22-4d75-b6aa-c6c84c5781dd",
+        "SubCategoryTypeList": []
+      }
+    }
+  },
+  "Life Sciences LOB": {
+    "id": "00c4e234-8f31-409f-aec3-c06ef1a30f03",
+    "SubCategoryList": {
+      "Analytics Services": {
+        "id": "b5066eef-d0ab-4a2c-9c48-80a82d74086d",
+        "SubCategoryTypeList": [
+          {
+            "id": "6c32b3eb-2433-439b-ba7a-9a643d272263",
+            "name": "Patient journey"
+          },
+          {
+            "id": "e29f7728-d19e-4808-ab89-44133081f421",
+            "name": "Patient personas"
+          },
+          {
+            "id": "94d53f58-cbe0-4a8f-9139-44b343af0114",
+            "name": "Cost of care"
+          }
+        ]
+      },
+      "Digital Patient Engagement": {
+        "id": "ecbb0063-dc8e-465c-9d7d-5ecd40f2b02d",
+        "SubCategoryTypeList": []
+      }
+    }
+  },
+  "Payment Services LOB": {
+    "id": "8c057383-8a71-4013-afef-dc3879025629",
+    "SubCategoryList": {
+      "Integrated Revenue...": {
+        "id": "ea211ff1-2b02-4eaf-932c-308236ac6ac3",
+        "SubCategoryTypeList": [
+          {
+            "id": "6b14e8d0-ee0e-4d80-857a-3b6f0fdd75ee",
+            "name": "Optimal Analytics"
+          }
+        ]
+      },
+      "Data Mining": {
+        "id": "9a2d125d-1097-49c4-8ab1-4c520abe95c6",
+        "SubCategoryTypeList": []
+      },
+      "Facility Audits": {
+        "id": "7b5cee1b-c2a4-458a-b640-65e78192b249",
+        "SubCategoryTypeList": []
+      }
+    }
+  },
+  "Risk Adjustment & Quality Measures": {
+    "id": "d283b2f6-2247-4701-bb77-9c81c23dc454",
+    "SubCategoryList": {
+      "Quality Measures": {
+        "id": "394a754a-b47e-47de-8da2-19d734203839",
+        "SubCategoryTypeList": [
+          {
+            "id": "dde93429-1fe6-4639-8bee-9593f20a0230",
+            "name": "Gap Identification & Closure"
+          },
+          {
+            "id": "8e0d0d30-ee33-4f0b-9bfe-38104c48b043",
+            "name": "Performance Evaluation"
+          }
+        ]
+      },
+      "Data Management & Digitization": {
+        "id": "a8b9421b-8aa9-4c8e-9d12-a67d44d9fec0",
+        "SubCategoryTypeList": [
+          {
+            "id": "57afda78-4bd6-4965-b10e-cf12df4286f5",
+            "name": "Data Visualization and Reporting"
+          },
+          {
+            "id": "5ab6b567-d30a-4246-923c-18ce282a8c4b",
+            "name": "Data Gap Identification & Resolution"
+          }
+        ]
+      },
+      "Member Services - Analytics": {
+        "id": "b404eaaf-6d31-4d61-b154-9443b42de7df",
+        "SubCategoryTypeList": [
+          {
+            "id": "fde727a4-07f2-4bf3-9e3c-5ec13a72648f",
+            "name": "Member Engagement"
+          },
+          {
+            "id": "9984054e-323c-4d9e-916b-51c53e832f70",
+            "name": "Health Risk Assessment/Enrollment Support"
+          },
+          {
+            "id": "f101207b-43ee-4df2-af75-7c6e8f19493a",
+            "name": "Member Outreach for HCC & Quality Gap Closure"
+          },
+          {
+            "id": "2b4fc84e-ac23-402f-8f92-148963c43301",
+            "name": "Member Retention & Market Analysis"
+          }
+        ]
+      },
+      "Risk Adjustment": {
+        "id": "f6257c38-b0bf-4096-9492-81ebe0f2ac63",
+        "SubCategoryTypeList": [
+          {
+            "id": "1611bff6-5c0b-4b26-b348-6c2c36398983",
+            "name": "Performance Evaluation"
+          },
+          {
+            "id": "9ef1b982-32be-4587-a3c6-ecc613717423",
+            "name": "Gap Identification & Closure"
+          }
+        ]
+      },
+      "Consulting": {
+        "id": "687d35fa-26d6-4d15-ba63-31b714d6ed3b",
+        "SubCategoryTypeList": [
+          {
+            "id": "137c85bd-40bc-4e36-9c8c-5106867ca3fb",
+            "name": "Performance Evaluation"
+          },
+          {
+            "id": "812a6d65-fd7e-42a9-a503-41b8ef880cca",
+            "name": "Operational Improvement"
+          }
+        ]
+      },
+      "Provider Engagement": {
+        "id": "91fcd9c7-e79e-479c-930a-063080121a6a",
+        "SubCategoryTypeList": [
+          {
+            "id": "2796930e-6248-4d3c-a7c7-2a32c4f26ad2",
+            "name": "Performance Evaluation"
+          },
+          {
+            "id": "9756ce8e-f133-42a8-b3f2-196b83aded66",
+            "name": "Provider Education"
+          },
+          {
+            "id": "40293ccf-5015-4d61-986a-fe77ca157436",
+            "name": "Provider Engagement"
+          },
+          {
+            "id": "685fbed0-cd66-44c1-986d-19a6b1f0d181",
+            "name": "Benchmarking/Scorecards"
+          }
+        ]
+      }
+    }
+  }
+}
