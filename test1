@@ -1,30 +1,28 @@
 const renderTypeOptionsDropdown = () => {
   const options: JSX.Element[] = [];
 
-  if (!typeOptionsList || typeof typeOptionsList !== "object") {
+  if (!typeOptionsList || typeof typeOptionsList !== 'object') {
     return options;
   }
 
-  Object.entries(typeOptionsList).forEach(([lobName, lobData]) => {
-    if (!lobData?.SubCategoryList) return;
+  Object.entries(typeOptionsList).forEach(([lobName, lobObj]) => {
+    if (!lobObj?.SubCategoryList) return;
 
-    Object.entries(lobData.SubCategoryList).forEach(
-      ([subCatName, subCatData]) => {
-        if (!subCatData?.id) return;
+    Object.entries(lobObj.SubCategoryList).forEach(([subCatName, subCatObj]) => {
+      options.push(
+        <ListSubheader key={`${lobName}-${subCatName}`}>
+          {subCatName}
+        </ListSubheader>
+      );
 
+      subCatObj.SubCategoryTypeList.forEach((type) => {
         options.push(
-          <ListSubheader key={`${lobName}-${subCatName}`}>
-            {subCatName}
-          </ListSubheader>
-        );
-
-        options.push(
-          <MenuItem key={subCatData.id} value={subCatData.id}>
-            {subCatName} ({subCatData.count})
+          <MenuItem key={type.id} value={type.id}>
+            {type.name}
           </MenuItem>
         );
-      }
-    );
+      });
+    });
   });
 
   return options;
