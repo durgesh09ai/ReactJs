@@ -1,33 +1,61 @@
-import React from "react";
+import React, { useState } from "react";
 import {
   FormControl,
   InputLabel,
-  Select,
   MenuItem,
+  Select,
+  SelectChangeEvent,
   ListSubheader
 } from "@mui/material";
 
-const Dropdown = ({ data }) => {
-  const [selected, setSelected] = React.useState("");
+// Define types for your JSON structure
+type SubCategoryType = {
+  id: string;
+  name: string;
+};
 
-  const handleChange = (event) => {
+type SubCategory = {
+  SubCategoryTypeList: SubCategoryType[];
+};
+
+type LobObject = {
+  Lob: string;
+  SubCategoryList: {
+    [subCategoryName: string]: SubCategory;
+  };
+};
+
+type Data = {
+  [lobName: string]: LobObject;
+};
+
+// Props
+interface DropdownProps {
+  data: Data;
+}
+
+const Dropdown: React.FC<DropdownProps> = ({ data }) => {
+  const [selected, setSelected] = useState<string>("");
+
+  const handleChange = (event: SelectChangeEvent<string>) => {
     setSelected(event.target.value);
   };
 
   const renderOptions = () => {
-    const options = [];
+    const options: React.ReactNode[] = [];
 
     Object.entries(data).forEach(([lobName, lobObj]) => {
       const subCategories = lobObj.SubCategoryList;
 
       Object.entries(subCategories).forEach(([subCatName, subCatObj]) => {
-        const subheaderKey = `${lobName} - ${subCatName}`;
+        // Non-selectable subcategory name
         options.push(
-          <ListSubheader key={subheaderKey}>
+          <ListSubheader key={`${lobName}-${subCatName}`}>
             {subCatName}
           </ListSubheader>
         );
 
+        // Selectable types
         subCatObj.SubCategoryTypeList.forEach((type) => {
           options.push(
             <MenuItem key={type.id} value={type.id}>
@@ -43,8 +71,9 @@ const Dropdown = ({ data }) => {
 
   return (
     <FormControl fullWidth>
-      <InputLabel>Select Type</InputLabel>
+      <InputLabel id="dropdown-label">Select Type</InputLabel>
       <Select
+        labelId="dropdown-label"
         value={selected}
         label="Select Type"
         onChange={handleChange}
