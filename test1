@@ -1,3 +1,9 @@
+Argument of type 'Promise<void>' is not assignable to parameter of type 'SetStateAction<never[]>'.ts(2345)
+const clientList: Promise<void>
+
+----------------------
+
+
 
 import React, { JSX, useEffect, useState } from "react";
 import { 
