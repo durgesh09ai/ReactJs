@@ -1,5 +1,4 @@
-import React, { useEffect, useState } from "react";
-import { observer } from "mobx-react-lite";
+import React, { useState, useEffect } from "react";
 import {
   Paper,
   Box,
@@ -11,36 +10,39 @@ import {
 import MoreVertIcon from "@mui/icons-material/MoreVert";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
-import SetupHeader from "./SetupHeader";
+import { observer } from "mobx-react-lite";
 import { mainPageStore } from "../../stores/MainPageStore";
+import SetupHeader from "./SetupHeader";
 
-  const SolutionPanel: React.FC = () => {
+const columnWidths = [
+  "200px", // Solution Name
+  "120px", // Type
+  "100px", // IMU
+  "100px", // SGU
+  "140px", // Created On
+  "100px", // Status
+  "80px",  // Views
+  "60px",  // Actions
+];
 
+const SolutionPanel: React.FC = () => {
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const [currentPage, setCurrentPage] = useState(1);
   const productPerPage = 4;
   const start = (currentPage - 1) * productPerPage;
 
-  const handleClick = (event: React.MouseEvent<HTMLElement>) => {
-    setAnchorEl(event.currentTarget);
-  };
-
-  const handleClose = () => {
-    setAnchorEl(null);
-  };
-
   const {
     fetchSolutionListData,
     solutionListData,
     solutionlistloading
-   }  = mainPageStore;
+  } = mainPageStore;
 
-
-   useEffect(() => {
-    fetchSolutionListData(start,productPerPage);
+  useEffect(() => {
+    fetchSolutionListData(start, productPerPage);
   }, [currentPage]);
 
   const isMenuOpen = Boolean(anchorEl);
+  const solutionlist = solutionListData?.result ?? [];
 
   const columnTitles = [
     "Solution Name",
@@ -49,147 +51,96 @@ import { mainPageStore } from "../../stores/MainPageStore";
     "SGU",
     "Created On",
     "Status",
-    "views",
+    "Views",
     "Actions",
   ];
 
-  const solutionlist = solutionListData?.result ?? [];
-
-  console.log('data:',solutionlist);
-
   return (
-    <Paper elevation={1} sx={{ maxWidth: "100%", pb: "20px", px: 1, borderRadius: 1 }}>
+    <Paper elevation={1} sx={{ maxWidth: "100%", pb: 2, px: 1, borderRadius: 1 }}>
       <SetupHeader title="My Solution" />
 
-      <Box sx={{ display: "flex", flexDirection: "column", justifyContent: "center" }}>
-        <Paper
-          elevation={0}
+      <Paper
+        elevation={0}
+        sx={{
+          border: "1px solid rgba(18,18,21,0.10)",
+          borderRadius: 0,
+          padding: 0,
+          overflowX: "auto",
+        }}
+      >
+        {/* Header Row */}
+        <Box
           sx={{
-            border: "1px solid rgba(18,18,21,0.10)",
-            borderRadius: 0,
-            padding: 0.5,
-            width: "100%",
+            display: "grid",
+            gridTemplateColumns: columnWidths.join(" "),
+            alignItems: "center",
+            backgroundColor: "#0F4977",
+            color: "#fff",
+            px: 2,
+            py: 1,
+            fontSize: 12,
+            fontWeight: 600,
           }}
         >
-          {/* Header Row */}
-          <Box
-            sx={{
-              display: "grid",
-              gridTemplateColumns: "repeat(8, 1fr)",
-              alignItems: "center",
-              gap: 2,
-              mb: 1,
-              backgroundColor:"#0F4977",
-              px:2,
-              py:1
-            }}
-          >
-            {columnTitles.map((title, index) => (
-              <Typography
-                key={index}
-                variant="subtitle2"
-                sx={{ color: "#fff", fontWeight: 400,fontSize:12,textAlign:index===columnTitles.length -1 ? "right" : "left" }}
-              >
-                {title}
-              </Typography>
-            ))}
-          </Box>
+          {columnTitles.map((title, index) => (
+            <Typography
+              key={index}
+              sx={{ textAlign: index === columnTitles.length - 1 ? "right" : "left" }}
+            >
+              {title}
+            </Typography>
+          ))}
+        </Box>
 
-          {/* Sample Data Row */}
+        {/* Data Rows */}
+        {solutionlist.map((item: any) => (
           <Box
+            key={item.id}
             sx={{
               display: "grid",
-              gridTemplateColumns: "repeat(8, 1fr)",
+              gridTemplateColumns: columnWidths.join(" "),
               alignItems: "center",
-              gap: 2,
+              px: 2,
+              py: 1.2,
+              borderBottom: "1px solid #f0f0f0",
+              fontSize: 12,
             }}
           >
-            {solutionlist.map((items:any,index:number) => {
-              <Typography key={index} sx={{fontSize:12}} >Solution {index + 1}</Typography>
-           
-            {/* Action column */}
+            <Typography>{item.name}</Typography>
+            <Typography>{item.tags?.[0] || "—"}</Typography>
+            <Typography>N/A</Typography>
+            <Typography>N/A</Typography>
+            <Typography>—</Typography>
+            <Typography>Active</Typography>
+            <Typography>{item.views}</Typography>
+
             <Box sx={{ display: "flex", justifyContent: "flex-end" }}>
               <IconButton
                 size="small"
-                onClick={handleClick}
-                sx={{ "&:hover": { backgroundColor: "transparent" } }}
+                onClick={(e) => setAnchorEl(e.currentTarget)}
               >
                 <MoreVertIcon />
               </IconButton>
-
               <Menu
                 anchorEl={anchorEl}
                 open={isMenuOpen}
-                onClose={handleClose}
+                onClose={() => setAnchorEl(null)}
                 anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
                 transformOrigin={{ vertical: "top", horizontal: "right" }}
               >
-                <MenuItem onClick={handleClose} sx={{ fontSize:12 }}>
+                <MenuItem onClick={() => setAnchorEl(null)}>
                   <EditIcon fontSize="small" sx={{ mr: 1 }} /> Edit
                 </MenuItem>
-                <MenuItem onClick={handleClose} sx={{ fontSize:12 }}>
+                <MenuItem onClick={() => setAnchorEl(null)}>
                   <DeleteIcon fontSize="small" sx={{ mr: 1 }} /> Archive
                 </MenuItem>
               </Menu>
             </Box>
-            })}
-
           </Box>
-        </Paper>
-      </Box>
+        ))}
+      </Paper>
     </Paper>
   );
 };
 
 export default observer(SolutionPanel);
-
-
-___________________________________________
-
-
-[
-    {
-        "id": "113b6105-13a3-4250-96f8-0a4511b12d16",
-        "name": "New Solution",
-        "description": "",
-        "tags": [
-            "Payer",
-            "Underwriting"
-        ],
-        "profile_img": "profile1.png",
-        "views": 9
-    },
-    {
-        "id": "113b6105-13a3-4250-96f8-0a4511b12d15",
-        "name": "New Solution",
-        "description": "Data Engineering & Management, Cloud Architecture,Data Acquisition- Intake Integration,Group Reporting Analytics,Medical Cost Management,Data Pipelines,IT,IT",
-        "tags": [
-            "Payer",
-            "Underwriting"
-        ],
-        "profile_img": "profile1.png",
-        "views": 9
-    },
-    {
-        "id": "113b6105-13a3-4250-96f8-0a4511b12d14",
-        "name": "New Solution",
-        "description": "",
-        "tags": [
-            "Payer",
-            "Underwriting"
-        ],
-        "profile_img": "profile1.png",
-        "views": 8
-    },
-    {
-        "id": "113b6105-13a3-4250-96f8-0a4511b12d13",
-        "name": "New Solution",
-        "description": "",
-        "tags": [
-            "Payer",
-            "Underwriting"
-        ],
-        "profile_img": "profile1.png",
-        "views": 7
-    }
-]
