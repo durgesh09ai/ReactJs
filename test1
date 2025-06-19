@@ -1,4 +1,5 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
+import { observer } from "mobx-react-lite";
 import {
   Paper,
   Box,
@@ -11,9 +12,14 @@ import MoreVertIcon from "@mui/icons-material/MoreVert";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
 import SetupHeader from "./SetupHeader";
+import { mainPageStore } from "../../stores/MainPageStore";
 
-export const SolutionPanel: React.FC = () => {
+  const SolutionPanel: React.FC = () => {
+
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
+  const [currentPage, setCurrentPage] = useState(1);
+  const productPerPage = 4;
+  const start = (currentPage - 1) * productPerPage;
 
   const handleClick = (event: React.MouseEvent<HTMLElement>) => {
     setAnchorEl(event.currentTarget);
@@ -23,20 +29,36 @@ export const SolutionPanel: React.FC = () => {
     setAnchorEl(null);
   };
 
+  const {
+    fetchSolutionListData,
+    solutionListData,
+    solutionlistloading
+   }  = mainPageStore;
+
+
+   useEffect(() => {
+    fetchSolutionListData(start,productPerPage);
+  }, [currentPage]);
+
   const isMenuOpen = Boolean(anchorEl);
 
   const columnTitles = [
-    "Column 1",
-    "Column 2",
-    "Column 3",
-    "Column 4",
-    "Column 5",
-    "Column 6",
+    "Solution Name",
+    "Type",
+    "IMU",
+    "SGU",
+    "Created On",
+    "Status",
+    "views",
     "Actions",
   ];
 
+  const solutionlist = solutionListData?.result ?? [];
+
+  console.log('data:',solutionlist);
+
   return (
-    <Paper elevation={1} sx={{ maxWidth: "820px", pb: "20px", px: 1, borderRadius: 1 }}>
+    <Paper elevation={1} sx={{ maxWidth: "100%", pb: "20px", px: 1, borderRadius: 1 }}>
       <SetupHeader title="My Solution" />
 
       <Box sx={{ display: "flex", flexDirection: "column", justifyContent: "center" }}>
@@ -44,7 +66,8 @@ export const SolutionPanel: React.FC = () => {
           elevation={0}
           sx={{
             border: "1px solid rgba(18,18,21,0.10)",
-            padding: 2,
+            borderRadius: 0,
+            padding: 0.5,
             width: "100%",
           }}
         >
@@ -52,17 +75,20 @@ export const SolutionPanel: React.FC = () => {
           <Box
             sx={{
               display: "grid",
-              gridTemplateColumns: "repeat(7, 1fr)",
+              gridTemplateColumns: "repeat(8, 1fr)",
               alignItems: "center",
               gap: 2,
               mb: 1,
+              backgroundColor:"#0F4977",
+              px:2,
+              py:1
             }}
           >
             {columnTitles.map((title, index) => (
               <Typography
                 key={index}
                 variant="subtitle2"
-                sx={{ color: "primary.main", fontWeight: 600 }}
+                sx={{ color: "#fff", fontWeight: 400,fontSize:12,textAlign:index===columnTitles.length -1 ? "right" : "left" }}
               >
                 {title}
               </Typography>
@@ -73,17 +99,16 @@ export const SolutionPanel: React.FC = () => {
           <Box
             sx={{
               display: "grid",
-              gridTemplateColumns: "repeat(7, 1fr)",
+              gridTemplateColumns: "repeat(8, 1fr)",
               alignItems: "center",
               gap: 2,
             }}
           >
-            {[...Array(6)].map((_, index) => (
-              <Typography key={index}>Data {index + 1}</Typography>
-            ))}
-
+            {solutionlist.map((items:any,index:number) => {
+              <Typography key={index} sx={{fontSize:12}} >Solution {index + 1}</Typography>
+           
             {/* Action column */}
-            <Box sx={{ display: "flex", justifyContent: "flex-start" }}>
+            <Box sx={{ display: "flex", justifyContent: "flex-end" }}>
               <IconButton
                 size="small"
                 onClick={handleClick}
@@ -99,17 +124,72 @@ export const SolutionPanel: React.FC = () => {
                 anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
                 transformOrigin={{ vertical: "top", horizontal: "right" }}
               >
-                <MenuItem onClick={handleClose}>
+                <MenuItem onClick={handleClose} sx={{ fontSize:12 }}>
                   <EditIcon fontSize="small" sx={{ mr: 1 }} /> Edit
                 </MenuItem>
-                <MenuItem onClick={handleClose}>
-                  <DeleteIcon fontSize="small" sx={{ mr: 1 }} /> Delete
+                <MenuItem onClick={handleClose} sx={{ fontSize:12 }}>
+                  <DeleteIcon fontSize="small" sx={{ mr: 1 }} /> Archive
                 </MenuItem>
               </Menu>
             </Box>
+            })}
+
           </Box>
         </Paper>
       </Box>
     </Paper>
   );
 };
+
+export default observer(SolutionPanel);
+
+
+___________________________________________
+
+
+[
+    {
+        "id": "113b6105-13a3-4250-96f8-0a4511b12d16",
+        "name": "New Solution",
+        "description": "",
+        "tags": [
+            "Payer",
+            "Underwriting"
+        ],
+        "profile_img": "profile1.png",
+        "views": 9
+    },
+    {
+        "id": "113b6105-13a3-4250-96f8-0a4511b12d15",
+        "name": "New Solution",
+        "description": "Data Engineering & Management, Cloud Architecture,Data Acquisition- Intake Integration,Group Reporting Analytics,Medical Cost Management,Data Pipelines,IT,IT",
+        "tags": [
+            "Payer",
+            "Underwriting"
+        ],
+        "profile_img": "profile1.png",
+        "views": 9
+    },
+    {
+        "id": "113b6105-13a3-4250-96f8-0a4511b12d14",
+        "name": "New Solution",
+        "description": "",
+        "tags": [
+            "Payer",
+            "Underwriting"
+        ],
+        "profile_img": "profile1.png",
+        "views": 8
+    },
+    {
+        "id": "113b6105-13a3-4250-96f8-0a4511b12d13",
+        "name": "New Solution",
+        "description": "",
+        "tags": [
+            "Payer",
+            "Underwriting"
+        ],
+        "profile_img": "profile1.png",
+        "views": 7
+    }
+]
