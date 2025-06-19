@@ -1,0 +1,109 @@
+import React from 'react';
+import {
+  Box,
+  Typography,
+  IconButton,
+  Chip,
+  Card,
+  CardContent,
+  CardMedia
+} from '@mui/material';
+
+interface ProductCardProps {
+  title: string;
+  description: string;
+  imageUrl: string;
+  iconUrl: string;
+  actionIcon1: string;
+  actionIcon2: string;
+  badges: Array<{
+    text: string;
+    variant: 'primary' | 'secondary';
+  }>;
+}
+
+export const ProductCard: React.FC<ProductCardProps> = ({
+  title,
+  description,
+  imageUrl,
+  iconUrl,
+  actionIcon1,
+  actionIcon2,
+  badges
+}) => {
+  return (
+    <Card
+      elevation={1}
+      sx={{
+        display: 'flex',
+        flexDirection: 'row',
+        p: 2,
+        borderRadius: 2,
+        border: '1px solid rgba(172,172,172,0.2)',
+        minWidth: 280,
+        gap: 2,
+        position: 'relative'
+      }}
+    >
+      <CardMedia
+        component="img"
+        image={imageUrl}
+        alt={`${title} preview`}
+        sx={{
+          width: 211,
+          height: 'auto',
+          objectFit: 'contain',
+          borderRadius: 1
+        }}
+      />
+
+      <CardContent sx={{ flex: 1, p: 0 }}>
+        <Box display="flex" justifyContent="space-between" alignItems="center">
+          <Typography variant="subtitle1" fontWeight={500}>
+            {title}
+          </Typography>
+          <Box display="flex" gap={1}>
+            <IconButton size="small" aria-label="Action 1">
+              <img src={actionIcon1} alt="action1" width={16} height={16} />
+            </IconButton>
+            <IconButton size="small" aria-label="Action 2">
+              <img src={actionIcon2} alt="action2" width={16} height={16} />
+            </IconButton>
+          </Box>
+        </Box>
+
+        <Typography
+          variant="body2"
+          color="text.secondary"
+          sx={{ mt: 1, mb: 1 }}
+        >
+          {description}
+        </Typography>
+
+        <Box display="flex" gap={1} flexWrap="wrap">
+          {badges.map((badge, index) => (
+            <Chip
+              key={index}
+              label={badge.text}
+              color={badge.variant === 'primary' ? 'primary' : 'secondary'}
+              size="small"
+            />
+          ))}
+        </Box>
+      </CardContent>
+
+      <Box
+        component="img"
+        src={iconUrl}
+        alt="corner icon"
+        sx={{
+          width: 25,
+          height: 25,
+          position: 'absolute',
+          left: 16,
+          bottom: 16
+        }}
+      />
+    </Card>
+  );
+};
