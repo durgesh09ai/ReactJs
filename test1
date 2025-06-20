@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from "react";
+import React, { useState } from "react";
 import {
   Box,
   TextField,
@@ -20,8 +20,18 @@ interface FormData {
   images: string[];
 }
 
+interface Member {
+  name: string;
+  role: string;
+  avatar: string;
+  badge: {
+    label: string;
+    variant: "blue" | "green" | "red";
+  };
+  isActive: boolean;
+}
+
 export const CaseStudyTeamMemeber: React.FC<BasicInfoFormProps> = ({ onSave }) => {
- 
   const [formData, setFormData] = useState<FormData>({
     solutionName: "",
     clientName: "",
@@ -29,9 +39,28 @@ export const CaseStudyTeamMemeber: React.FC<BasicInfoFormProps> = ({ onSave }) =
     images: [],
   });
 
+  const [memberInput, setMemberInput] = useState("");
+  const [teamMembers, setTeamMembers] = useState<Member[]>([]);
+
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
+  };
+
+  const handleAddMember = () => {
+    if (!memberInput.trim()) return;
+    const newMember: Member = {
+      name: memberInput.trim(),
+      role: "Contributor", // default or you can add a role input field
+      avatar: "./proimage.png", // you can customize or allow uploads later
+      badge: {
+        label: "Member",
+        variant: "blue",
+      },
+      isActive: true,
+    };
+    setTeamMembers((prev) => [...prev, newMember]);
+    setMemberInput("");
   };
 
   const handleSave = () => {
@@ -71,77 +100,72 @@ export const CaseStudyTeamMemeber: React.FC<BasicInfoFormProps> = ({ onSave }) =
           <Stack spacing={3} sx={{ flex: 1 }}>
             <Box>
               <Typography variant="body2" gutterBottom>
-               Add your Team
+                Add your Team
               </Typography>
-              <Box sx={{ p: 2, display: 'flex', flexDirection:"row", gap: 1 }}>
-              <TextField
-                id="members"
-                name="member"
-                value={formData.solutionName}
-                placeholder="Enter Team Member Name"
-                fullWidth
-                variant="outlined"
-                size="small"
-              />
-               <Button
-            variant="contained"
-            size="small"
-            sx={{
-              alignSelf: 'flex-start',
-              height:38,
-              backgroundColor: "#0F4977",
-              textTransform: 'none',
-              fontSize: '0.75rem',
-              "&:hover": {
-                backgroundColor: "#0c3b61",
-              }
-            }}
-          >
-            Add
-          </Button>
-          </Box>
-
-            </Box>
-
-            <Box
-            sx={{
-              backgroundColor: "white",
-              border: "1px solid rgba(0,0,0,0.2)",
-              borderRadius: 1,
-              p: 2,
-            }}
-          >
-            <Typography
-              fontWeight={600}
-              fontSize="1rem"
-              color="rgba(21,23,24,1)"
-              sx={{ pb: 1, borderBottom: "1px solid rgba(0,0,0,0.2)" }}
-            >
-              Team Created
-            </Typography>
-
-            <Box mt={2}>
-              <TeamMember
-                name="Demo User"
-                role="Manager"
-                avatar="./proimage.png"
-                badge={{ label: "Team lead", variant: "blue" }}
-                isActive={true}
-              />
-              <Box mt={2}>
-                <TeamMember
-                  name="Demo User2"
-                  role="Manager"
-                  avatar="./proimage.png"
-                  badge={{ label: "Python Developer", variant: "blue" }}
-                  isActive={false}
+              <Box sx={{ p: 2, display: "flex", flexDirection: "row", gap: 1 }}>
+                <TextField
+                  id="members"
+                  name="member"
+                  value={memberInput}
+                  onChange={(e) => setMemberInput(e.target.value)}
+                  placeholder="Enter Team Member Name"
+                  fullWidth
+                  variant="outlined"
+                  size="small"
                 />
+                <Button
+                  variant="contained"
+                  size="small"
+                  onClick={handleAddMember}
+                  sx={{
+                    alignSelf: "flex-start",
+                    height: 38,
+                    backgroundColor: "#0F4977",
+                    textTransform: "none",
+                    fontSize: "0.75rem",
+                    "&:hover": {
+                      backgroundColor: "#0c3b61",
+                    },
+                  }}
+                >
+                  Add
+                </Button>
               </Box>
             </Box>
-          </Box>
 
+            {/* Right Column - Team List */}
+            <Box
+              sx={{
+                backgroundColor: "white",
+                border: "1px solid rgba(0,0,0,0.2)",
+                borderRadius: 1,
+                p: 2,
+              }}
+            >
+              <Typography
+                fontWeight={600}
+                fontSize="1rem"
+                color="rgba(21,23,24,1)"
+                sx={{ pb: 1, borderBottom: "1px solid rgba(0,0,0,0.2)" }}
+              >
+                Team Created
+              </Typography>
+
+              <Box mt={2}>
+                {teamMembers.map((member, index) => (
+                  <Box mt={index > 0 ? 2 : 0} key={index}>
+                    <TeamMember
+                      name={member.name}
+                      role={member.role}
+                      avatar={member.avatar}
+                      badge={member.badge}
+                      isActive={member.isActive}
+                    />
+                  </Box>
+                ))}
+              </Box>
+            </Box>
           </Stack>
-       
         </Box>
       </Stack>
     </Paper>
