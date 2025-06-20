@@ -1,125 +1,94 @@
-import React, { useState } from "react";
+import React, { useState, useCallback } from "react";
 import {
   Box,
-  Paper,
   TextField,
   Typography,
-  Chip,
-  Button
+  Paper,
+  Stack,
+  Button,
 } from "@mui/material";
-import { styled } from "@mui/material/styles";
-import InsertDriveFileIcon from '@mui/icons-material/InsertDriveFile';
+import { TeamMember } from "./TeamMember";
 
-interface DocsUrl {
-  id: string;
-  label: string;
+interface BasicInfoFormProps {
+  onSave?: (formData: FormData) => void;
 }
 
-interface AddUrlSectionProps {
-  selectedDocsUrl: DocsUrl[];
-  onDocUrlSelect: (docsUrl: DocsUrl) => void;
-  onDocUrlRemove: (docUrlId: string) => void;
+interface FormData {
+  solutionName: string;
+  clientName: string;
+  tags: string;
+  images: string[];
 }
 
-const StyledChip = styled(Chip)(() => ({
-  backgroundColor: 'rgba(243,250,255,1)',
-  borderRadius: '16px',
-  '& .MuiChip-deleteIcon': {
-    color: 'rgba(15,73,119,1)',
-  }
-}));
+export const CaseStudyTeamMemeber: React.FC<BasicInfoFormProps> = ({ onSave }) => {
+ 
+  const [formData, setFormData] = useState<FormData>({
+    solutionName: "",
+    clientName: "",
+    tags: "",
+    images: [],
+  });
 
-export const AddUrlSection: React.FC<AddUrlSectionProps> = ({
-  selectedDocsUrl,
-  onDocUrlSelect,
-  onDocUrlRemove,
-}) => {
-  const [showForm, setShowForm] = useState(false);
-  const [url, setUrl] = useState("");
-
-  const handleAddUrlClick = () => {
-    setShowForm(prev => !prev);
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
-  const handleAdd = () => {
-    if (!url.trim()) return;
-    const newDoc: DocsUrl = {
-      id: Date.now().toString(),
-      label: url.trim(),
-    };
-    onDocUrlSelect(newDoc);
-    setUrl("");
-    setShowForm(false);
+  const handleSave = () => {
+    if (onSave) {
+      onSave(formData);
+    }
   };
 
   return (
     <Paper
       elevation={0}
       sx={{
-        border: 1,
-        borderColor: 'rgba(15,73,119,0.1)',
-        borderRadius: 2,
-        minWidth: '240px',
-        minHeight: '502px',
+        width: { xs: "100%", md: "704px" },
         flexGrow: 1,
-        display: 'flex',
-        flexDirection: 'column',
+        p: 2,
+        minHeight: "282px",
       }}
     >
-      {/* Header */}
-      <Box
-        sx={{
-          display: "flex",
-          justifyContent: "space-between",
-          alignItems: "center",
-          p: 1,
-          borderBottom: 2,
-          borderColor: '#0c3b61',
-        }}
-      >
-        <Typography variant="body2" sx={{ fontWeight: 500 }}>
-          Reference Document URLs
-        </Typography>
-        <Button
-          variant="contained"
-          size="small"
-          sx={{
-            backgroundColor: "#0F4977",
-            borderRadius: "8px",
-            color: "#fff",
-            textTransform: "none",
-            fontSize: "0.75rem",
-            padding: "4px 12px",
-            minWidth: "unset",
-            "&:hover": {
-              backgroundColor: "#0c3b61",
-            },
-          }}
-          onClick={handleAddUrlClick}
-        >
-          +
-        </Button>
-      </Box>
-
-      {/* Form (URL Input) */}
-      {showForm && (
-        <Box sx={{ p: 2, display: 'flex', flexDirection: 'column', gap: 1 }}>
-          <Typography variant="body2" gutterBottom>
-            Add Document URL:
-          </Typography>
-          <TextField
-            placeholder="https://example.com/doc.pdf"
-            value={url}
-            onChange={(e) => setUrl(e.target.value)}
-            size="small"
-            fullWidth
+      <Stack spacing={2}>
+        <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+          <img
+            src="./startIcon.png"
+            alt="Start icon"
+            style={{ width: "20px", height: "20px" }}
           />
-          <Button
+          <Typography variant="subtitle1">Add Team Members</Typography>
+        </Box>
+
+        <Box
+          sx={{
+            display: "flex",
+            flexDirection: { xs: "column", md: "row" },
+            gap: 4,
+          }}
+        >
+          {/* Left Column */}
+          <Stack spacing={3} sx={{ flex: 1 }}>
+            <Box>
+              <Typography variant="body2" gutterBottom>
+               Add your Team
+              </Typography>
+              <Box sx={{ p: 2, display: 'flex', flexDirection:"row", gap: 1 }}>
+              <TextField
+                id="members"
+                name="member"
+                value={formData.solutionName}
+                placeholder="Enter Team Member Name"
+                fullWidth
+                variant="outlined"
+                size="small"
+              />
+               <Button
             variant="contained"
             size="small"
-            onClick={handleAdd}
             sx={{
               alignSelf: 'flex-start',
+              height:38,
               backgroundColor: "#0F4977",
               textTransform: 'none',
               fontSize: '0.75rem',
@@ -130,29 +99,51 @@ export const AddUrlSection: React.FC<AddUrlSectionProps> = ({
           >
             Add
           </Button>
-        </Box>
-      )}
+          </Box>
 
-      {/* Selected URLs */}
-      <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1, p: 2, alignItems: 'flex-start' }}>
-        <Typography variant="body2" sx={{ fontWeight: 500, fontSize: '12px' }}>
-          Selected Documents
-        </Typography>
-        {selectedDocsUrl.map((docUrl) => (
-          <StyledChip
-            key={docUrl.id}
-            sx={{ fontSize: 12, color: '#0c3b61' }}
-            label={
-              <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
-                <InsertDriveFileIcon sx={{ fontSize: 16, color: '#0c3b61' }} />
-                <span>{docUrl.label}</span>
+            </Box>
+
+            <Box
+            sx={{
+              backgroundColor: "white",
+              border: "1px solid rgba(0,0,0,0.2)",
+              borderRadius: 1,
+              p: 2,
+            }}
+          >
+            <Typography
+              fontWeight={600}
+              fontSize="1rem"
+              color="rgba(21,23,24,1)"
+              sx={{ pb: 1, borderBottom: "1px solid rgba(0,0,0,0.2)" }}
+            >
+              Team Created
+            </Typography>
+
+            <Box mt={2}>
+              <TeamMember
+                name="Demo User"
+                role="Manager"
+                avatar="./proimage.png"
+                badge={{ label: "Team lead", variant: "blue" }}
+                isActive={true}
+              />
+              <Box mt={2}>
+                <TeamMember
+                  name="Demo User2"
+                  role="Manager"
+                  avatar="./proimage.png"
+                  badge={{ label: "Python Developer", variant: "blue" }}
+                  isActive={false}
+                />
               </Box>
-            }
-            onDelete={() => onDocUrlRemove(docUrl.id)}
-            size="small"
-          />
-        ))}
-      </Box>
+            </Box>
+          </Box>
+
+          </Stack>
+       
+        </Box>
+      </Stack>
     </Paper>
   );
 };
