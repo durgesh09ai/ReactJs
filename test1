@@ -1,146 +1,223 @@
-import React, { useState, useEffect } from "react";
-import {
-  Paper,
-  Box,
-  Typography,
-  IconButton,
-  Menu,
-  MenuItem,
-} from "@mui/material";
-import MoreVertIcon from "@mui/icons-material/MoreVert";
-import EditIcon from "@mui/icons-material/Edit";
-import DeleteIcon from "@mui/icons-material/Delete";
-import { observer } from "mobx-react-lite";
-import { mainPageStore } from "../../stores/MainPageStore";
-import SetupHeader from "./SetupHeader";
+import React, { useState } from "react";
+import { Paper, Box } from "@mui/material";
+import { SolutionTypeSelector } from "./SolutionTypeSelector";
+import { ProgressStepper } from "./ProgressStepper";
+import { BasicInfoForm } from "./BasicInfoForm";
+import { CaseStudyDetailsForm } from "./CaseStudyDetailsForm";
+import { TermAndGamification } from "./TermAndGamification";
+import { ActionButtons } from "../ActionButtons";
+import { TagSelector } from "./TagSelector";
+import { AddUrlSection } from "./AddUrlSection";
+import { Breadcrumb } from "./Breadcrumb";
+import { SuccessCard } from "./SuccessCard";
 
-const columnWidths = [
-  "200px", // Solution Name
-  "120px", // Type
-  "100px", // IMU
-  "100px", // SGU
-  "140px", // Created On
-  "100px", // Status
-  "80px",  // Views
-  "60px",  // Actions
+interface Tag {
+  id: string;
+  label: string;
+}
+
+interface DocsUrl {
+  id: string;
+  label: string;
+}
+
+interface Category {
+  id: string;
+  label: string;
+}
+
+// Step config per solution type
+const stepConfigMap: Record<
+  string,
+  { id: string; label: string; component: React.FC<{ onSave: () => void }> }[]
+> = {
+  "case-study": [
+    { id: "basic", label: "Basic", component: BasicInfoForm },
+    { id: "details", label: "Case Study Details", component: CaseStudyDetailsForm },
+    { id: "team", label: "Team & Gamification", component: TermAndGamification },
+  ],
+  "product": [
+    { id: "basic", label: "Basic", component: BasicInfoForm },
+    { id: "team", label: "Team & Gamification", component: TermAndGamification },
+  ],
+  "rfi-rfp": [
+    { id: "basic", label: "Basic", component: BasicInfoForm },
+    { id: "details", label: "Case Study Details", component: CaseStudyDetailsForm },
+  ],
+  // Add other types as needed
+};
+
+const DocsUrls: DocsUrl[] = [
+  { id: "case-study", label: "Case Study.pdf" },
+  { id: "product", label: "Product.pdf" },
+  { id: "accelerator", label: "Accelerator.pdf" },
+  { id: "demo", label: "Demo.pdf" },
+  { id: "success-story", label: "Success Story.pdf" },
+  { id: "product-2", label: "Product.pdf" },
+  { id: "rfi-rfp", label: "RFI/RFPs.pdf" },
 ];
 
-const SolutionPanel: React.FC = () => {
-  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
-  const [currentPage, setCurrentPage] = useState(1);
-  const productPerPage = 4;
-  const start = (currentPage - 1) * productPerPage;
+const categories: Category[] = [
+  { id: "23", label: "Insurance" },
+  { id: "30", label: "Healthcare" },
+  { id: "31", label: "Banking and Capital Markets" },
+  { id: "32", label: "Growth Markets" },
+];
 
-  const {
-    fetchSolutionListData,
-    solutionListData,
-    solutionlistloading
-  } = mainPageStore;
+export const CaseStudyFlow: React.FC = () => {
+  const [currentStep, setCurrentStep] = useState(1);
+  const [selectedSolutionType, setSelectedSolutionType] = useState("case-study");
+  const [selectedTags, setSelectedTags] = useState<Tag[]>([]);
+  const [selectedDocsUrl, setSelectedDocsUrl] = useState<DocsUrl[]>(DocsUrls);
 
-  useEffect(() => {
-    fetchSolutionListData(start, productPerPage);
-  }, [currentPage]);
-
-  const isMenuOpen = Boolean(anchorEl);
-  const solutionlist = solutionListData?.result ?? [];
-
-  const columnTitles = [
-    "Solution Name",
-    "Type",
-    "IMU",
-    "SGU",
-    "Created On",
-    "Status",
-    "Views",
-    "Actions",
+  const breadcrumbItems = [
+    { label: "Home", href: "/" },
+    { label: "Add a project" },
   ];
 
+  const handleSolutionTypeChange = (typeId: string) => {
+    setSelectedSolutionType(typeId);
+    setCurrentStep(1); // Reset step when solution type changes
+  };
+
+  const steps = stepConfigMap[selectedSolutionType] || [];
+  const totalSteps = steps.length;
+  const currentStepConfig = steps[currentStep - 1];
+
+  const handleNext = () => {
+    if (currentStep < totalSteps + 1) setCurrentStep((prev) => prev + 1);
+  };
+
+  const handlePrevious = () => {
+    if (currentStep > 1) setCurrentStep((prev) => prev - 1);
+  };
+
+  const handleSave = () => {
+    console.log("Saving...");
+  };
+
+  const handleTagSelect = (tag: Tag) => {
+    if (!selectedTags.some((t) => t.id === tag.id)) {
+      setSelectedTags([...selectedTags, tag]);
+    }
+  };
+
+  const handleTagRemove = (tagId: string) => {
+    setSelectedTags(selectedTags.filter((tag) => tag.id !== tagId));
+  };
+
+  const handleDocUrlSelect = (docsUrl: DocsUrl) => {
+    if (!selectedDocsUrl.some((t) => t.id === docsUrl.id)) {
+      setSelectedDocsUrl([...selectedDocsUrl, docsUrl]);
+    }
+  };
+
+  const handleDocUrlRemove = (docsUrlId: string) => {
+    setSelectedDocsUrl(selectedDocsUrl.filter((d) => d.id !== docsUrlId));
+  };
+
+  // 🎉 Completed screen
+  if (currentStep > totalSteps) {
+    return (
+      <Box sx={{ py: 1 }}>
+        <Paper
+          elevation={0}
+          sx={{
+            mt: 4,
+            p: 4,
+            bgcolor: "#0F4977",
+            borderRadius: "20px",
+            border: "1px solid rgba(15,73,119,1)",
+          }}
+        >
+          <SuccessCard />
+        </Paper>
+      </Box>
+    );
+  }
+
   return (
-    <Paper elevation={1} sx={{ maxWidth: "100%", pb: 2, px: 1, borderRadius: 1 }}>
-      <SetupHeader title="My Solution" />
+    <Box sx={{ py: 1 }}>
+      <Breadcrumb items={breadcrumbItems} />
 
       <Paper
         elevation={0}
         sx={{
-          border: "1px solid rgba(18,18,21,0.10)",
-          borderRadius: 0,
-          padding: 0,
-          overflowX: "auto",
+          mt: 2,
+          p: 2,
+          bgcolor: "rgba(243,250,255,1)",
+          borderRadius: "20px",
+          border: "1px solid rgba(15,73,119,1)",
         }}
       >
-        {/* Header Row */}
-        <Box
-          sx={{
-            display: "grid",
-            gridTemplateColumns: columnWidths.join(" "),
-            alignItems: "center",
-            backgroundColor: "#0F4977",
-            color: "#fff",
-            px: 2,
-            py: 1,
-            fontSize: 12,
-            fontWeight: 600,
-          }}
-        >
-          {columnTitles.map((title, index) => (
-            <Typography
-              key={index}
-              sx={{ textAlign: index === columnTitles.length - 1 ? "right" : "left" }}
-            >
-              {title}
-            </Typography>
-          ))}
-        </Box>
+        <SolutionTypeSelector
+          options={Object.keys(stepConfigMap).map((id) => ({
+            id,
+            label: id.replace("-", " ").replace(/\b\w/g, (l) => l.toUpperCase()),
+          }))}
+          defaultSelected={selectedSolutionType}
+          onChange={handleSolutionTypeChange}
+          disabled={currentStep !== 1} 
+        />
 
-        {/* Data Rows */}
-        {solutionlist.map((item: any) => (
+        <Paper elevation={0} sx={{ mt: 1, p: 1, borderRadius: 2 }}>
+          <ProgressStepper
+            steps={steps.map((step, idx) => ({
+              ...step,
+              completed: idx < currentStep,
+              active: idx === currentStep - 1,
+            }))}
+            currentStep={currentStep}
+            totalSteps={totalSteps}
+          />
+
           <Box
-            key={item.id}
             sx={{
-              display: "grid",
-              gridTemplateColumns: columnWidths.join(" "),
-              alignItems: "center",
-              px: 2,
-              py: 1.2,
-              borderBottom: "1px solid #f0f0f0",
-              fontSize: 12,
+              display: "flex",
+              flexDirection: { xs: "column", md: "row" },
+              gap: 2,
+              mt: 2,
+              width: "100%",
             }}
           >
-            <Typography>{item.name}</Typography>
-            <Typography>{item.tags?.[0] || "—"}</Typography>
-            <Typography>N/A</Typography>
-            <Typography>N/A</Typography>
-            <Typography>—</Typography>
-            <Typography>Active</Typography>
-            <Typography>{item.views}</Typography>
+            {/* Left column */}
+            <Box sx={{ flex: 7, minWidth: 0 }}>
+              {currentStepConfig?.component && (
+                <currentStepConfig.component onSave={handleSave} />
+              )}
 
-            <Box sx={{ display: "flex", justifyContent: "flex-end" }}>
-              <IconButton
-                size="small"
-                onClick={(e) => setAnchorEl(e.currentTarget)}
-              >
-                <MoreVertIcon />
-              </IconButton>
-              <Menu
-                anchorEl={anchorEl}
-                open={isMenuOpen}
-                onClose={() => setAnchorEl(null)}
-                anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
-                transformOrigin={{ vertical: "top", horizontal: "right" }}
-              >
-                <MenuItem onClick={() => setAnchorEl(null)}>
-                  <EditIcon fontSize="small" sx={{ mr: 1 }} /> Edit
-                </MenuItem>
-                <MenuItem onClick={() => setAnchorEl(null)}>
-                  <DeleteIcon fontSize="small" sx={{ mr: 1 }} /> Archive
-                </MenuItem>
-              </Menu>
+              <Box sx={{ mt: 1 }}>
+                <ActionButtons
+                  onPrevious={handlePrevious}
+                  onSave={handleSave}
+                  onNext={handleNext}
+                  isPreviousDisabled={currentStep === 1}
+                  isNextDisabled={currentStep > totalSteps}
+                />
+              </Box>
+            </Box>
+
+            {/* Right column */}
+            <Box sx={{ flex: 3, minWidth: 0 }}>
+              {currentStepConfig?.id === "basic" && (
+                <TagSelector
+                  selectedTags={selectedTags}
+                  categories={categories}
+                  onTagSelect={handleTagSelect}
+                  onTagRemove={handleTagRemove}
+                />
+              )}
+              {currentStepConfig?.id === "details" && (
+                <AddUrlSection
+                  selectedDocsUrl={selectedDocsUrl}
+                  onDocUrlSelect={handleDocUrlSelect}
+                  onDocUrlRemove={handleDocUrlRemove}
+                />
+              )}
             </Box>
           </Box>
-        ))}
+        </Paper>
       </Paper>
-    </Paper>
+    </Box>
   );
 };
-
-export default observer(SolutionPanel);
