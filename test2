@@ -1,109 +1,108 @@
-import React from 'react';
+import React, { useState, useEffect } from "react";
 import {
-  Box,
   Typography,
-  IconButton,
-  Chip,
-  Card,
-  CardContent,
-  CardMedia
-} from '@mui/material';
+  Box,
+  Paper,
+  Radio,
+  RadioGroup,
+  FormControlLabel,
+  Stack
+} from "@mui/material";
 
-interface ProductCardProps {
-  title: string;
-  description: string;
-  imageUrl: string;
-  iconUrl: string;
-  actionIcon1: string;
-  actionIcon2: string;
-  badges: Array<{
-    text: string;
-    variant: 'primary' | 'secondary';
-  }>;
+interface SolutionType {
+  id: string;
+  label: string;
 }
 
-export const ProductCard: React.FC<ProductCardProps> = ({
-  title,
-  description,
-  imageUrl,
-  iconUrl,
-  actionIcon1,
-  actionIcon2,
-  badges
+interface SolutionTypeSelectorProps {
+  options: SolutionType[];
+  defaultSelected?: string;
+  onChange?: (selectedId: string) => void;
+  disabled?: boolean; 
+}
+
+export const SolutionTypeSelector: React.FC<SolutionTypeSelectorProps> = ({
+  options,
+  defaultSelected,
+  onChange,
+  disabled = false, // ✅ Default to false
 }) => {
+  const [selected, setSelected] = useState<string>(defaultSelected || "");
+
+  useEffect(() => {
+    if (defaultSelected) {
+      setSelected(defaultSelected);
+    }
+  }, [defaultSelected]);
+
+  const handleSelect = (id: string) => {
+    setSelected(id);
+    if (onChange) {
+      onChange(id);
+    }
+  };
+
   return (
-    <Card
-      elevation={1}
-      sx={{
-        display: 'flex',
-        flexDirection: 'row',
-        p: 2,
-        borderRadius: 2,
-        border: '1px solid rgba(172,172,172,0.2)',
-        minWidth: 280,
-        gap: 2,
-        position: 'relative'
-      }}
-    >
-      <CardMedia
-        component="img"
-        image={imageUrl}
-        alt={`${title} preview`}
-        sx={{
-          width: 211,
-          height: 'auto',
-          objectFit: 'contain',
-          borderRadius: 1
-        }}
-      />
+    <Box sx={{ width: '100%' }}>
+      <Typography variant="body1" sx={{ mb: 1 }}>
+        Add a solution type
+      </Typography>
 
-      <CardContent sx={{ flex: 1, p: 0 }}>
-        <Box display="flex" justifyContent="space-between" alignItems="center">
-          <Typography variant="subtitle1" fontWeight={500}>
-            {title}
-          </Typography>
-          <Box display="flex" gap={1}>
-            <IconButton size="small" aria-label="Action 1">
-              <img src={actionIcon1} alt="action1" width={16} height={16} />
-            </IconButton>
-            <IconButton size="small" aria-label="Action 2">
-              <img src={actionIcon2} alt="action2" width={16} height={16} />
-            </IconButton>
-          </Box>
-        </Box>
-
-        <Typography
-          variant="body2"
-          color="text.secondary"
-          sx={{ mt: 1, mb: 1 }}
+      <RadioGroup
+        value={selected}
+        onChange={(e) => handleSelect(e.target.value)}
+        row
+      >
+        <Stack
+          direction="row"
+          spacing={1}
+          sx={{ flexWrap: 'nowrap', overflowX: 'auto' }}
         >
-          {description}
-        </Typography>
-
-        <Box display="flex" gap={1} flexWrap="wrap">
-          {badges.map((badge, index) => (
-            <Chip
-              key={index}
-              label={badge.text}
-              color={badge.variant === 'primary' ? 'primary' : 'secondary'}
-              size="small"
-            />
+          {options.map((option) => (
+            <Paper
+              key={option.id}
+              elevation={0}
+              sx={{
+                border: 1,
+                borderColor: 'rgba(211,209,209,0.4)',
+                borderRadius: 2,
+                px: 1,
+                py: 0.5,
+                minWidth: 100,
+                height: 40,
+                display: 'flex',
+                alignItems: 'center',
+                opacity: disabled ? 0.5 : 1, // ✅ Visual cue
+              }}
+            >
+              <FormControlLabel
+                value={option.id}
+                control={
+                  <Radio
+                    disabled={disabled} // ✅ Disable radio
+                    size="small"
+                    sx={{
+                      color: 'rgba(211,209,209,0.4)',
+                      '&.Mui-checked': {
+                        color: 'rgba(15,73,119,1)',
+                      },
+                      p: 0.5
+                    }}
+                  />
+                }
+                label={option.label}
+                disabled={disabled} // ✅ Disable label click
+                sx={{
+                  m: 0,
+                  '.MuiFormControlLabel-label': {
+                    fontSize: '0.7rem'
+                  }
+                }}
+              />
+            </Paper>
           ))}
-        </Box>
-      </CardContent>
-
-      <Box
-        component="img"
-        src={iconUrl}
-        alt="corner icon"
-        sx={{
-          width: 25,
-          height: 25,
-          position: 'absolute',
-          left: 16,
-          bottom: 16
-        }}
-      />
-    </Card>
+        </Stack>
+      </RadioGroup>
+    </Box>
   );
 };
