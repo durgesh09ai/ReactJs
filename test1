@@ -1,223 +1,201 @@
-import React, { useState } from "react";
-import { Paper, Box } from "@mui/material";
-import { SolutionTypeSelector } from "./SolutionTypeSelector";
-import { ProgressStepper } from "./ProgressStepper";
-import { BasicInfoForm } from "./BasicInfoForm";
-import { CaseStudyDetailsForm } from "./CaseStudyDetailsForm";
-import { TermAndGamification } from "./TermAndGamification";
-import { ActionButtons } from "../ActionButtons";
-import { TagSelector } from "./TagSelector";
-import { AddUrlSection } from "./AddUrlSection";
-import { Breadcrumb } from "./Breadcrumb";
-import { SuccessCard } from "./SuccessCard";
+import React, { useState, useCallback } from "react";
+import {
+  Box,
+  TextField,
+  Typography,
+  Paper,
+  Stack,
+  } from "@mui/material";
+import { useDropzone } from "react-dropzone";
 
-interface Tag {
-  id: string;
-  label: string;
+interface BasicInfoFormProps {
+  onSave?: (formData: FormData) => void;
 }
 
-interface DocsUrl {
-  id: string;
-  label: string;
+interface FormData {
+  solutionName: string;
+  clientName: string;
+  tags: string;
+  images: string[];
 }
 
-interface Category {
-  id: string;
-  label: string;
-}
+export const CaseStudyBasicform: React.FC<BasicInfoFormProps> = ({ onSave }) => {
+  const [formData, setFormData] = useState<FormData>({
+    solutionName: "",
+    clientName: "",
+    tags: "",
+    images: [],
+  });
 
-// Step config per solution type
-const stepConfigMap: Record<
-  string,
-  { id: string; label: string; component: React.FC<{ onSave: () => void }> }[]
-> = {
-  "case-study": [
-    { id: "basic", label: "Basic", component: BasicInfoForm },
-    { id: "details", label: "Case Study Details", component: CaseStudyDetailsForm },
-    { id: "team", label: "Team & Gamification", component: TermAndGamification },
-  ],
-  "product": [
-    { id: "basic", label: "Basic", component: BasicInfoForm },
-    { id: "team", label: "Team & Gamification", component: TermAndGamification },
-  ],
-  "rfi-rfp": [
-    { id: "basic", label: "Basic", component: BasicInfoForm },
-    { id: "details", label: "Case Study Details", component: CaseStudyDetailsForm },
-  ],
-  // Add other types as needed
-};
-
-const DocsUrls: DocsUrl[] = [
-  { id: "case-study", label: "Case Study.pdf" },
-  { id: "product", label: "Product.pdf" },
-  { id: "accelerator", label: "Accelerator.pdf" },
-  { id: "demo", label: "Demo.pdf" },
-  { id: "success-story", label: "Success Story.pdf" },
-  { id: "product-2", label: "Product.pdf" },
-  { id: "rfi-rfp", label: "RFI/RFPs.pdf" },
-];
-
-const categories: Category[] = [
-  { id: "23", label: "Insurance" },
-  { id: "30", label: "Healthcare" },
-  { id: "31", label: "Banking and Capital Markets" },
-  { id: "32", label: "Growth Markets" },
-];
-
-export const CaseStudyFlow: React.FC = () => {
-  const [currentStep, setCurrentStep] = useState(1);
-  const [selectedSolutionType, setSelectedSolutionType] = useState("case-study");
-  const [selectedTags, setSelectedTags] = useState<Tag[]>([]);
-  const [selectedDocsUrl, setSelectedDocsUrl] = useState<DocsUrl[]>(DocsUrls);
-
-  const breadcrumbItems = [
-    { label: "Home", href: "/" },
-    { label: "Add a project" },
-  ];
-
-  const handleSolutionTypeChange = (typeId: string) => {
-    setSelectedSolutionType(typeId);
-    setCurrentStep(1); // Reset step when solution type changes
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
-  const steps = stepConfigMap[selectedSolutionType] || [];
-  const totalSteps = steps.length;
-  const currentStepConfig = steps[currentStep - 1];
+  const handleDrop = useCallback((acceptedFiles: File[]) => {
+    const newImages = acceptedFiles.map(file => URL.createObjectURL(file));
+    setFormData(prev => ({ ...prev, images: [...prev.images, ...newImages] }));
+  }, []);
 
-  const handleNext = () => {
-    if (currentStep < totalSteps + 1) setCurrentStep((prev) => prev + 1);
-  };
-
-  const handlePrevious = () => {
-    if (currentStep > 1) setCurrentStep((prev) => prev - 1);
-  };
+  const { getRootProps, getInputProps, isDragActive } = useDropzone({
+    onDrop: handleDrop,
+    accept: { "image/*": [] },
+    multiple: true,
+  });
 
   const handleSave = () => {
-    console.log("Saving...");
-  };
-
-  const handleTagSelect = (tag: Tag) => {
-    if (!selectedTags.some((t) => t.id === tag.id)) {
-      setSelectedTags([...selectedTags, tag]);
+    if (onSave) {
+      onSave(formData);
     }
   };
-
-  const handleTagRemove = (tagId: string) => {
-    setSelectedTags(selectedTags.filter((tag) => tag.id !== tagId));
-  };
-
-  const handleDocUrlSelect = (docsUrl: DocsUrl) => {
-    if (!selectedDocsUrl.some((t) => t.id === docsUrl.id)) {
-      setSelectedDocsUrl([...selectedDocsUrl, docsUrl]);
-    }
-  };
-
-  const handleDocUrlRemove = (docsUrlId: string) => {
-    setSelectedDocsUrl(selectedDocsUrl.filter((d) => d.id !== docsUrlId));
-  };
-
-  // 🎉 Completed screen
-  if (currentStep > totalSteps) {
-    return (
-      <Box sx={{ py: 1 }}>
-        <Paper
-          elevation={0}
-          sx={{
-            mt: 4,
-            p: 4,
-            bgcolor: "#0F4977",
-            borderRadius: "20px",
-            border: "1px solid rgba(15,73,119,1)",
-          }}
-        >
-          <SuccessCard />
-        </Paper>
-      </Box>
-    );
-  }
 
   return (
-    <Box sx={{ py: 1 }}>
-      <Breadcrumb items={breadcrumbItems} />
-
-      <Paper
-        elevation={0}
-        sx={{
-          mt: 2,
-          p: 2,
-          bgcolor: "rgba(243,250,255,1)",
-          borderRadius: "20px",
-          border: "1px solid rgba(15,73,119,1)",
-        }}
-      >
-        <SolutionTypeSelector
-          options={Object.keys(stepConfigMap).map((id) => ({
-            id,
-            label: id.replace("-", " ").replace(/\b\w/g, (l) => l.toUpperCase()),
-          }))}
-          defaultSelected={selectedSolutionType}
-          onChange={handleSolutionTypeChange}
-          disabled={currentStep !== 1} 
-        />
-
-        <Paper elevation={0} sx={{ mt: 1, p: 1, borderRadius: 2 }}>
-          <ProgressStepper
-            steps={steps.map((step, idx) => ({
-              ...step,
-              completed: idx < currentStep,
-              active: idx === currentStep - 1,
-            }))}
-            currentStep={currentStep}
-            totalSteps={totalSteps}
+    <Paper
+      elevation={0}
+      sx={{
+        width: { xs: "100%", md: "704px" },
+        flexGrow: 1,
+        p: 1,
+        minHeight: "382px",
+      }}
+    >
+      <Stack spacing={2}>
+        <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+          <img
+            src="./formIcon.png"
+            alt="Start icon"
+            style={{ width: "20px", height: "20px" }}
           />
+          <Typography variant="subtitle1">Start Your Story</Typography>
+        </Box>
 
-          <Box
-            sx={{
-              display: "flex",
-              flexDirection: { xs: "column", md: "row" },
-              gap: 2,
-              mt: 2,
-              width: "100%",
-            }}
-          >
-            {/* Left column */}
-            <Box sx={{ flex: 7, minWidth: 0 }}>
-              {currentStepConfig?.component && (
-                <currentStepConfig.component onSave={handleSave} />
-              )}
+        <Typography variant="body2" color="text.secondary">
+          General Information
+        </Typography>
 
-              <Box sx={{ mt: 1 }}>
-                <ActionButtons
-                  onPrevious={handlePrevious}
-                  onSave={handleSave}
-                  onNext={handleNext}
-                  isPreviousDisabled={currentStep === 1}
-                  isNextDisabled={currentStep > totalSteps}
-                />
-              </Box>
+        <Box
+          sx={{
+            display: "flex",
+            flexDirection: { xs: "column", md: "row" },
+            gap: 4,
+            width:'580px' 
+          }}
+        >
+          {/* Left Column */}
+          <Stack spacing={2} sx={{ flex: 1}}>
+            <Box>
+              <Typography variant="body2" gutterBottom>
+                Name of the Case Study
+              </Typography>
+              <TextField
+                required
+                id="solutionName"
+                name="solutionName"
+                value={formData.solutionName}
+                onChange={handleChange}
+                placeholder="Enter name of the Case Study"
+                fullWidth
+                variant="outlined"
+                size="small"
+              />
             </Box>
 
-            {/* Right column */}
-            <Box sx={{ flex: 3, minWidth: 0 }}>
-              {currentStepConfig?.id === "basic" && (
-                <TagSelector
-                  selectedTags={selectedTags}
-                  categories={categories}
-                  onTagSelect={handleTagSelect}
-                  onTagRemove={handleTagRemove}
-                />
-              )}
-              {currentStepConfig?.id === "details" && (
-                <AddUrlSection
-                  selectedDocsUrl={selectedDocsUrl}
-                  onDocUrlSelect={handleDocUrlSelect}
-                  onDocUrlRemove={handleDocUrlRemove}
-                />
-              )}
+            <Box>
+              <Typography variant="body2" gutterBottom>
+                Client Name
+              </Typography>
+              <TextField
+                id="clientName"
+                name="clientName"
+                value={formData.clientName}
+                onChange={handleChange}
+                placeholder="Enter client name"
+                fullWidth
+                variant="outlined"
+                size="small"
+              />
             </Box>
+
+            <Box>
+              <Typography variant="body2" gutterBottom>
+                Smart Tags
+              </Typography>
+              <TextField
+                id="clientName"
+                name="clientName"
+                value={formData.clientName}
+                onChange={handleChange}
+                placeholder="Enter client name"
+                fullWidth
+                variant="outlined"
+                size="small"
+              />
+            </Box>
+
+           
+          </Stack>
+
+          {/* Right Column */}
+          <Box sx={{ flex: 1 }}>
+            <Typography variant="body2" gutterBottom>
+              Upload Card images.
+            </Typography>
+            <Box
+              {...getRootProps()}
+              sx={{
+                border: "2px dashed rgba(15,73,119,0.5)",
+                padding: 2,
+                borderRadius: 2,
+                textAlign: "center",
+                cursor: "pointer",
+                mt: 2,
+                minHeight: "100px", // Optional: setting a height for the drop area
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+              }}
+            >
+
+
+         <Box sx={{ display: "flex", gap: 2, mt: 2, flexWrap: "wrap" }}>
+              {formData.images.map((img, idx) => (
+                <img
+                  key={idx}
+                  src={img}
+                  alt={`Upload preview ${idx}`}
+                  style={{
+                    width: "50px",
+                    minHeight: "50px", 
+                    display: "flex",
+                    alignItems: "center",
+                    textAlign: "center",
+                     justifyContent: "center",
+                     borderRadius: "10px",
+                    padding: 2,
+                  }}
+                />
+              ))}
+            </Box>
+
+              <input {...getInputProps()} />
+              {isDragActive ? (
+                <Typography variant="body2">Drop the files here ...</Typography>
+              ) : (
+                <img
+                src="./add_file.svg"
+                alt="Card image 2"
+                style={{
+                  width: "66px",
+                  height: "auto",
+                }}
+              />              )}
+            </Box>
+
           </Box>
-        </Paper>
-      </Paper>
-    </Box>
+        </Box>
+      </Stack>
+
+
+    </Paper>
   );
 };
