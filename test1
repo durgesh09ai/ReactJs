@@ -1,30 +1,182 @@
-submit = async () => {
-  try {
-    const data = {
-      research_name: this.formData.caseStudyDetails,
-      description: this.formData.solution,
-      workspace_id: this.formData.workspaceId,
+import React, { useEffect, useState } from "react";
+import {
+  Box,
+  Paper,
+  Tabs,
+  Tab,
+  TextField,
+  Typography,
+  Chip,
+  List,
+  ListItem,
+  ListItemText,
+  ListItemIcon,
+  Checkbox,
+  ListItemButton,
+  InputAdornment,
+} from "@mui/material";
+import { styled } from "@mui/material/styles";
+import SearchIcon from "@mui/icons-material/Search";
+import { mainPageStore } from "../../stores/MainPageStore";
+import { observer } from "mobx-react-lite";
+import { solutionFormStore } from "../../stores/SolutionFormStore";
+
+interface Category {
+  id: string;
+  name: string;
+}
+
+const StyledChip = styled(Chip)(() => ({
+  backgroundColor: "rgba(243,250,255,1)",
+  borderRadius: "16px",
+  "& .MuiChip-deleteIcon": {
+    color: "rgba(15,73,119,1)",
+  },
+}));
+
+export const TagSelector: React.FC = observer(() => {
+  const [activeTab, setActiveTab] = useState<"IMU" | "SGU">("IMU");
+  const [searchQuery, setSearchQuery] = useState<string>("");
+
+  const [sguList, setSguList] = useState<Category[]>([]);
+  const [imuList, setImuList] = useState<Category[]>([]);
+
+  const imuTags: Category[] = solutionFormStore.formData["imuTags"] || [];
+  const sguTags: Category[] = solutionFormStore.formData["sguTags"] || [];
+
+  const updateTags = (key: "imuTags" | "sguTags", tags: Category[]) => {
+    solutionFormStore.updateFormData({ [key]: tags });
+  };
+
+  useEffect(() => {
+    const loadSguData = async () => {
+      const data = await mainPageStore.fetchFillerListData("sgu");
+      setSguList(data);
     };
+    loadSguData();
+  }, []);
 
-    const res = await fetch(`${this.apiUrl}/research_dashboard/create_solution`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(data),
-    });
+  useEffect(() => {
+    const loadImuData = async () => {
+      const data = await mainPageStore.fetchFillerListData("imu");
+      setImuList(data);
+    };
+    loadImuData();
+  }, []);
 
-    if (!res.ok) {
-      throw new Error("Failed to add research item");
-    }
+  const currentCategories = activeTab === "IMU" ? imuList : sguList;
 
-    // Optional: parse response if needed
-    // const result = await res.json();
-    // console.log("Submitted successfully", result);
+  const filteredCategories = currentCategories.filter((category) =>
+    category.name.toLowerCase().includes(searchQuery.toLowerCase())
+  );
 
-  } catch (e: any) {
-    runInAction(() => {
-      this.error = e.message || "Unknown error";
-    });
-  }
-};
+  const handleToggle = (category: Category) => {
+    const key = activeTab === "IMU" ? "imuTags" : "sguTags";
+    const currentTags = key === "imuTags" ? imuTags : sguTags;
+
+    const exists = currentTags.some((item) => item.id === category.id);
+    const updatedTags = exists
+      ? currentTags.filter((item) => item.id !== category.id)
+      : [...currentTags, category];
+
+    updateTags(key, updatedTags);
+  };
+
+  const handleDelete = (tab: "IMU" | "SGU", id: string) => {
+    const key = tab === "IMU" ? "imuTags" : "sguTags";
+    const currentTags = key === "imuTags" ? imuTags : sguTags;
+    const updatedTags = currentTags.filter((tag) => tag.id !== id);
+    updateTags(key, updatedTags);
+  };
+
+  return (
+    <Paper
+      elevation={0}
+      sx={{
+        border: 1,
+        borderColor: "rgba(15,73,119,0.1)",
+        borderRadius: 2,
+        minWidth: "240px",
+        minHeight: "502px",
+        flexGrow: 1,
+        display: "flex",
+        flexDirection: "column",
+      }}
+    >
+      <Box sx={{ width: "100%", borderBottom: 1, borderColor: "divider" }}>
+        <Tabs value={activeTab} onChange={(_, newValue) => setActiveTab(newValue)}>
+          <Tab label="IMU" value="IMU" sx={{ fontSize: "0.75rem" }} />
+          <Tab label="SGU" value="SGU" sx={{ fontSize: "0.75rem" }} />
+        </Tabs>
+      </Box>
+
+      <Box sx={{ p: 2, display: "flex", flexDirection: "column", flexGrow: 1 }}>
+        <TextField
+          placeholder="Search tags"
+          value={searchQuery}
+          onChange={(e) => setSearchQuery(e.target.value)}
+          size="small"
+          fullWidth
+          InputProps={{
+            endAdornment: (
+              <InputAdornment position="end">
+                <SearchIcon />
+              </InputAdornment>
+            ),
+          }}
+          sx={{ mb: 2 }}
+        />
+
+        <Typography variant="caption" color="text.secondary" sx={{ mb: 1 }}>
+          Selected tags
+        </Typography>
+
+        <Box sx={{ display: "flex", flexWrap: "wrap", gap: 1, mb: 2 }}>
+          {imuTags.map((tag) => (
+            <StyledChip
+              key={`imu-${tag.id}`}
+              label={`${tag.name} (IMU)`}
+              onDelete={() => handleDelete("IMU", tag.id)}
+              size="small"
+            />
+          ))}
+          {sguTags.map((tag) => (
+            <StyledChip
+              key={`sgu-${tag.id}`}
+              label={`${tag.name} (SGU)`}
+              onDelete={() => handleDelete("SGU", tag.id)}
+              size="small"
+            />
+          ))}
+        </Box>
+
+        <Typography variant="caption" color="text.secondary" sx={{ mb: 1 }}>
+          Choose {activeTab}
+        </Typography>
+
+        <List sx={{ flexGrow: 1, overflow: "auto" }}>
+          {filteredCategories.map((category) => {
+            const isChecked =
+              activeTab === "IMU"
+                ? imuTags.some((t) => t.id === category.id)
+                : sguTags.some((t) => t.id === category.id);
+
+            return (
+              <ListItem disablePadding key={category.id}>
+                <ListItemButton onClick={() => handleToggle(category)} sx={{ py: 0.5 }}>
+                  <ListItemIcon sx={{ minWidth: "auto", mr: 1 }}>
+                    <Checkbox checked={isChecked} size="small" />
+                  </ListItemIcon>
+                  <ListItemText
+                    primary={category.name}
+                    primaryTypographyProps={{ variant: "body2" }}
+                  />
+                </ListItemButton>
+              </ListItem>
+            );
+          })}
+        </List>
+      </Box>
+    </Paper>
+  );
+});
