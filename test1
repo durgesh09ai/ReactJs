@@ -1,182 +1,357 @@
 import React, { useEffect, useState } from "react";
 import {
   Box,
-  Paper,
-  Tabs,
-  Tab,
   TextField,
   Typography,
-  Chip,
-  List,
-  ListItem,
-  ListItemText,
-  ListItemIcon,
+  Paper,
+  Stack,
+  Autocomplete,
   Checkbox,
-  ListItemButton,
-  InputAdornment,
+  Chip,
 } from "@mui/material";
-import { styled } from "@mui/material/styles";
-import SearchIcon from "@mui/icons-material/Search";
-import { mainPageStore } from "../../stores/MainPageStore";
-import { observer } from "mobx-react-lite";
-import { solutionFormStore } from "../../stores/SolutionFormStore";
+import CheckBoxOutlineBlankIcon from "@mui/icons-material/CheckBoxOutlineBlank";
+import CheckBoxIcon from "@mui/icons-material/CheckBox";
+import InfoOutlinedIcon from "@mui/icons-material/InfoOutlined";
 
-interface Category {
-  id: string;
-  name: string;
+const icon = <CheckBoxOutlineBlankIcon fontSize="small" />;
+const checkedIcon = <CheckBoxIcon fontSize="small" />;
+
+interface BasicInfoFormProps {
+  data: any;
+  onDataChange: (data: any) => void;
 }
 
-const StyledChip = styled(Chip)(() => ({
-  backgroundColor: "rgba(243,250,255,1)",
-  borderRadius: "16px",
-  "& .MuiChip-deleteIcon": {
-    color: "rgba(15,73,119,1)",
-  },
-}));
+const exlDifferentiator = [
+  { key: "reporting", label: "Reporting/MI" },
+  { key: "strategy", label: "Strategy" },
+  { key: "analytics", label: "Analytics Data Management" },
+  { key: "modeling", label: "Modeling" },
+  { key: "management", label: "Model Risk Management" },
+  { key: "monitoring", label: "Model Monitoring" },
+  { key: "engineering", label: "Data Engineering" },
+  { key: "software", label: "Software Engineering" },
+  { key: "others", label: "others" },
+];
 
-export const TagSelector: React.FC = observer(() => {
-  const [activeTab, setActiveTab] = useState<"IMU" | "SGU">("IMU");
-  const [searchQuery, setSearchQuery] = useState<string>("");
+const valueProposition1 = [
+  { key: "supplying-talent", label: "Supplying Talent" },
+  { key: "influence-analytics-output", label: "Influence Analytics Output" },
+  { key: "influence-business-outcomes", label: "Influence Business Outcomes" },
+];
 
-  const [sguList, setSguList] = useState<Category[]>([]);
-  const [imuList, setImuList] = useState<Category[]>([]);
+const valueProposition=   [
+      {
+        id: "supplying-talent",
+        label: "Supplying Talent",
+        message: "We supply talent to solve business needs.",
+      },
+      {
+        id: "influence-analytics-output",
+        label: "Influence Analytics Output",
+        message: "We enhance analytics results.",
+      },
+      {
+        id: "influence-business-outcomes",
+        label: "Influence Business Outcomes",
+        message: "We impact business outcomes directly.",
+      },
+    ];
 
-  const imuTags: Category[] = solutionFormStore.formData["imuTags"] || [];
-  const sguTags: Category[] = solutionFormStore.formData["sguTags"] || [];
+const licensingModel = [
+  { key: "pmpm", label: "PMPM" },
+  { key: "license-based", label: "License Based" },
+  { key: "upfront-ongoing", label: "Upfront + Ongoing" },
+  { key: "contingency-based", label: "Contingency Based" },
+];
 
-  const updateTags = (key: "imuTags" | "sguTags", tags: Category[]) => {
-    solutionFormStore.updateFormData({ [key]: tags });
+export const ProductDetailsForm: React.FC<BasicInfoFormProps> = ({ data, onDataChange }) => {
+  const [formData, setFormData] = useState<any>(data || {});
+
+useEffect(() => {
+    if (JSON.stringify(data) !== JSON.stringify(formData)) {
+      setFormData(data || {});
+    }
+  }, [data]);
+
+  // Notify parent when formData changes
+  useEffect(() => {
+    if (typeof onDataChange === "function") {
+      onDataChange(formData);
+    }
+  }, [formData]);
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    setFormData((prev: any) => ({ ...prev, [name]: value }));
   };
 
-  useEffect(() => {
-    const loadSguData = async () => {
-      const data = await mainPageStore.fetchFillerListData("sgu");
-      setSguList(data);
-    };
-    loadSguData();
-  }, []);
-
-  useEffect(() => {
-    const loadImuData = async () => {
-      const data = await mainPageStore.fetchFillerListData("imu");
-      setImuList(data);
-    };
-    loadImuData();
-  }, []);
-
-  const currentCategories = activeTab === "IMU" ? imuList : sguList;
-
-  const filteredCategories = currentCategories.filter((category) =>
-    category.name.toLowerCase().includes(searchQuery.toLowerCase())
-  );
-
-  const handleToggle = (category: Category) => {
-    const key = activeTab === "IMU" ? "imuTags" : "sguTags";
-    const currentTags = key === "imuTags" ? imuTags : sguTags;
-
-    const exists = currentTags.some((item) => item.id === category.id);
-    const updatedTags = exists
-      ? currentTags.filter((item) => item.id !== category.id)
-      : [...currentTags, category];
-
-    updateTags(key, updatedTags);
+  const handleUpdateField = (key: string, value: any) => {
+    setFormData((prev: any) => ({ ...prev, [key]: value }));
   };
 
-  const handleDelete = (tab: "IMU" | "SGU", id: string) => {
-    const key = tab === "IMU" ? "imuTags" : "sguTags";
-    const currentTags = key === "imuTags" ? imuTags : sguTags;
-    const updatedTags = currentTags.filter((tag) => tag.id !== id);
-    updateTags(key, updatedTags);
+  const handleDelete = (key: string, field: string) => {
+    const updated = (formData[field] || []).filter((item: any) => item.key !== key);
+    handleUpdateField(field, updated);
+  };
+
+  const inputStyle = {
+    fontSize: "13px",
+    "&::placeholder": {
+      fontSize: "12px",
+    },
+  };
+
+  const textFieldStyle = { width: "220px" };
+
+
+   const handleSingleSelectChange = (
+    field: string,
+    value: any,
+    autoFillKey?: string
+  ) => {
+    setFormData((prev: any) => ({
+      ...prev,
+      [field]: value ? [value] : [],
+      ...(autoFillKey && value?.message
+        ? { [autoFillKey]: value.message }
+        : {}),
+    }));
+  };
+
+  const createSingleSelectWithMessage = (
+    title: string,
+    field: string,
+    options: { id: string; label: string; message?: string }[],
+    autoFillKey?: string
+  ) => {
+    const selected = formData[field]?.[0] || null;
+
+    return (
+      <Box sx={{ width: 260 }}>
+        <Typography variant="body2" gutterBottom>
+          {title}
+        </Typography>
+        <Autocomplete
+          options={options}
+          value={selected}
+          getOptionLabel={(option) => option.label}
+          onChange={(_, newValue) =>
+            handleSingleSelectChange(field, newValue, autoFillKey)
+          }
+          isOptionEqualToValue={(option, value) => option.id === value.id}
+          renderInput={(params) => (
+            <TextField
+              {...params}
+              variant="outlined"
+              placeholder={`Select ${title}`}
+              size="small"
+              InputLabelProps={{ sx: { fontSize: 14 } }}
+            />
+          )}
+        />
+        {selected?.message && (
+          <Box sx={{ mt: 1, display: "flex", alignItems: "center", gap: 1 }}>
+            <InfoOutlinedIcon fontSize="small" color="info" />
+            <Typography variant="caption" color="text.secondary">
+              {selected.message}
+            </Typography>
+          </Box>
+        )}
+      </Box>
+    );
   };
 
   return (
-    <Paper
-      elevation={0}
-      sx={{
-        border: 1,
-        borderColor: "rgba(15,73,119,0.1)",
-        borderRadius: 2,
-        minWidth: "240px",
-        minHeight: "502px",
-        flexGrow: 1,
-        display: "flex",
-        flexDirection: "column",
-      }}
-    >
-      <Box sx={{ width: "100%", borderBottom: 1, borderColor: "divider" }}>
-        <Tabs value={activeTab} onChange={(_, newValue) => setActiveTab(newValue)}>
-          <Tab label="IMU" value="IMU" sx={{ fontSize: "0.75rem" }} />
-          <Tab label="SGU" value="SGU" sx={{ fontSize: "0.75rem" }} />
-        </Tabs>
-      </Box>
-
-      <Box sx={{ p: 2, display: "flex", flexDirection: "column", flexGrow: 1 }}>
-        <TextField
-          placeholder="Search tags"
-          value={searchQuery}
-          onChange={(e) => setSearchQuery(e.target.value)}
-          size="small"
-          fullWidth
-          InputProps={{
-            endAdornment: (
-              <InputAdornment position="end">
-                <SearchIcon />
-              </InputAdornment>
-            ),
-          }}
-          sx={{ mb: 2 }}
-        />
-
-        <Typography variant="caption" color="text.secondary" sx={{ mb: 1 }}>
-          Selected tags
-        </Typography>
-
-        <Box sx={{ display: "flex", flexWrap: "wrap", gap: 1, mb: 2 }}>
-          {imuTags.map((tag) => (
-            <StyledChip
-              key={`imu-${tag.id}`}
-              label={`${tag.name} (IMU)`}
-              onDelete={() => handleDelete("IMU", tag.id)}
-              size="small"
-            />
-          ))}
-          {sguTags.map((tag) => (
-            <StyledChip
-              key={`sgu-${tag.id}`}
-              label={`${tag.name} (SGU)`}
-              onDelete={() => handleDelete("SGU", tag.id)}
-              size="small"
-            />
-          ))}
+    <Paper elevation={0} sx={{ width: { xs: "100%", md: "704px" }, flexGrow: 1, p: 2, minHeight: "522px" }}>
+      <Stack spacing={2}>
+        <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+          <img src="./formIcon.png" alt="Start icon" style={{ width: "20px", height: "20px" }} />
+          <Typography variant="subtitle1">Product Details</Typography>
         </Box>
 
-        <Typography variant="caption" color="text.secondary" sx={{ mb: 1 }}>
-          Choose {activeTab}
+        <Typography variant="body2" color="text.secondary">
+          General Information
         </Typography>
 
-        <List sx={{ flexGrow: 1, overflow: "auto" }}>
-          {filteredCategories.map((category) => {
-            const isChecked =
-              activeTab === "IMU"
-                ? imuTags.some((t) => t.id === category.id)
-                : sguTags.some((t) => t.id === category.id);
+        {/* EXL Differentiator */}
+        <Box sx={{ width: "100%" }}>
+          <Typography variant="body2" gutterBottom>EXL Differentiator</Typography>
+         <Autocomplete
+          multiple
+          freeSolo
+          options={exlDifferentiator}
+          getOptionLabel={(option) => typeof option === "string" ? option : option.label}
+          filterSelectedOptions
+          value={formData.exlDifferentiator || []}
+          onChange={(_, newValue) => {
+            const parsed = newValue.map((item) => {
+              if (typeof item === "string") {
+                return { key: item.toLowerCase().replace(/\s+/g, "-"), label: item };
+              }
+              return item;
+            });
+            handleUpdateField("exlDifferentiator", parsed);
+          }}
+          isOptionEqualToValue={(option, value) =>
+            (typeof option === "string" ? option : option.key) === (typeof value === "string" ? value : value.key)
+          }
+            renderTags={() => null}
+            renderOption={(props, option, { selected }) => (
+              <li {...props} style={{ fontSize: 14 }}>
+                <Checkbox
+                  icon={icon}
+                  checkedIcon={checkedIcon}
+                  style={{ marginRight: 8 }}
+                  checked={selected}
+                />
+      {typeof option === "string" ? option : option.label}
+    </li>
+  )}
+  renderInput={(params) => (
+    <TextField
+      {...params}
+      variant="outlined"
+      placeholder="Add differentiator"
+      size="small"
+      InputLabelProps={{ sx: { fontSize: 14 } }}
+    />
+  )}
+/>
 
-            return (
-              <ListItem disablePadding key={category.id}>
-                <ListItemButton onClick={() => handleToggle(category)} sx={{ py: 0.5 }}>
-                  <ListItemIcon sx={{ minWidth: "auto", mr: 1 }}>
-                    <Checkbox checked={isChecked} size="small" />
-                  </ListItemIcon>
-                  <ListItemText
-                    primary={category.name}
-                    primaryTypographyProps={{ variant: "body2" }}
+          <Box sx={{ mt: 1, display: "flex", gap: 1, flexWrap: "wrap" }}>
+            {(formData.exlDifferentiator || []).map((item: any) => (
+              <Chip
+                key={item.key}
+                label={item.label}
+                onDelete={() => handleDelete(item.key, "exlDifferentiator")}
+                color="primary"
+                variant="outlined"
+                size="small"
+              />
+            ))}
+          </Box>
+        </Box>
+
+        {/* Two Columns */}
+        <Box sx={{ display: "flex", flexDirection: { xs: "column", md: "row" }, gap: 2, width: "100%" }}>
+          {/* Left Column */}
+          <Stack spacing={2} sx={{ width: "100%" }}>
+            {/* Value Proposition */}
+            {/* <Box sx={{ width: 260 }}>
+              <Typography variant="body2" gutterBottom>Value Proposition</Typography>
+              <Autocomplete
+                multiple
+                options={valueProposition}
+                disableCloseOnSelect
+                value={formData.valueProposition || []}
+                getOptionLabel={(option) => option.label}
+                onChange={(_, newValue) => handleUpdateField("valueProposition", newValue)}
+                isOptionEqualToValue={(option, value) => option.key === value.key}
+                renderTags={() => null}
+                renderOption={(props, option, { selected }) => (
+                  <li {...props}>
+                    <Checkbox icon={icon} checkedIcon={checkedIcon} style={{ marginRight: 8 }} checked={selected} />
+                    {option.label}
+                  </li>
+                )}
+                renderInput={(params) => (
+                  <TextField
+                    {...params}
+                    variant="outlined"
+                    label="Select Value Proposition"
+                    placeholder="Select Value Proposition"
+                    size="small"
+                    InputLabelProps={{ sx: { fontSize: 14 } }}
                   />
-                </ListItemButton>
-              </ListItem>
-            );
-          })}
-        </List>
-      </Box>
+                )}
+              />
+              <Box sx={{ mt: 1, display: "flex", gap: 1, flexWrap: "wrap" }}>
+                {(formData.valueProposition || []).map((item: any) => (
+                  <Chip
+                    key={item.key}
+                    label={item.label}
+                    onDelete={() => handleDelete(item.key, "valueProposition")}
+                    color="primary"
+                    variant="outlined"
+                    size="small"
+                  />
+                ))}
+              </Box>
+            </Box> */}
+
+          {createSingleSelectWithMessage(
+              "Value Proposition",
+              "valueProposition",
+              valueProposition
+            )}
+           
+          </Stack>
+
+          {/* Right Column */}
+          <Stack spacing={2} sx={{ width: "100%" }}>
+             {/* Licensing Model */}
+            <Box sx={{ width: 260 }}>
+              <Typography variant="body2" gutterBottom>Licensing Model</Typography>
+              <Autocomplete
+                multiple
+                options={licensingModel}
+                disableCloseOnSelect
+                value={formData.licensingModel || []}
+                getOptionLabel={(option) => option.label}
+                onChange={(_, newValue) => handleUpdateField("licensingModel", newValue)}
+                isOptionEqualToValue={(option, value) => option.key === value.key}
+                renderTags={() => null}
+                renderOption={(props, option, { selected }) => (
+                  <li {...props}>
+                    <Checkbox icon={icon} checkedIcon={checkedIcon} style={{ marginRight: 8 }} checked={selected} />
+                    {option.label}
+                  </li>
+                )}
+                renderInput={(params) => (
+                  <TextField
+                    {...params}
+                    variant="outlined"
+                    label="Select Licensing Model"
+                    placeholder="Select Licensing Model"
+                    size="small"
+                    InputLabelProps={{ sx: { fontSize: 14 } }}
+                  />
+                )}
+              />
+              <Box sx={{ mt: 1, display: "flex", gap: 1, flexWrap: "wrap" }}>
+                {(formData.licensingModel || []).map((item: any) => (
+                  <Chip
+                    key={item.key}
+                    label={item.label}
+                    onDelete={() => handleDelete(item.key, "licensingModel")}
+                    color="primary"
+                    variant="outlined"
+                    size="small"
+                  />
+                ))}
+              </Box>
+            </Box>
+          </Stack>
+        </Box>
+
+        {/* Final Description Field */}
+        <Box>
+          <Typography variant="body2" gutterBottom>Description</Typography>
+          <TextField
+            name="description"
+            value={formData.description || ""}
+            onChange={handleChange}
+            variant="outlined"
+            size="small"
+            sx={textFieldStyle}
+            InputProps={{ sx: inputStyle }}
+            placeholder="Enter Detail"
+            multiline
+            rows={4}
+            style={{ width: "680px" }}
+          />
+        </Box>
+      </Stack>
     </Paper>
   );
-});
+};
