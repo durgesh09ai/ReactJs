@@ -1,353 +1,65 @@
-import React, { useState, useEffect } from "react";
-import {
-  Box,
-  TextField,
-  Typography,
-  Paper,
-  Stack,
-  Autocomplete,
-  Checkbox,
-  Chip,
-} from "@mui/material";
-import InfoOutlinedIcon from "@mui/icons-material/InfoOutlined";
-import CheckBoxOutlineBlankIcon from "@mui/icons-material/CheckBoxOutlineBlank";
-import CheckBoxIcon from "@mui/icons-material/CheckBox";
+import { makeAutoObservable, runInAction, toJS } from "mobx";
+import { API_BASE_URL } from "./config/config";
 
-const icon = <CheckBoxOutlineBlankIcon fontSize="small" />;
-const checkedIcon = <CheckBoxIcon fontSize="small" />;
+export class SolutionFormStore {
+  apiUrl: string = API_BASE_URL;
+  formData: Record<string, any> = {};
+  error: any;
 
-export interface BasicInfoFormProps {
-  data: any;
-  onDataChange: (data: any) => void;
+  constructor() {
+    makeAutoObservable(this);
+  }
+
+  // Merge any new form data into the global formData object
+  updateFormData(data: Record<string, any>) {
+    this.formData = { ...this.formData, ...data };
+  }
+
+  // Get the entire form data
+  getFormData() {
+    return this.formData;
+  }
+
+  // Submit form data
+  // async submit() {
+  //   console.log("Submitting", toJS(this.formData));
+  //   // Example API call:
+  //   // await axios.post(`${API_BASE_URL}/submit`, this.formData);
+  // }
+
+  submit = async () => {
+    try {
+
+    const  data =  {research_name: string; description: string; workspace_id: string }
+
+        const res = await fetch(`${this.apiUrl}/research_dashboard/create_solution`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(data),
+      });
+  
+      if (!res.ok) {
+        throw new Error("Failed to add research item");
+      }
+        // Re-fetch the SideMenu data
+    //  await this.fetchSideMenuData(this.loggedInUser);
+      } catch (e: any) {
+      runInAction(() => {
+        this.error = e.message || "Unknown error";
+      });
+    }
+  };
+
+
+  // Reset the entire form
+  reset() {
+    this.formData = {};
+  }
 }
 
-export const CaseStudyDetailsForm: React.FC<BasicInfoFormProps> = ({
-  data,
-  onDataChange,
-}) => {
-  const [formData, setFormData] = useState<any>(data || {});
+export const solutionFormStore = new SolutionFormStore();
 
-  useEffect(() => {
-    if (JSON.stringify(data) !== JSON.stringify(formData)) {
-      setFormData(data || {});
-    }
-  }, [data]);
 
-  useEffect(() => {
-    if (typeof onDataChange === "function") {
-      onDataChange(formData);
-    }
-  }, [formData]);
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target;
-    setFormData((prev: any) => ({ ...prev, [name]: value }));
-  };
-
-  const handleArrayFieldChange = (field: string, value: any[]) => {
-    setFormData((prev: any) => ({ ...prev, [field]: value }));
-  };
-
-  const handleSingleSelectChange = (
-    field: string,
-    value: any,
-    autoFillKey?: string
-  ) => {
-    setFormData((prev: any) => ({
-      ...prev,
-      [field]: value ? [value] : [],
-      ...(autoFillKey && value?.message
-        ? { [autoFillKey]: value.message }
-        : {}),
-    }));
-  };
-
-  const inputStyle = {
-    fontSize: "13px",
-    "&::placeholder": {
-      fontSize: "12px",
-    },
-  };
-
-  const textFieldStyle = {
-    width: "320px",
-  };
-
-  const createMultiSelectSection = (
-    title: string,
-    field: string,
-    options: { key: string; label: string }[],
-    width: number = 260
-  ) => {
-    const selected = formData[field] || [];
-
-    return (
-      <Box sx={{ width }}>
-        <Typography variant="body2" gutterBottom>
-          {title}
-        </Typography>
-        <Autocomplete
-          multiple
-          options={options}
-          disableCloseOnSelect
-          value={selected}
-          getOptionLabel={(option) => option.label}
-          onChange={(_, newValue) => handleArrayFieldChange(field, newValue)}
-          isOptionEqualToValue={(option, value) => option.key === value.key}
-          renderTags={() => null}
-          renderOption={(props, option, { selected }) => (
-            <li {...props}>
-              <Checkbox
-                icon={icon}
-                checkedIcon={checkedIcon}
-                style={{ marginRight: 8 }}
-                checked={selected}
-              />
-              {option.label}
-            </li>
-          )}
-          renderInput={(params) => (
-            <TextField
-              {...params}
-              variant="outlined"
-              placeholder={`Select ${title}`}
-              size="small"
-              InputLabelProps={{ sx: { fontSize: 14 } }}
-            />
-          )}
-        />
-        <Box sx={{ mt: 1, display: "flex", gap: 1, flexWrap: "wrap" }}>
-          {selected.map((item: any) => (
-            <Chip
-              key={item.key}
-              label={item.label}
-              onDelete={() =>
-                handleArrayFieldChange(
-                  field,
-                  selected.filter((v: any) => v.key !== item.key)
-                )
-              }
-              color="primary"
-              variant="outlined"
-              size="small"
-            />
-          ))}
-        </Box>
-      </Box>
-    );
-  };
-
-  const createSingleSelectWithMessage = (
-    title: string,
-    field: string,
-    options: { key: string; label: string; message?: string }[],
-    autoFillKey?: string
-  ) => {
-    const selected = formData[field]?.[0] || null;
-
-    return (
-      <Box sx={{ width: 260 }}>
-        <Typography variant="body2" gutterBottom>
-          {title}
-        </Typography>
-        <Autocomplete
-          options={options}
-          value={selected}
-          getOptionLabel={(option) => option.label}
-          onChange={(_, newValue) =>
-            handleSingleSelectChange(field, newValue, autoFillKey)
-          }
-          isOptionEqualToValue={(option, value) => option.key === value.key}
-          renderInput={(params) => (
-            <TextField
-              {...params}
-              variant="outlined"
-              placeholder={`Select ${title}`}
-              size="small"
-              InputLabelProps={{ sx: { fontSize: 14 } }}
-            />
-          )}
-        />
-        {selected?.message && (
-          <Box sx={{ mt: 1, display: "flex", alignItems: "center", gap: 1 }}>
-            <InfoOutlinedIcon fontSize="small" color="info" />
-            <Typography variant="caption" color="text.secondary">
-              {selected.message}
-            </Typography>
-          </Box>
-        )}
-      </Box>
-    );
-  };
-
-  const sectionData = {
-    workType: [
-      { key: "reporting", label: "Reporting/MI" },
-      { key: "strategy", label: "Strategy" },
-      { key: "analytics", label: "Analytics Data Management" },
-      { key: "modeling", label: "Modeling" },
-      { key: "management", label: "Model Risk Management" },
-      { key: "monitoring", label: "Model Monitoring" },
-      { key: "engineering", label: "Data Engineering" },
-      { key: "software", label: "Software Engineering" },
-      { key: "others", label: "Others" },
-    ],
-    scopeComplexity: [
-      { key: "simple", label: "Simple", message: "This is a simple scope." },
-      { key: "medium", label: "Medium", message: "This is a medium complexity." },
-      { key: "complex", label: "Complex", message: "This is a complex scope." },
-    ],
-    valueProposition: [
-      {
-        key: "supplying-talent",
-        label: "Supplying Talent",
-        message: "We supply talent to solve business needs.",
-      },
-      {
-        key: "influence-analytics-output",
-        label: "Influence Analytics Output",
-        message: "We enhance analytics results.",
-      },
-      {
-        key: "influence-business-outcomes",
-        label: "Influence Business Outcomes",
-        message: "We impact business outcomes directly.",
-      },
-    ],
-    AIMLPenetration: [
-      { key: "no-ai-ml", label: "No AI-ML" },
-      { key: "basic-ml", label: "Basic ML" },
-      { key: "advanced-ai-ml", label: "Advanced AI-ML" },
-    ],
-    degreeofClient: [
-      { key: "no-advocacy", label: "No Advocacy" },
-      { key: "internal-advocacy", label: "Internal Advocacy" },
-      { key: "external-advocacy", label: "External Advocacy" },
-    ],
-  };
-
-  return (
-    <Paper elevation={0} sx={{ width: "100%", flexGrow: 1, p: 2, minHeight: "582px" }}>
-      <Stack spacing={2}>
-        <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
-          <img src="./formIcon.png" alt="Start icon" style={{ width: "20px", height: "20px" }} />
-          <Typography variant="subtitle1">Case Study Details</Typography>
-        </Box>
-
-        <Typography variant="body2" color="text.secondary">
-          General Information
-        </Typography>
-
-        <Stack spacing={2} sx={{ flex: 1 }}>
-          {createMultiSelectSection("Work Type", "workType", sectionData.workType, 700)}
-        </Stack>
-
-        <Box
-          sx={{
-            display: "flex",
-            flexDirection: { xs: "column", md: "row" },
-            gap: 2,
-            alignItems: "flex-start",
-            width: "100%",
-          }}
-        >
-          {/* Left Column */}
-          <Stack spacing={2} sx={{ flex: 1 }}>
-            {createSingleSelectWithMessage(
-              "Scope Complexity",
-              "scopeComplexity",
-              sectionData.scopeComplexity,
-              "scopeDescription"
-            )}
-            {createSingleSelectWithMessage(
-              "Value Proposition",
-              "valueProposition",
-              sectionData.valueProposition
-            )}
-
-            {createMultiSelectSection("AI-ML Penetration", "AIMLPenetration", sectionData.AIMLPenetration)}
-
-            <Typography variant="body2" gutterBottom>
-              Case Study Details
-            </Typography>
-            <TextField
-              name="caseStudyDetails"
-              value={formData.caseStudyDetails || ""}
-              onChange={handleChange}
-              placeholder="Enter Case Study Details"
-              multiline
-              rows={4}
-              size="small"
-              sx={textFieldStyle}
-              InputProps={{ sx: inputStyle }}
-            />
-
-            <Typography variant="body2" gutterBottom>
-              Solution
-            </Typography>
-            <TextField
-              name="solution"
-              value={formData.solution || ""}
-              onChange={handleChange}
-              placeholder="Enter Solution Detail"
-              multiline
-              rows={4}
-              size="small"
-              sx={textFieldStyle}
-              InputProps={{ sx: inputStyle }}
-            />
-          </Stack>
-
-          {/* Right Column */}
-          <Stack spacing={2} sx={{ flex: 1 }}>
-            {/* <Box sx={{ mt: 1, display: "flex", alignItems: "center", gap: 1 }}>
-            <InfoOutlinedIcon fontSize="small" color="info" />
-            <Typography variant="caption" color="text.secondary">
-              {formData.scopeDescription || ""}
-            </Typography>
-            </Box>
-
-           <Box sx={{ mt: 1, display: "flex", alignItems: "center", gap: 1 }}>
-            <InfoOutlinedIcon fontSize="small" color="info" />
-            <Typography variant="caption" color="text.secondary">
-              {formData.valuePropositionDescription || ""}
-            </Typography>
-            </Box> */}
-
-            {createMultiSelectSection("Degree of Client Advocacy", "degreeofClient", sectionData.degreeofClient)}
-
-            <Typography variant="body2" gutterBottom>
-              Problem Detail
-            </Typography>
-            <TextField
-              name="problem"
-              value={formData.problem || ""}
-              onChange={handleChange}
-              placeholder="Enter Problem"
-              multiline
-              rows={4}
-              size="small"
-              sx={textFieldStyle}
-              InputProps={{ sx: inputStyle }}
-            />
-
-            <Typography variant="body2" gutterBottom>
-              Outcome Detail
-            </Typography>
-            <TextField
-              name="outcome"
-              value={formData.outcome || ""}
-              onChange={handleChange}
-              placeholder="Enter Outcome"
-              multiline
-              rows={4}
-              size="small"
-              sx={textFieldStyle}
-              InputProps={{ sx: inputStyle }}
-            />
-          </Stack>
-        </Box>
-      </Stack>
-    </Paper>
-  );
-};
