@@ -1,73 +1,94 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Box,
   TextField,
   Typography,
   Paper,
   Stack,
-  Button,
+  Autocomplete,
+  Checkbox,
+  Chip,
 } from "@mui/material";
-import { TeamMember } from "./TeamMember";
+import CheckBoxOutlineBlankIcon from "@mui/icons-material/CheckBoxOutlineBlank";
+import CheckBoxIcon from "@mui/icons-material/CheckBox";
 
-interface BasicInfoFormProps {
-  onSave?: (formData: FormData) => void;
+const icon = <CheckBoxOutlineBlankIcon fontSize="small" />;
+const checkedIcon = <CheckBoxIcon fontSize="small" />;
+
+interface Tag {
+  key: string;
+  label: string;
 }
 
-interface FormData {
-  solutionName: string;
-  clientName: string;
-  tags: string;
-  images: string[];
+interface RFIRFPDetailsFormProps {
+  data: {
+    dealSize?: string;
+    description?: string;
+    rfpDescription?: string;
+    valuePropositionDescription?: string;
+    exlDifferentiator: Tag[];
+    valueProposition: Tag[];
+  };
+  onDataChange: (key: string, value: any) => void;
 }
 
-interface Member {
-  name: string;
-  role: string;
-  avatar: string;
-  badge: {
-    label: string;
-    variant: "blue" | "green" | "red";
-  };
-  isActive: boolean;
-}
+const exlDifferentiator: Tag[] = [
+  { key: "reporting", label: "Reporting/MI" },
+  { key: "strategy", label: "Strategy" },
+  { key: "analytics", label: "Analytics Data Management" },
+  { key: "modeling", label: "Modeling" },
+  { key: "management", label: "Model Risk Management" },
+  { key: "monitoring", label: "Model Monitoring" },
+  { key: "engineering", label: "Data Engineering" },
+  { key: "software", label: "Software Engineering" },
+  { key: "others", label: "Others" },
+];
 
-export const CaseStudyTeamMemeber: React.FC<BasicInfoFormProps> = ({ onSave }) => {
-  const [formData, setFormData] = useState<FormData>({
-    solutionName: "",
-    clientName: "",
-    tags: "",
-    images: [],
-  });
+const valueProposition: Tag[] = [
+  { key: "supplying-talent", label: "Supplying Talent" },
+  { key: "influence-analytics-output", label: "Influence Analytics Output" },
+  { key: "influence-business-outcomes", label: "Influence Business Outcomes" },
+];
 
-  const [memberInput, setMemberInput] = useState("");
-  const [teamMembers, setTeamMembers] = useState<Member[]>([]);
+export const RFIRFPDetailsForm: React.FC<RFIRFPDetailsFormProps> = ({ data, onDataChange }) => {
+  const [formData, setFormData] = useState(data);
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target;
-    setFormData((prev) => ({ ...prev, [name]: value }));
-  };
+  // Sync local state with parent prop
+  useEffect(() => {
+    setFormData(data);
+  }, [data]);
 
-  const handleAddMember = () => {
-    if (!memberInput.trim()) return;
-    const newMember: Member = {
-      name: memberInput.trim(),
-      role: "Contributor", // default or you can add a role input field
-      avatar: "./proimage.png", // you can customize or allow uploads later
-      badge: {
-        label: "Member",
-        variant: "blue",
-      },
-      isActive: true,
-    };
-    setTeamMembers((prev) => [...prev, newMember]);
-    setMemberInput("");
+  // Handle input change
+  const handleChange = (key: string, value: any) => {
+    setFormData((prev) => ({ ...prev, [key]: value }));
+    onDataChange(key, value);
   };
 
-  const handleSave = () => {
-    if (onSave) {
-      onSave(formData);
-    }
+  const inputStyle = {
+    fontSize: "13px",
+    "&::placeholder": {
+      fontSize: "12px",
+    },
   };
+
+  const textFieldStyle = {
+    width: "220px",
+  };
+
+  const renderChips = (items: Tag[], field: keyof RFIRFPDetailsFormProps["data"]) =>
+    items.map((item) => (
+      <Chip
+        key={item.key}
+        label={item.label}
+        onDelete={() => {
+          const updated = items.filter((tag) => tag.key !== item.key);
+          handleChange(field, updated);
+        }}
+        color="primary"
+        variant="outlined"
+        size="small"
+      />
+    ));
 
   return (
     <Paper
@@ -76,96 +97,187 @@ export const CaseStudyTeamMemeber: React.FC<BasicInfoFormProps> = ({ onSave }) =
         width: { xs: "100%", md: "704px" },
         flexGrow: 1,
         p: 2,
-        minHeight: "282px",
+        minHeight: "522px",
       }}
     >
       <Stack spacing={2}>
         <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
-          <img
-            src="./startIcon.png"
-            alt="Start icon"
-            style={{ width: "20px", height: "20px" }}
-          />
-          <Typography variant="subtitle1">Add Team Members</Typography>
+          <img src="./formIcon.png" alt="Start icon" style={{ width: "20px", height: "20px" }} />
+          <Typography variant="subtitle1">Product Details</Typography>
         </Box>
 
+        <Typography variant="body2" color="text.secondary">
+          General Information
+        </Typography>
+
+        {/* EXL Differentiator */}
+        <Box sx={{ width: "100%" }}>
+          <Typography variant="body2" gutterBottom>
+            EXL Differentiator
+          </Typography>
+          <Autocomplete
+            multiple
+            options={exlDifferentiator}
+            disableCloseOnSelect
+            value={formData.exlDifferentiator || []}
+            getOptionLabel={(option) => option.label}
+            onChange={(e, newVal) => handleChange("exlDifferentiator", newVal)}
+            isOptionEqualToValue={(option, value) => option.key === value.key}
+            renderTags={() => null}
+            renderOption={(props, option, { selected }) => (
+              <li {...props} style={{ fontSize: 14 }}>
+                <Checkbox icon={icon} checkedIcon={checkedIcon} style={{ marginRight: 8 }} checked={selected} />
+                {option.label}
+              </li>
+            )}
+            renderInput={(params) => (
+              <TextField
+                {...params}
+                variant="outlined"
+                label="Select EXL Differentiator"
+                placeholder="Select EXL Differentiator"
+                size="small"
+                InputLabelProps={{ sx: { fontSize: 14 } }}
+              />
+            )}
+          />
+          <Box sx={{ mt: 1, display: "flex", gap: 1, flexWrap: "wrap" }}>
+            {renderChips(formData.exlDifferentiator || [], "exlDifferentiator")}
+          </Box>
+        </Box>
+
+        {/* Flex Layout Section */}
         <Box
           sx={{
             display: "flex",
             flexDirection: { xs: "column", md: "row" },
-            gap: 4,
+            columnGap: 2,
+            rowGap: 2,
+            alignItems: "flex-start",
+            width: "100%",
           }}
         >
           {/* Left Column */}
-          <Stack spacing={3} sx={{ flex: 1 }}>
+          <Stack spacing={2} sx={{ width: "100%", fontSize: 12 }}>
             <Box>
               <Typography variant="body2" gutterBottom>
-                Add your Team
+                Deal Size($)
               </Typography>
-              <Box sx={{ p: 2, display: "flex", flexDirection: "row", gap: 1 }}>
-                <TextField
-                  id="members"
-                  name="member"
-                  value={memberInput}
-                  onChange={(e) => setMemberInput(e.target.value)}
-                  placeholder="Enter Team Member Name"
-                  fullWidth
-                  variant="outlined"
-                  size="small"
-                />
-                <Button
-                  variant="contained"
-                  size="small"
-                  onClick={handleAddMember}
-                  sx={{
-                    alignSelf: "flex-start",
-                    height: 38,
-                    backgroundColor: "#0F4977",
-                    textTransform: "none",
-                    fontSize: "0.75rem",
-                    "&:hover": {
-                      backgroundColor: "#0c3b61",
-                    },
-                  }}
-                >
-                  Add
-                </Button>
-              </Box>
+              <TextField
+                name="dealSize"
+                value={formData.dealSize || ""}
+                onChange={(e) => handleChange("dealSize", e.target.value)}
+                variant="outlined"
+                size="small"
+                sx={textFieldStyle}
+                InputProps={{ sx: inputStyle }}
+                placeholder="Enter Deal Size($)"
+                multiline
+                rows={4}
+                maxRows={4}
+                style={{ width: "320px" }}
+              />
             </Box>
 
-            {/* Right Column - Team List */}
-            <Box
-              sx={{
-                backgroundColor: "white",
-                border: "1px solid rgba(0,0,0,0.2)",
-                borderRadius: 1,
-                p: 2,
-              }}
-            >
-              <Typography
-                fontWeight={600}
-                fontSize="1rem"
-                color="rgba(21,23,24,1)"
-                sx={{ pb: 1, borderBottom: "1px solid rgba(0,0,0,0.2)" }}
-              >
-                Team Created
+            <Box sx={{ width: 260 }}>
+              <Typography variant="body2" gutterBottom>
+                Value Proposition
               </Typography>
-
-              <Box mt={2}>
-                {teamMembers.map((member, index) => (
-                  <Box mt={index > 0 ? 2 : 0} key={index}>
-                    <TeamMember
-                      name={member.name}
-                      role={member.role}
-                      avatar={member.avatar}
-                      badge={member.badge}
-                      isActive={member.isActive}
-                    />
-                  </Box>
-                ))}
+              <Autocomplete
+                multiple
+                options={valueProposition}
+                disableCloseOnSelect
+                value={formData.valueProposition || []}
+                getOptionLabel={(option) => option.label}
+                onChange={(e, newVal) => handleChange("valueProposition", newVal)}
+                isOptionEqualToValue={(option, value) => option.key === value.key}
+                renderTags={() => null}
+                renderOption={(props, option, { selected }) => (
+                  <li {...props}>
+                    <Checkbox icon={icon} checkedIcon={checkedIcon} style={{ marginRight: 8 }} checked={selected} />
+                    {option.label}
+                  </li>
+                )}
+                renderInput={(params) => (
+                  <TextField
+                    {...params}
+                    variant="outlined"
+                    label="Select Value Proposition"
+                    placeholder="Select Value Proposition"
+                    size="small"
+                    InputLabelProps={{ sx: { fontSize: 14 } }}
+                  />
+                )}
+              />
+              <Box sx={{ mt: 1, display: "flex", gap: 1, flexWrap: "wrap" }}>
+                {renderChips(formData.valueProposition || [], "valueProposition")}
               </Box>
             </Box>
           </Stack>
+
+          {/* Right Column */}
+          <Stack spacing={2} sx={{ width: "100%", fontSize: 12 }}>
+            <Box>
+              <Typography variant="body2" gutterBottom>
+                RFI / RFP Description
+              </Typography>
+              <TextField
+                name="rfpDescription"
+                value={formData.rfpDescription || ""}
+                onChange={(e) => handleChange("rfpDescription", e.target.value)}
+                variant="outlined"
+                size="small"
+                sx={textFieldStyle}
+                InputProps={{ sx: inputStyle }}
+                placeholder="Enter RFI / RFP Description"
+                multiline
+                rows={4}
+                maxRows={4}
+                style={{ width: "320px" }}
+              />
+            </Box>
+
+            <Box>
+              <Typography variant="body2" gutterBottom>
+                Value Proposition Description
+              </Typography>
+              <TextField
+                name="valuePropositionDescription"
+                value={formData.valuePropositionDescription || ""}
+                onChange={(e) => handleChange("valuePropositionDescription", e.target.value)}
+                variant="outlined"
+                size="small"
+                sx={textFieldStyle}
+                InputProps={{ sx: inputStyle }}
+                placeholder="Enter Value Proposition Description"
+                multiline
+                rows={4}
+                maxRows={4}
+                style={{ width: "320px" }}
+              />
+            </Box>
+          </Stack>
+        </Box>
+
+        {/* Description Field */}
+        <Box>
+          <Typography variant="body2" gutterBottom>
+            Description
+          </Typography>
+          <TextField
+            name="description"
+            value={formData.description || ""}
+            onChange={(e) => handleChange("description", e.target.value)}
+            variant="outlined"
+            size="small"
+            sx={textFieldStyle}
+            InputProps={{ sx: inputStyle }}
+            placeholder="Enter Detail"
+            multiline
+            rows={4}
+            maxRows={4}
+            style={{ width: "680px" }}
+          />
         </Box>
       </Stack>
     </Paper>
