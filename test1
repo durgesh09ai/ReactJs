@@ -1,44 +1,186 @@
-import { makeAutoObservable } from "mobx";
-import { API_BASE_URL } from "./config/config";
+import React, { useEffect, useState } from "react";
+import {
+  Box,
+  Paper,
+  Tabs,
+  Tab,
+  TextField,
+  Typography,
+  Chip,
+  List,
+  ListItem,
+  ListItemText,
+  ListItemIcon,
+  Checkbox,
+  ListItemButton,
+  InputAdornment,
+} from "@mui/material";
+import { styled } from "@mui/material/styles";
+import SearchIcon from "@mui/icons-material/Search";
+import { mainPageStore } from "../../stores/MainPageStore";
+import { observer } from "mobx-react-lite";
+import { solutionFormStore } from "../../stores/SolutionFormStore";
 
-export class SolutionFormStore {
-  formData: Record<string, any> = {};
-
-  constructor() {
-    makeAutoObservable(this);
-  }
-
-  // Merge any new form data into the global formData object
-  updateFormData(data: Record<string, any>) {
-    this.formData = { ...this.formData, ...data };
-  }
-
-  // Get the entire form data
-  getFormData() {
-    return this.formData;
-  }
-
-  // Submit form data
-  async submit() {
-    console.log("Submitting", this.formData);
-    // Example API call:
-    // await axios.post(`${API_BASE_URL}/submit`, this.formData);
-  }
-
-  // Reset the entire form
-  reset() {
-    this.formData = {};
-  }
+interface Category {
+  id: string;
+  name: string;
 }
 
-export const solutionFormStore = new SolutionFormStore();
+const StyledChip = styled(Chip)(() => ({
+  backgroundColor: "rgba(243,250,255,1)",
+  borderRadius: "16px",
+  "& .MuiChip-deleteIcon": {
+    color: "rgba(15,73,119,1)",
+  },
+}));
 
+export const TagSelector: React.FC = observer(() => {
+  const [activeTab, setActiveTab] = useState<"IMU" | "SGU">("IMU");
+  const [searchQuery, setSearchQuery] = useState<string>("");
 
-------------------------------------------------------------------------------
+  const [sguList, setSguList] = useState<Category[]>([]);
+  const [imuList, setImuList] = useState<Category[]>([]);
 
- {currentStepConfig?.component && (
-                <currentStepConfig.component
-                  data={solutionFormStore.getFormData()}
-                  onDataChange={(updatedData: any) => solutionFormStore.updateFormData(updatedData)}
-                />
- )}
+  const imuTags: Record<string, string> = solutionFormStore.formData["imuTags"] || {};
+  const sguTags: Record<string, string> = solutionFormStore.formData["sguTags"] || {};
+
+  const updateTags = (key: "imuTags" | "sguTags", tags: Record<string, string>) => {
+        solutionFormStore.updateFormData({ imuTags: tags });
+  };
+
+  useEffect(() => {
+    const loadSguData = async () => {
+      const data = await mainPageStore.fetchFillerListData("sgu");
+      setSguList(data);
+    };
+    loadSguData();
+  }, []);
+
+  useEffect(() => {
+    const loadImuData = async () => {
+      const data = await mainPageStore.fetchFillerListData("imu");
+      setImuList(data);
+    };
+    loadImuData();
+  }, []);
+
+  const currentCategories = activeTab === "IMU" ? imuList : sguList;
+
+  const filteredCategories = currentCategories.filter((category) =>
+    category.name.toLowerCase().includes(searchQuery.toLowerCase())
+  );
+
+  const handleToggle = (category: Category) => {
+    if (activeTab === "IMU") {
+      const newTags = { ...imuTags };
+      newTags[category.id] ? delete newTags[category.id] : newTags[category.id] = category.name;
+      updateTags("imuTags", newTags);
+    } else {
+      const newTags = { ...sguTags };
+      newTags[category.id] ? delete newTags[category.id] : newTags[category.id] = category.name;
+      updateTags("sguTags", newTags);
+    }
+  };
+
+  const handleDelete = (tab: "IMU" | "SGU", id: string) => {
+    if (tab === "IMU") {
+      const newTags = { ...imuTags };
+      delete newTags[id];
+      updateTags("imuTags", newTags);
+    } else {
+      const newTags = { ...sguTags };
+      delete newTags[id];
+      updateTags("sguTags", newTags);
+    }
+  };
+
+  return (
+    <Paper
+      elevation={0}
+      sx={{
+        border: 1,
+        borderColor: "rgba(15,73,119,0.1)",
+        borderRadius: 2,
+        minWidth: "240px",
+        minHeight: "502px",
+        flexGrow: 1,
+        display: "flex",
+        flexDirection: "column",
+      }}
+    >
+      <Box sx={{ width: "100%", borderBottom: 1, borderColor: "divider" }}>
+        <Tabs value={activeTab} onChange={(_, newValue) => setActiveTab(newValue)}>
+          <Tab label="IMU" value="IMU" sx={{ fontSize: "0.75rem" }} />
+          <Tab label="SGU" value="SGU" sx={{ fontSize: "0.75rem" }} />
+        </Tabs>
+      </Box>
+
+      <Box sx={{ p: 2, display: "flex", flexDirection: "column", flexGrow: 1 }}>
+        <TextField
+          placeholder="Search tags"
+          value={searchQuery}
+          onChange={(e) => setSearchQuery(e.target.value)}
+          size="small"
+          fullWidth
+          InputProps={{
+            endAdornment: (
+              <InputAdornment position="end">
+                <SearchIcon />
+              </InputAdornment>
+            ),
+          }}
+          sx={{ mb: 2 }}
+        />
+
+        <Typography variant="caption" color="text.secondary" sx={{ mb: 1 }}>
+          Selected tags
+        </Typography>
+
+        <Box sx={{ display: "flex", flexWrap: "wrap", gap: 1, mb: 2 }}>
+          {Object.entries(imuTags).map(([id, label]) => (
+            <StyledChip
+              key={`imu-${id}`}
+              label={`${label} (IMU)`}
+              onDelete={() => handleDelete("IMU", id)}
+              size="small"
+            />
+          ))}
+          {Object.entries(sguTags).map(([id, label]) => (
+            <StyledChip
+              key={`sgu-${id}`}
+              label={`${label} (SGU)`}
+              onDelete={() => handleDelete("SGU", id)}
+              size="small"
+            />
+          ))}
+        </Box>
+
+        <Typography variant="caption" color="text.secondary" sx={{ mb: 1 }}>
+          Choose {activeTab}
+        </Typography>
+
+        <List sx={{ flexGrow: 1, overflow: "auto" }}>
+          {filteredCategories.map((category) => {
+            const isChecked = activeTab === "IMU"
+              ? !!imuTags[category.id]
+              : !!sguTags[category.id];
+
+            return (
+              <ListItem disablePadding key={category.id}>
+                <ListItemButton onClick={() => handleToggle(category)} sx={{ py: 0.5 }}>
+                  <ListItemIcon sx={{ minWidth: "auto", mr: 1 }}>
+                    <Checkbox checked={isChecked} size="small" />
+                  </ListItemIcon>
+                  <ListItemText
+                    primary={category.name}
+                    primaryTypographyProps={{ variant: "body2" }}
+                  />
+                </ListItemButton>
+              </ListItem>
+            );
+          })}
+        </List>
+      </Box>
+    </Paper>
+  );
+});
