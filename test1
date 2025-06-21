@@ -1,65 +1,30 @@
-import { makeAutoObservable, runInAction, toJS } from "mobx";
-import { API_BASE_URL } from "./config/config";
+submit = async () => {
+  try {
+    const data = {
+      research_name: this.formData.caseStudyDetails,
+      description: this.formData.solution,
+      workspace_id: this.formData.workspaceId,
+    };
 
-export class SolutionFormStore {
-  apiUrl: string = API_BASE_URL;
-  formData: Record<string, any> = {};
-  error: any;
+    const res = await fetch(`${this.apiUrl}/research_dashboard/create_solution`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(data),
+    });
 
-  constructor() {
-    makeAutoObservable(this);
-  }
-
-  // Merge any new form data into the global formData object
-  updateFormData(data: Record<string, any>) {
-    this.formData = { ...this.formData, ...data };
-  }
-
-  // Get the entire form data
-  getFormData() {
-    return this.formData;
-  }
-
-  // Submit form data
-  // async submit() {
-  //   console.log("Submitting", toJS(this.formData));
-  //   // Example API call:
-  //   // await axios.post(`${API_BASE_URL}/submit`, this.formData);
-  // }
-
-  submit = async () => {
-    try {
-
-    const  data =  {research_name: string; description: string; workspace_id: string }
-
-        const res = await fetch(`${this.apiUrl}/research_dashboard/create_solution`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(data),
-      });
-  
-      if (!res.ok) {
-        throw new Error("Failed to add research item");
-      }
-        // Re-fetch the SideMenu data
-    //  await this.fetchSideMenuData(this.loggedInUser);
-      } catch (e: any) {
-      runInAction(() => {
-        this.error = e.message || "Unknown error";
-      });
+    if (!res.ok) {
+      throw new Error("Failed to add research item");
     }
-  };
 
+    // Optional: parse response if needed
+    // const result = await res.json();
+    // console.log("Submitted successfully", result);
 
-  // Reset the entire form
-  reset() {
-    this.formData = {};
+  } catch (e: any) {
+    runInAction(() => {
+      this.error = e.message || "Unknown error";
+    });
   }
-}
-
-export const solutionFormStore = new SolutionFormStore();
-
-
-
+};
