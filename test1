@@ -1,186 +1,324 @@
-import React, { useEffect, useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   Box,
-  Paper,
-  Tabs,
-  Tab,
   TextField,
   Typography,
-  Chip,
-  List,
-  ListItem,
-  ListItemText,
-  ListItemIcon,
+  Paper,
+  Stack,
+  Autocomplete,
   Checkbox,
-  ListItemButton,
-  InputAdornment,
+  Chip,
 } from "@mui/material";
-import { styled } from "@mui/material/styles";
-import SearchIcon from "@mui/icons-material/Search";
-import { mainPageStore } from "../../stores/MainPageStore";
-import { observer } from "mobx-react-lite";
-import { solutionFormStore } from "../../stores/SolutionFormStore";
+import CheckBoxOutlineBlankIcon from "@mui/icons-material/CheckBoxOutlineBlank";
+import CheckBoxIcon from "@mui/icons-material/CheckBox";
+import InfoOutlinedIcon from "@mui/icons-material/InfoOutlined";
 
-interface Category {
-  id: string;
-  name: string;
+const icon = <CheckBoxOutlineBlankIcon fontSize="small" />;
+const checkedIcon = <CheckBoxIcon fontSize="small" />;
+
+export interface BasicInfoFormProps {
+  data: any;
+  onDataChange: (data: any) => void;
 }
 
-const StyledChip = styled(Chip)(() => ({
-  backgroundColor: "rgba(243,250,255,1)",
-  borderRadius: "16px",
-  "& .MuiChip-deleteIcon": {
-    color: "rgba(15,73,119,1)",
-  },
-}));
-
-export const TagSelector: React.FC = observer(() => {
-  const [activeTab, setActiveTab] = useState<"IMU" | "SGU">("IMU");
-  const [searchQuery, setSearchQuery] = useState<string>("");
-
-  const [sguList, setSguList] = useState<Category[]>([]);
-  const [imuList, setImuList] = useState<Category[]>([]);
-
-  const imuTags: Record<string, string> = solutionFormStore.formData["imuTags"] || {};
-  const sguTags: Record<string, string> = solutionFormStore.formData["sguTags"] || {};
-
-  const updateTags = (key: "imuTags" | "sguTags", tags: Record<string, string>) => {
-        solutionFormStore.updateFormData({ imuTags: tags });
-  };
+export const CaseStudyDetailsForm: React.FC<BasicInfoFormProps> = ({
+  data,
+  onDataChange,
+}) => {
+  const [formData, setFormData] = useState<any>(data || {});
 
   useEffect(() => {
-    const loadSguData = async () => {
-      const data = await mainPageStore.fetchFillerListData("sgu");
-      setSguList(data);
-    };
-    loadSguData();
-  }, []);
+    if (JSON.stringify(data) !== JSON.stringify(formData)) {
+      setFormData(data || {});
+    }
+  }, [data]);
 
   useEffect(() => {
-    const loadImuData = async () => {
-      const data = await mainPageStore.fetchFillerListData("imu");
-      setImuList(data);
+    if (typeof onDataChange === "function") {
+      onDataChange(formData);
+    }
+  }, [formData]);
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    setFormData((prev: any) => ({ ...prev, [name]: value }));
+  };
+
+  const handleArrayFieldChange = (field: string, value: any[]) => {
+    setFormData((prev: any) => ({ ...prev, [field]: value }));
+  };
+
+  const inputStyle = {
+    fontSize: "13px",
+    "&::placeholder": {
+      fontSize: "12px",
+    },
+  };
+
+  const textFieldStyle = {
+    width: "320px",
+  };
+
+  const createSelectSection = (
+    title: string,
+    field: string,
+    options: { key: string; label: string; message?: string }[],
+    config?: { singleSelect?: boolean; showMessage?: boolean }
+  ) => {
+    const singleSelect = config?.singleSelect;
+    const showMessage = config?.showMessage;
+    const selected = formData[field] || [];
+    const selectedOption = singleSelect ? selected[0] : null;
+
+    const handleChange = (_: any, newValue: any | any[]) => {
+      if (singleSelect) {
+        handleArrayFieldChange(field, newValue ? [newValue] : []);
+      } else {
+        handleArrayFieldChange(field, newValue);
+      }
     };
-    loadImuData();
-  }, []);
 
-  const currentCategories = activeTab === "IMU" ? imuList : sguList;
-
-  const filteredCategories = currentCategories.filter((category) =>
-    category.name.toLowerCase().includes(searchQuery.toLowerCase())
-  );
-
-  const handleToggle = (category: Category) => {
-    if (activeTab === "IMU") {
-      const newTags = { ...imuTags };
-      newTags[category.id] ? delete newTags[category.id] : newTags[category.id] = category.name;
-      updateTags("imuTags", newTags);
-    } else {
-      const newTags = { ...sguTags };
-      newTags[category.id] ? delete newTags[category.id] : newTags[category.id] = category.name;
-      updateTags("sguTags", newTags);
-    }
-  };
-
-  const handleDelete = (tab: "IMU" | "SGU", id: string) => {
-    if (tab === "IMU") {
-      const newTags = { ...imuTags };
-      delete newTags[id];
-      updateTags("imuTags", newTags);
-    } else {
-      const newTags = { ...sguTags };
-      delete newTags[id];
-      updateTags("sguTags", newTags);
-    }
-  };
-
-  return (
-    <Paper
-      elevation={0}
-      sx={{
-        border: 1,
-        borderColor: "rgba(15,73,119,0.1)",
-        borderRadius: 2,
-        minWidth: "240px",
-        minHeight: "502px",
-        flexGrow: 1,
-        display: "flex",
-        flexDirection: "column",
-      }}
-    >
-      <Box sx={{ width: "100%", borderBottom: 1, borderColor: "divider" }}>
-        <Tabs value={activeTab} onChange={(_, newValue) => setActiveTab(newValue)}>
-          <Tab label="IMU" value="IMU" sx={{ fontSize: "0.75rem" }} />
-          <Tab label="SGU" value="SGU" sx={{ fontSize: "0.75rem" }} />
-        </Tabs>
-      </Box>
-
-      <Box sx={{ p: 2, display: "flex", flexDirection: "column", flexGrow: 1 }}>
-        <TextField
-          placeholder="Search tags"
-          value={searchQuery}
-          onChange={(e) => setSearchQuery(e.target.value)}
-          size="small"
-          fullWidth
-          InputProps={{
-            endAdornment: (
-              <InputAdornment position="end">
-                <SearchIcon />
-              </InputAdornment>
-            ),
-          }}
-          sx={{ mb: 2 }}
-        />
-
-        <Typography variant="caption" color="text.secondary" sx={{ mb: 1 }}>
-          Selected tags
+    return (
+      <Box sx={{ width: 260 }}>
+        <Typography variant="body2" gutterBottom>
+          {title}
         </Typography>
 
-        <Box sx={{ display: "flex", flexWrap: "wrap", gap: 1, mb: 2 }}>
-          {Object.entries(imuTags).map(([id, label]) => (
-            <StyledChip
-              key={`imu-${id}`}
-              label={`${label} (IMU)`}
-              onDelete={() => handleDelete("IMU", id)}
+        <Autocomplete
+          multiple={!singleSelect}
+          options={options}
+          disableCloseOnSelect={!singleSelect}
+          value={selected}
+          getOptionLabel={(option) => option.label}
+          onChange={handleChange}
+          isOptionEqualToValue={(option, value) => option.key === value.key}
+          renderTags={() => null}
+          renderOption={(props, option, { selected }) => (
+            <li {...props}>
+              <Checkbox
+                icon={icon}
+                checkedIcon={checkedIcon}
+                style={{ marginRight: 8 }}
+                checked={selected}
+              />
+              {option.label}
+            </li>
+          )}
+          renderInput={(params) => (
+            <TextField
+              {...params}
+              variant="outlined"
+              label={`Select ${title}`}
+              placeholder={`Select ${title}`}
               size="small"
+              InputLabelProps={{ sx: { fontSize: 14 } }}
             />
-          ))}
-          {Object.entries(sguTags).map(([id, label]) => (
-            <StyledChip
-              key={`sgu-${id}`}
-              label={`${label} (SGU)`}
-              onDelete={() => handleDelete("SGU", id)}
+          )}
+        />
+
+        <Box sx={{ mt: 1, display: "flex", gap: 1, flexWrap: "wrap" }}>
+          {selected.map((item: any) => (
+            <Chip
+              key={item.key}
+              label={item.label}
+              onDelete={() =>
+                handleArrayFieldChange(
+                  field,
+                  selected.filter((v: any) => v.key !== item.key)
+                )
+              }
+              color="primary"
+              variant="outlined"
               size="small"
             />
           ))}
         </Box>
 
-        <Typography variant="caption" color="text.secondary" sx={{ mb: 1 }}>
-          Choose {activeTab}
-        </Typography>
-
-        <List sx={{ flexGrow: 1, overflow: "auto" }}>
-          {filteredCategories.map((category) => {
-            const isChecked = activeTab === "IMU"
-              ? !!imuTags[category.id]
-              : !!sguTags[category.id];
-
-            return (
-              <ListItem disablePadding key={category.id}>
-                <ListItemButton onClick={() => handleToggle(category)} sx={{ py: 0.5 }}>
-                  <ListItemIcon sx={{ minWidth: "auto", mr: 1 }}>
-                    <Checkbox checked={isChecked} size="small" />
-                  </ListItemIcon>
-                  <ListItemText
-                    primary={category.name}
-                    primaryTypographyProps={{ variant: "body2" }}
-                  />
-                </ListItemButton>
-              </ListItem>
-            );
-          })}
-        </List>
+        {showMessage && selectedOption?.message && (
+          <Box sx={{ mt: 1, display: "flex", alignItems: "center", gap: 1 }}>
+            <InfoOutlinedIcon fontSize="small" color="info" />
+            <Typography variant="caption" color="text.secondary">
+              {selectedOption.message}
+            </Typography>
+          </Box>
+        )}
       </Box>
+    );
+  };
+
+  const sectionData = {
+    workType: [
+      { key: "reporting", label: "Reporting/MI" },
+      { key: "strategy", label: "Strategy" },
+      { key: "analytics", label: "Analytics Data Management" },
+      { key: "modeling", label: "Modeling" },
+      { key: "management", label: "Model Risk Management" },
+      { key: "monitoring", label: "Model Monitoring" },
+      { key: "engineering", label: "Data Engineering" },
+      { key: "software", label: "Software Engineering" },
+      { key: "others", label: "Others" },
+    ],
+    scopeComplexity: [
+      { key: "simple", label: "Simple", message: "This is a simple scope." },
+      { key: "medium", label: "Medium", message: "This is a medium complexity." },
+      { key: "complex", label: "Complex", message: "This is a complex scope." },
+    ],
+    valueProposition: [
+      {
+        key: "supplying-talent",
+        label: "Supplying Talent",
+        message: "We supply talent to solve business needs.",
+      },
+      {
+        key: "influence-analytics-output",
+        label: "Influence Analytics Output",
+        message: "We enhance analytics results.",
+      },
+      {
+        key: "influence-business-outcomes",
+        label: "Influence Business Outcomes",
+        message: "We impact business outcomes directly.",
+      },
+    ],
+    AIMLPenetration: [
+      { key: "no-ai-ml", label: "No AI-ML" },
+      { key: "basic-ml", label: "Basic ML" },
+      { key: "advanced-ai-ml", label: "Advanced AI-ML" },
+    ],
+    degreeofClient: [
+      { key: "no-advocacy", label: "No Advocacy" },
+      { key: "internal-advocacy", label: "Internal Advocacy" },
+      { key: "external-advocacy", label: "External Advocacy" },
+    ],
+  };
+
+  return (
+    <Paper elevation={0} sx={{ width: "100%", flexGrow: 1, p: 2, minHeight: "582px" }}>
+      <Stack spacing={2}>
+        <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+          <img src="./formIcon.png" alt="Start icon" style={{ width: "20px", height: "20px" }} />
+          <Typography variant="subtitle1">Case Study Details</Typography>
+        </Box>
+
+        <Typography variant="body2" color="text.secondary">General Information</Typography>
+
+        <Box
+          sx={{
+            display: "flex",
+            flexDirection: { xs: "column", md: "row" },
+            gap: 2,
+            alignItems: "flex-start",
+            width: "100%",
+          }}
+        >
+          {/* Left Column */}
+          <Stack spacing={2} sx={{ flex: 1 }}>
+            {createSelectSection("Work Type", "workType", sectionData.workType)}
+            {createSelectSection("Scope Complexity", "scopeComplexity", sectionData.scopeComplexity, {
+              singleSelect: true,
+              showMessage: true,
+            })}
+            {createSelectSection("Value Proposition", "valueProposition", sectionData.valueProposition, {
+              singleSelect: true,
+              showMessage: true,
+            })}
+            {createSelectSection("AI-ML Penetration", "AIMLPenetration", sectionData.AIMLPenetration, {
+              singleSelect: true,
+            })}
+
+            <Typography variant="body2" gutterBottom>Case Study Details</Typography>
+            <TextField
+              name="caseStudyDetails"
+              value={formData.caseStudyDetails || ""}
+              onChange={handleChange}
+              label="Case Study Details"
+              placeholder="Enter Case Study Details"
+              multiline
+              rows={4}
+              size="small"
+              sx={textFieldStyle}
+              InputProps={{ sx: inputStyle }}
+            />
+
+            <Typography variant="body2" gutterBottom>Solution</Typography>
+            <TextField
+              name="solution"
+              value={formData.solution || ""}
+              onChange={handleChange}
+              label="Solution"
+              placeholder="Enter Solution Detail"
+              multiline
+              rows={4}
+              size="small"
+              sx={textFieldStyle}
+              InputProps={{ sx: inputStyle }}
+            />
+          </Stack>
+
+          {/* Right Column */}
+          <Stack spacing={2} sx={{ flex: 1 }}>
+            <Typography variant="body2" gutterBottom>Scope Complexity Description</Typography>
+            <TextField
+              name="scopeDescription"
+              value={formData.scopeDescription || ""}
+              onChange={handleChange}
+              label="Scope Complexity Description"
+              placeholder="Enter Description"
+              multiline
+              rows={4}
+              size="small"
+              sx={textFieldStyle}
+              InputProps={{ sx: inputStyle }}
+            />
+
+            <Typography variant="body2" gutterBottom>Value Proposition Description</Typography>
+            <TextField
+              name="valuePropositionDescription"
+              value={formData.valuePropositionDescription || ""}
+              onChange={handleChange}
+              label="Value Proposition Description"
+              placeholder="Enter Description"
+              multiline
+              rows={4}
+              size="small"
+              sx={textFieldStyle}
+              InputProps={{ sx: inputStyle }}
+            />
+
+            {createSelectSection("Degree of Client Advocacy", "degreeofClient", sectionData.degreeofClient, {
+              singleSelect: true,
+            })}
+
+            <Typography variant="body2" gutterBottom>Problem Detail</Typography>
+            <TextField
+              name="problem"
+              value={formData.problem || ""}
+              onChange={handleChange}
+              label="Problem"
+              placeholder="Enter Problem"
+              multiline
+              rows={4}
+              size="small"
+              sx={textFieldStyle}
+              InputProps={{ sx: inputStyle }}
+            />
+
+            <Typography variant="body2" gutterBottom>Outcome Detail</Typography>
+            <TextField
+              name="outcome"
+              value={formData.outcome || ""}
+              onChange={handleChange}
+              label="Outcome"
+              placeholder="Enter Outcome"
+              multiline
+              rows={4}
+              size="small"
+              sx={textFieldStyle}
+              InputProps={{ sx: inputStyle }}
+            />
+          </Stack>
+        </Box>
+      </Stack>
     </Paper>
   );
-});
+};
