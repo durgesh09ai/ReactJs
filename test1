@@ -9,9 +9,9 @@ import {
   Checkbox,
   Chip,
 } from "@mui/material";
+import InfoOutlinedIcon from "@mui/icons-material/InfoOutlined";
 import CheckBoxOutlineBlankIcon from "@mui/icons-material/CheckBoxOutlineBlank";
 import CheckBoxIcon from "@mui/icons-material/CheckBox";
-import InfoOutlinedIcon from "@mui/icons-material/InfoOutlined";
 
 const icon = <CheckBoxOutlineBlankIcon fontSize="small" />;
 const checkedIcon = <CheckBoxIcon fontSize="small" />;
@@ -48,6 +48,20 @@ export const CaseStudyDetailsForm: React.FC<BasicInfoFormProps> = ({
     setFormData((prev: any) => ({ ...prev, [field]: value }));
   };
 
+  const handleSingleSelectChange = (
+    field: string,
+    value: any,
+    autoFillKey?: string
+  ) => {
+    setFormData((prev: any) => ({
+      ...prev,
+      [field]: value ? [value] : [],
+      ...(autoFillKey && value?.message
+        ? { [autoFillKey]: value.message }
+        : {}),
+    }));
+  };
+
   const inputStyle = {
     fontSize: "13px",
     "&::placeholder": {
@@ -59,38 +73,26 @@ export const CaseStudyDetailsForm: React.FC<BasicInfoFormProps> = ({
     width: "320px",
   };
 
-  const createSelectSection = (
+  const createMultiSelectSection = (
     title: string,
     field: string,
-    options: { key: string; label: string; message?: string }[],
-    config?: { singleSelect?: boolean; showMessage?: boolean }
+    options: { key: string; label: string }[],
+    width: number = 260
   ) => {
-    const singleSelect = config?.singleSelect;
-    const showMessage = config?.showMessage;
     const selected = formData[field] || [];
-    const selectedOption = singleSelect ? selected[0] : null;
-
-    const handleChange = (_: any, newValue: any | any[]) => {
-      if (singleSelect) {
-        handleArrayFieldChange(field, newValue ? [newValue] : []);
-      } else {
-        handleArrayFieldChange(field, newValue);
-      }
-    };
 
     return (
-      <Box sx={{ width: 260 }}>
+      <Box sx={{ width }}>
         <Typography variant="body2" gutterBottom>
           {title}
         </Typography>
-
         <Autocomplete
-          multiple={!singleSelect}
+          multiple
           options={options}
-          disableCloseOnSelect={!singleSelect}
+          disableCloseOnSelect
           value={selected}
           getOptionLabel={(option) => option.label}
-          onChange={handleChange}
+          onChange={(_, newValue) => handleArrayFieldChange(field, newValue)}
           isOptionEqualToValue={(option, value) => option.key === value.key}
           renderTags={() => null}
           renderOption={(props, option, { selected }) => (
@@ -108,14 +110,12 @@ export const CaseStudyDetailsForm: React.FC<BasicInfoFormProps> = ({
             <TextField
               {...params}
               variant="outlined"
-              label={`Select ${title}`}
               placeholder={`Select ${title}`}
               size="small"
               InputLabelProps={{ sx: { fontSize: 14 } }}
             />
           )}
         />
-
         <Box sx={{ mt: 1, display: "flex", gap: 1, flexWrap: "wrap" }}>
           {selected.map((item: any) => (
             <Chip
@@ -133,12 +133,46 @@ export const CaseStudyDetailsForm: React.FC<BasicInfoFormProps> = ({
             />
           ))}
         </Box>
+      </Box>
+    );
+  };
 
-        {showMessage && selectedOption?.message && (
+  const createSingleSelectWithMessage = (
+    title: string,
+    field: string,
+    options: { key: string; label: string; message?: string }[],
+    autoFillKey?: string
+  ) => {
+    const selected = formData[field]?.[0] || null;
+
+    return (
+      <Box sx={{ width: 260 }}>
+        <Typography variant="body2" gutterBottom>
+          {title}
+        </Typography>
+        <Autocomplete
+          options={options}
+          value={selected}
+          getOptionLabel={(option) => option.label}
+          onChange={(_, newValue) =>
+            handleSingleSelectChange(field, newValue, autoFillKey)
+          }
+          isOptionEqualToValue={(option, value) => option.key === value.key}
+          renderInput={(params) => (
+            <TextField
+              {...params}
+              variant="outlined"
+              placeholder={`Select ${title}`}
+              size="small"
+              InputLabelProps={{ sx: { fontSize: 14 } }}
+            />
+          )}
+        />
+        {selected?.message && (
           <Box sx={{ mt: 1, display: "flex", alignItems: "center", gap: 1 }}>
             <InfoOutlinedIcon fontSize="small" color="info" />
             <Typography variant="caption" color="text.secondary">
-              {selectedOption.message}
+              {selected.message}
             </Typography>
           </Box>
         )}
@@ -200,7 +234,13 @@ export const CaseStudyDetailsForm: React.FC<BasicInfoFormProps> = ({
           <Typography variant="subtitle1">Case Study Details</Typography>
         </Box>
 
-        <Typography variant="body2" color="text.secondary">General Information</Typography>
+        <Typography variant="body2" color="text.secondary">
+          General Information
+        </Typography>
+
+        <Stack spacing={2} sx={{ flex: 1 }}>
+          {createMultiSelectSection("Work Type", "workType", sectionData.workType, 700)}
+        </Stack>
 
         <Box
           sx={{
@@ -213,25 +253,27 @@ export const CaseStudyDetailsForm: React.FC<BasicInfoFormProps> = ({
         >
           {/* Left Column */}
           <Stack spacing={2} sx={{ flex: 1 }}>
-            {createSelectSection("Work Type", "workType", sectionData.workType)}
-            {createSelectSection("Scope Complexity", "scopeComplexity", sectionData.scopeComplexity, {
-              singleSelect: true,
-              showMessage: true,
-            })}
-            {createSelectSection("Value Proposition", "valueProposition", sectionData.valueProposition, {
-              singleSelect: true,
-              showMessage: true,
-            })}
-            {createSelectSection("AI-ML Penetration", "AIMLPenetration", sectionData.AIMLPenetration, {
-              singleSelect: true,
-            })}
+            {createSingleSelectWithMessage(
+              "Scope Complexity",
+              "scopeComplexity",
+              sectionData.scopeComplexity,
+              "scopeDescription"
+            )}
+            {createSingleSelectWithMessage(
+              "Value Proposition",
+              "valueProposition",
+              sectionData.valueProposition
+            )}
 
-            <Typography variant="body2" gutterBottom>Case Study Details</Typography>
+            {createMultiSelectSection("AI-ML Penetration", "AIMLPenetration", sectionData.AIMLPenetration)}
+
+            <Typography variant="body2" gutterBottom>
+              Case Study Details
+            </Typography>
             <TextField
               name="caseStudyDetails"
               value={formData.caseStudyDetails || ""}
               onChange={handleChange}
-              label="Case Study Details"
               placeholder="Enter Case Study Details"
               multiline
               rows={4}
@@ -240,12 +282,13 @@ export const CaseStudyDetailsForm: React.FC<BasicInfoFormProps> = ({
               InputProps={{ sx: inputStyle }}
             />
 
-            <Typography variant="body2" gutterBottom>Solution</Typography>
+            <Typography variant="body2" gutterBottom>
+              Solution
+            </Typography>
             <TextField
               name="solution"
               value={formData.solution || ""}
               onChange={handleChange}
-              label="Solution"
               placeholder="Enter Solution Detail"
               multiline
               rows={4}
@@ -257,44 +300,29 @@ export const CaseStudyDetailsForm: React.FC<BasicInfoFormProps> = ({
 
           {/* Right Column */}
           <Stack spacing={2} sx={{ flex: 1 }}>
-            <Typography variant="body2" gutterBottom>Scope Complexity Description</Typography>
-            <TextField
-              name="scopeDescription"
-              value={formData.scopeDescription || ""}
-              onChange={handleChange}
-              label="Scope Complexity Description"
-              placeholder="Enter Description"
-              multiline
-              rows={4}
-              size="small"
-              sx={textFieldStyle}
-              InputProps={{ sx: inputStyle }}
-            />
+            {/* <Box sx={{ mt: 1, display: "flex", alignItems: "center", gap: 1 }}>
+            <InfoOutlinedIcon fontSize="small" color="info" />
+            <Typography variant="caption" color="text.secondary">
+              {formData.scopeDescription || ""}
+            </Typography>
+            </Box>
 
-            <Typography variant="body2" gutterBottom>Value Proposition Description</Typography>
-            <TextField
-              name="valuePropositionDescription"
-              value={formData.valuePropositionDescription || ""}
-              onChange={handleChange}
-              label="Value Proposition Description"
-              placeholder="Enter Description"
-              multiline
-              rows={4}
-              size="small"
-              sx={textFieldStyle}
-              InputProps={{ sx: inputStyle }}
-            />
+           <Box sx={{ mt: 1, display: "flex", alignItems: "center", gap: 1 }}>
+            <InfoOutlinedIcon fontSize="small" color="info" />
+            <Typography variant="caption" color="text.secondary">
+              {formData.valuePropositionDescription || ""}
+            </Typography>
+            </Box> */}
 
-            {createSelectSection("Degree of Client Advocacy", "degreeofClient", sectionData.degreeofClient, {
-              singleSelect: true,
-            })}
+            {createMultiSelectSection("Degree of Client Advocacy", "degreeofClient", sectionData.degreeofClient)}
 
-            <Typography variant="body2" gutterBottom>Problem Detail</Typography>
+            <Typography variant="body2" gutterBottom>
+              Problem Detail
+            </Typography>
             <TextField
               name="problem"
               value={formData.problem || ""}
               onChange={handleChange}
-              label="Problem"
               placeholder="Enter Problem"
               multiline
               rows={4}
@@ -303,12 +331,13 @@ export const CaseStudyDetailsForm: React.FC<BasicInfoFormProps> = ({
               InputProps={{ sx: inputStyle }}
             />
 
-            <Typography variant="body2" gutterBottom>Outcome Detail</Typography>
+            <Typography variant="body2" gutterBottom>
+              Outcome Detail
+            </Typography>
             <TextField
               name="outcome"
               value={formData.outcome || ""}
               onChange={handleChange}
-              label="Outcome"
               placeholder="Enter Outcome"
               multiline
               rows={4}
