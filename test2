@@ -1,195 +1,194 @@
 import React, { useState } from "react";
 import {
+  AppBar,
+  Toolbar,
+  InputBase,
   Box,
-  Paper,
-  Tabs,
+  IconButton,
   Tab,
-  TextField,
-  Typography,
-  Chip,
-  List,
-  ListItem,
-  ListItemText,
-  ListItemIcon,
-  Checkbox,
-  ListItemButton,
-  InputAdornment,
+  Tabs,
+  Avatar,
+  alpha,
+  styled,
+  Button,
 } from "@mui/material";
-import { styled } from "@mui/material/styles";
 import SearchIcon from "@mui/icons-material/Search";
+import FilterListIcon from "@mui/icons-material/FilterList";
+import NotificationsIcon from "@mui/icons-material/Notifications";
+import ChatIcon from "@mui/icons-material/Chat";
+import { Link, useNavigate } from "react-router-dom";
+import AddIcon from "@mui/icons-material/Add";
+import EmojiEventsIcon from "@mui/icons-material/EmojiEvents";
 
-interface Category {
-  id: string;
-  label: string;
-}
+const Search = styled("div")(({ theme }) => ({
+  position: "relative",
+  borderRadius: theme.shape.borderRadius,
+  backgroundColor: alpha(theme.palette.common.white, 0.95),
+  boxShadow: "0px 1px 3px 0px rgba(96,108,128,0.05)",
+  width: "100%",
+  maxWidth: "100%",
+}));
 
-const StyledChip = styled(Chip)(() => ({
-  backgroundColor: "rgba(243,250,255,1)",
-  borderRadius: "16px",
-  "& .MuiChip-deleteIcon": {
-    color: "rgba(15,73,119,1)",
+const SearchIconWrapper = styled("div")(({ theme }) => ({
+  padding: theme.spacing(0, 2),
+  height: "100%",
+  position: "absolute",
+  pointerEvents: "none",
+  display: "flex",
+  alignItems: "center",
+  justifyContent: "center",
+}));
+
+const StyledInputBase = styled(InputBase)(({ theme }) => ({
+  color: "#98A2B2",
+  width: "100%",
+  "& .MuiInputBase-input": {
+    padding: theme.spacing(1),
+    paddingLeft: theme.spacing(6),
+    transition: theme.transitions.create("width"),
+    fontSize: "0.75rem",
   },
 }));
 
-export const TagSelector: React.FC = () => {
-  const [activeTab, setActiveTab] = useState<"IMU" | "SGU">("IMU");
-  const [searchQuery, setSearchQuery] = useState<string>("");
 
-  // Separate states
-  const [imuTags, setImuTags] = useState<Record<string, string>>({});
-  const [sguTags, setSguTags] = useState<Record<string, string>>({});
+const Header = () => {
+  const [value, setValue] = useState(0);
+  const navigate = useNavigate();
 
-  const imuCategories: Category[] = [
-    { id: "imu-1", label: "Insurance" },
-    { id: "imu-2", label: "Banking" },
-    { id: "imu-3", label: "Retail" },
-  ];
-
-  const sguCategories: Category[] = [
-    { id: "sgu-1", label: "North America" },
-    { id: "sgu-2", label: "Europe" },
-    { id: "sgu-3", label: "Asia Pacific" },
-  ];
-
-  const currentCategories = activeTab === "IMU" ? imuCategories : sguCategories;
-
-  const filteredCategories = currentCategories.filter((category) =>
-    category.label.toLowerCase().includes(searchQuery.toLowerCase())
-  );
-
-  const handleToggle = (category: Category) => {
-    if (activeTab === "IMU") {
-      setImuTags((prev) => {
-        const newTags = { ...prev };
-        if (newTags[category.id]) {
-          delete newTags[category.id];
-        } else {
-          newTags[category.id] = category.label;
-        }
-        return newTags;
-      });
-    } else {
-      setSguTags((prev) => {
-        const newTags = { ...prev };
-        if (newTags[category.id]) {
-          delete newTags[category.id];
-        } else {
-          newTags[category.id] = category.label;
-        }
-        return newTags;
-      });
-    }
+  const handleChange = (_event: React.SyntheticEvent, newValue: number) => {
+    setValue(newValue);
   };
 
-  const handleDelete = (tab: "IMU" | "SGU", id: string) => {
-    if (tab === "IMU") {
-      setImuTags((prev) => {
-        const newTags = { ...prev };
-        delete newTags[id];
-        return newTags;
-      });
-    } else {
-      setSguTags((prev) => {
-        const newTags = { ...prev };
-        delete newTags[id];
-        return newTags;
-      });
-    }
-  };
+  const addSolution = () => navigate("/addasolution");
+  const handleClick = () => navigate("/dashboarddetail");
 
   return (
-    <Paper
+    <AppBar
+      position="static"
+      color="transparent"
       elevation={0}
-      sx={{
-        border: 1,
-        borderColor: "rgba(15,73,119,0.1)",
-        borderRadius: 2,
-        minWidth: "240px",
-        minHeight: "502px",
-        flexGrow: 1,
-        display: "flex",
-        flexDirection: "column",
-      }}
+      sx={{ borderBottom: 1, borderColor: "rgba(0, 0, 0, 0.12)", height: 48 }}
     >
-      <Box sx={{ width: "100%", borderBottom: 1, borderColor: "divider" }}>
-        <Tabs
-          value={activeTab}
-          onChange={(_, newValue) => setActiveTab(newValue)}
-        >
-          <Tab label="IMU" value="IMU" sx={{ fontSize: "0.75rem" }} />
-          <Tab label="SGU" value="SGU" sx={{ fontSize: "0.75rem" }} />
-        </Tabs>
-      </Box>
+      <Toolbar
+        variant="dense"
+        sx={{ justifyContent: "space-between", py: 0.5, minHeight: 48 }}
+      >
+        {/* Left section: Logo + Search */}
+        <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
+          <img src="/EXL_Service_logo.png" alt="Logo" style={{ height: 36 }} />
 
-      <Box sx={{ p: 2, display: "flex", flexDirection: "column", flexGrow: 1 }}>
-        <TextField
-          placeholder="Search tags"
-          value={searchQuery}
-          onChange={(e) => setSearchQuery(e.target.value)}
-          size="small"
-          fullWidth
-          InputProps={{
-            endAdornment: (
-              <InputAdornment position="end">
-                <SearchIcon />
-              </InputAdornment>
-            ),
-          }}
-          sx={{ mb: 2 }}
-        />
+          <Search
+ sx={{
+    width: 360, 
+    minWidth: 360,
+    maxWidth: 500,
+    display: "flex",
+    alignItems: "center",
+    border: "1px solid #D0D5DD",
+    borderRadius: "8px",
+    paddingLeft: 1,
+    paddingRight: 1,
+    backgroundColor: "#fff",
+    flexShrink: 0, 
+  }}
+>
 
-        <Typography variant="caption" color="text.secondary" sx={{ mb: 1 }}>
-          Selected tags
-        </Typography>
-
-        <Box sx={{ display: "flex", flexWrap: "wrap", gap: 1, mb: 2 }}>
-          {Object.entries(imuTags).map(([id, label]) => (
-            <StyledChip
-              key={`imu-${id}`}
-              label={`${label} (IMU)`}
-              onDelete={() => handleDelete("IMU", id)}
-              size="small"
+            <SearchIconWrapper>
+              <SearchIcon sx={{ color: "#98A2B2" }} />
+            </SearchIconWrapper>
+            <StyledInputBase
+              placeholder="Search Projects"
+              inputProps={{ "aria-label": "search" }}
             />
-          ))}
-          {Object.entries(sguTags).map(([id, label]) => (
-            <StyledChip
-              key={`sgu-${id}`}
-              label={`${label} (SGU)`}
-              onDelete={() => handleDelete("SGU", id)}
-              size="small"
-            />
-          ))}
+            <Box
+              sx={{
+                position: "absolute",
+                right: 8,
+                top: "50%",
+                transform: "translateY(-50%)",
+              }}
+            >
+              <IconButton size="small">
+                <FilterListIcon sx={{ fontSize: 20, color: "#98A2B2" }} />
+              </IconButton>
+            </Box>
+          </Search>
         </Box>
 
-        <Typography variant="caption" color="text.secondary" sx={{ mb: 1 }}>
-          Choose {activeTab}
-        </Typography>
+        {/* Middle section: Tabs */}
+        <Box sx={{ flexGrow: 1, mx: 4 }}>
+          <Tabs
+            value={value}
+            onChange={handleChange}
+            indicatorColor="primary"
+            textColor="inherit"
+            variant="scrollable"
+            scrollButtons="auto"
+            sx={{
+              "& .MuiTab-root": {
+                textTransform: "none",
+                minWidth: "auto",
+                color: "#7A8699",
+                fontWeight: 500,
+                fontSize: "14px",
+                px: 2,
+              },
+              "& .Mui-selected": {
+                color: "#323C4D",
+                fontWeight: 700,
+                fontSize: "14px",
+              },
+            }}
+          >
+            <Tab label="Dashboard" component={Link} to="/" />
+            <Tab
+              label="Solution Catalogue"
+              component={Link}
+              to="/solutioncatalogue/all/all"
+            />
+          </Tabs>
+        </Box>
 
-        <List sx={{ flexGrow: 1, overflow: "auto" }}>
-          {filteredCategories.map((category) => {
-            const isChecked =
-              activeTab === "IMU"
-                ? !!imuTags[category.id]
-                : !!sguTags[category.id];
-            return (
-              <ListItem disablePadding key={category.id}>
-                <ListItemButton
-                  onClick={() => handleToggle(category)}
-                  sx={{ py: 0.5 }}
-                >
-                  <ListItemIcon sx={{ minWidth: "auto", mr: 1 }}>
-                    <Checkbox checked={isChecked} size="small" />
-                  </ListItemIcon>
-                  <ListItemText
-                    primary={category.label}
-                    primaryTypographyProps={{ variant: "body2" }}
-                  />
-                </ListItemButton>
-              </ListItem>
-            );
-          })}
-        </List>
-      </Box>
-    </Paper>
+        {/* Right section: Buttons */}
+        <Box sx={{ display: "flex", justifyContent: "flex-end", gap: 2 }}>
+          <Button
+            onClick={addSolution}
+            variant="outlined"
+            startIcon={<AddIcon />}
+            sx={{
+              color: "#0F4977",
+              borderColor: "#0F4977",
+              fontSize: "12px",
+              boxShadow: "0px 1px 3px 0px rgba(96,108,128,0.05)",
+              height: "40px",
+              borderRadius: "8px",
+              "&:hover": {
+                borderColor: "#0F4977",
+                backgroundColor: "rgba(15, 73, 119, 0.04)",
+              },
+            }}
+          >
+            Add New Solution
+          </Button>
+
+          <Button
+            onClick={handleClick}
+            variant="contained"
+            startIcon={<EmojiEventsIcon />}
+            sx={{
+              color: "#FFF",
+              borderColor: "#0F4977",
+              fontSize: "14px",
+              borderRadius: "8px",
+              boxShadow: "0px 1px 3px 0px rgba(96,108,128,0.05)",
+            }}
+          >
+            My Stat and Rank
+          </Button>
+        </Box>
+      </Toolbar>
+    </AppBar>
   );
 };
+
+export default Header;
