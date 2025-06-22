@@ -1,357 +1,59 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
+import { observer } from "mobx-react-lite";
 import {
   Box,
-  TextField,
-  Typography,
-  Paper,
-  Stack,
-  Autocomplete,
-  Checkbox,
-  Chip,
+  CssBaseline,
+  ThemeProvider,
 } from "@mui/material";
-import CheckBoxOutlineBlankIcon from "@mui/icons-material/CheckBoxOutlineBlank";
-import CheckBoxIcon from "@mui/icons-material/CheckBox";
-import InfoOutlinedIcon from "@mui/icons-material/InfoOutlined";
+import DefaultSidebar from "./DefaultSidebar";
+import DefaultHeader from "./DefaultHeader";
+import { Outlet } from "react-router-dom";
+import {
+  ContentPaper,
+  InnerContent,
+  MainContent,
+  OutletContainer,
+  RootBox,
+  SidebarContainer,
+  theme,
+} from "./BaseLayout.style";
+import { mainPageStore } from "../../stores/MainPageStore";
 
-const icon = <CheckBoxOutlineBlankIcon fontSize="small" />;
-const checkedIcon = <CheckBoxIcon fontSize="small" />;
-
-interface BasicInfoFormProps {
-  data: any;
-  onDataChange: (data: any) => void;
+interface BaseLayoutProps {
+  header?: React.ReactNode;
+  sidebar?: React.ReactNode;
 }
 
-const exlDifferentiator = [
-  { key: "reporting", label: "Reporting/MI" },
-  { key: "strategy", label: "Strategy" },
-  { key: "analytics", label: "Analytics Data Management" },
-  { key: "modeling", label: "Modeling" },
-  { key: "management", label: "Model Risk Management" },
-  { key: "monitoring", label: "Model Monitoring" },
-  { key: "engineering", label: "Data Engineering" },
-  { key: "software", label: "Software Engineering" },
-  { key: "others", label: "others" },
-];
-
-const valueProposition1 = [
-  { key: "supplying-talent", label: "Supplying Talent" },
-  { key: "influence-analytics-output", label: "Influence Analytics Output" },
-  { key: "influence-business-outcomes", label: "Influence Business Outcomes" },
-];
-
-const valueProposition=   [
-      {
-        id: "supplying-talent",
-        label: "Supplying Talent",
-        message: "We supply talent to solve business needs.",
-      },
-      {
-        id: "influence-analytics-output",
-        label: "Influence Analytics Output",
-        message: "We enhance analytics results.",
-      },
-      {
-        id: "influence-business-outcomes",
-        label: "Influence Business Outcomes",
-        message: "We impact business outcomes directly.",
-      },
-    ];
-
-const licensingModel = [
-  { key: "pmpm", label: "PMPM" },
-  { key: "license-based", label: "License Based" },
-  { key: "upfront-ongoing", label: "Upfront + Ongoing" },
-  { key: "contingency-based", label: "Contingency Based" },
-];
-
-export const ProductDetailsForm: React.FC<BasicInfoFormProps> = ({ data, onDataChange }) => {
-  const [formData, setFormData] = useState<any>(data || {});
-
-useEffect(() => {
-    if (JSON.stringify(data) !== JSON.stringify(formData)) {
-      setFormData(data || {});
-    }
-  }, [data]);
-
-  // Notify parent when formData changes
-  useEffect(() => {
-    if (typeof onDataChange === "function") {
-      onDataChange(formData);
-    }
-  }, [formData]);
-
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target;
-    setFormData((prev: any) => ({ ...prev, [name]: value }));
-  };
-
-  const handleUpdateField = (key: string, value: any) => {
-    setFormData((prev: any) => ({ ...prev, [key]: value }));
-  };
-
-  const handleDelete = (key: string, field: string) => {
-    const updated = (formData[field] || []).filter((item: any) => item.key !== key);
-    handleUpdateField(field, updated);
-  };
-
-  const inputStyle = {
-    fontSize: "13px",
-    "&::placeholder": {
-      fontSize: "12px",
-    },
-  };
-
-  const textFieldStyle = { width: "220px" };
-
-
-   const handleSingleSelectChange = (
-    field: string,
-    value: any,
-    autoFillKey?: string
-  ) => {
-    setFormData((prev: any) => ({
-      ...prev,
-      [field]: value ? [value] : [],
-      ...(autoFillKey && value?.message
-        ? { [autoFillKey]: value.message }
-        : {}),
-    }));
-  };
-
-  const createSingleSelectWithMessage = (
-    title: string,
-    field: string,
-    options: { id: string; label: string; message?: string }[],
-    autoFillKey?: string
-  ) => {
-    const selected = formData[field]?.[0] || null;
-
-    return (
-      <Box sx={{ width: 260 }}>
-        <Typography variant="body2" gutterBottom>
-          {title}
-        </Typography>
-        <Autocomplete
-          options={options}
-          value={selected}
-          getOptionLabel={(option) => option.label}
-          onChange={(_, newValue) =>
-            handleSingleSelectChange(field, newValue, autoFillKey)
-          }
-          isOptionEqualToValue={(option, value) => option.id === value.id}
-          renderInput={(params) => (
-            <TextField
-              {...params}
-              variant="outlined"
-              placeholder={`Select ${title}`}
-              size="small"
-              InputLabelProps={{ sx: { fontSize: 14 } }}
-            />
-          )}
-        />
-        {selected?.message && (
-          <Box sx={{ mt: 1, display: "flex", alignItems: "center", gap: 1 }}>
-            <InfoOutlinedIcon fontSize="small" color="info" />
-            <Typography variant="caption" color="text.secondary">
-              {selected.message}
-            </Typography>
-          </Box>
-        )}
-      </Box>
-    );
-  };
+const BaseLayout = observer((props?: BaseLayoutProps) => {
+  const header = props?.header ?? <DefaultHeader />;
+  const sidebar = props?.sidebar ?? <DefaultSidebar />;
+  const { sidebarCollapsed } = mainPageStore;
 
   return (
-    <Paper elevation={0} sx={{ width: { xs: "100%", md: "704px" }, flexGrow: 1, p: 2, minHeight: "522px" }}>
-      <Stack spacing={2}>
-        <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
-          <img src="./formIcon.png" alt="Start icon" style={{ width: "20px", height: "20px" }} />
-          <Typography variant="subtitle1">Product Details</Typography>
-        </Box>
+    <ThemeProvider theme={theme}>
+      <CssBaseline />
+      <Box sx={{ width: "100%", borderBottom: "1px solid rgba(0,0,0,0.1)" }}>
+        {header}
+      </Box>
+      <RootBox>
+        <ContentPaper>
+          <Box sx={{ display: "flex", height: "100%", width: "100%" }}>
+            <SidebarContainer sidebarCollapsed={sidebarCollapsed}>
+              {sidebar}
+            </SidebarContainer>
 
-        <Typography variant="body2" color="text.secondary">
-          General Information
-        </Typography>
-
-        {/* EXL Differentiator */}
-        <Box sx={{ width: "100%" }}>
-          <Typography variant="body2" gutterBottom>EXL Differentiator</Typography>
-         <Autocomplete
-          multiple
-          freeSolo
-          options={exlDifferentiator}
-          getOptionLabel={(option) => typeof option === "string" ? option : option.label}
-          filterSelectedOptions
-          value={formData.exlDifferentiator || []}
-          onChange={(_, newValue) => {
-            const parsed = newValue.map((item) => {
-              if (typeof item === "string") {
-                return { key: item.toLowerCase().replace(/\s+/g, "-"), label: item };
-              }
-              return item;
-            });
-            handleUpdateField("exlDifferentiator", parsed);
-          }}
-          isOptionEqualToValue={(option, value) =>
-            (typeof option === "string" ? option : option.key) === (typeof value === "string" ? value : value.key)
-          }
-            renderTags={() => null}
-            renderOption={(props, option, { selected }) => (
-              <li {...props} style={{ fontSize: 14 }}>
-                <Checkbox
-                  icon={icon}
-                  checkedIcon={checkedIcon}
-                  style={{ marginRight: 8 }}
-                  checked={selected}
-                />
-      {typeof option === "string" ? option : option.label}
-    </li>
-  )}
-  renderInput={(params) => (
-    <TextField
-      {...params}
-      variant="outlined"
-      placeholder="Add differentiator"
-      size="small"
-      InputLabelProps={{ sx: { fontSize: 14 } }}
-    />
-  )}
-/>
-
-          <Box sx={{ mt: 1, display: "flex", gap: 1, flexWrap: "wrap" }}>
-            {(formData.exlDifferentiator || []).map((item: any) => (
-              <Chip
-                key={item.key}
-                label={item.label}
-                onDelete={() => handleDelete(item.key, "exlDifferentiator")}
-                color="primary"
-                variant="outlined"
-                size="small"
-              />
-            ))}
+            <MainContent sx={{ borderLeft: "1px solid rgba(0,0,0,0.1)" }}>
+              <InnerContent>
+                <OutletContainer>
+                  <Outlet />
+                </OutletContainer>
+              </InnerContent>
+            </MainContent>
           </Box>
-        </Box>
-
-        {/* Two Columns */}
-        <Box sx={{ display: "flex", flexDirection: { xs: "column", md: "row" }, gap: 2, width: "100%" }}>
-          {/* Left Column */}
-          <Stack spacing={2} sx={{ width: "100%" }}>
-            {/* Value Proposition */}
-            {/* <Box sx={{ width: 260 }}>
-              <Typography variant="body2" gutterBottom>Value Proposition</Typography>
-              <Autocomplete
-                multiple
-                options={valueProposition}
-                disableCloseOnSelect
-                value={formData.valueProposition || []}
-                getOptionLabel={(option) => option.label}
-                onChange={(_, newValue) => handleUpdateField("valueProposition", newValue)}
-                isOptionEqualToValue={(option, value) => option.key === value.key}
-                renderTags={() => null}
-                renderOption={(props, option, { selected }) => (
-                  <li {...props}>
-                    <Checkbox icon={icon} checkedIcon={checkedIcon} style={{ marginRight: 8 }} checked={selected} />
-                    {option.label}
-                  </li>
-                )}
-                renderInput={(params) => (
-                  <TextField
-                    {...params}
-                    variant="outlined"
-                    label="Select Value Proposition"
-                    placeholder="Select Value Proposition"
-                    size="small"
-                    InputLabelProps={{ sx: { fontSize: 14 } }}
-                  />
-                )}
-              />
-              <Box sx={{ mt: 1, display: "flex", gap: 1, flexWrap: "wrap" }}>
-                {(formData.valueProposition || []).map((item: any) => (
-                  <Chip
-                    key={item.key}
-                    label={item.label}
-                    onDelete={() => handleDelete(item.key, "valueProposition")}
-                    color="primary"
-                    variant="outlined"
-                    size="small"
-                  />
-                ))}
-              </Box>
-            </Box> */}
-
-          {createSingleSelectWithMessage(
-              "Value Proposition",
-              "valueProposition",
-              valueProposition
-            )}
-           
-          </Stack>
-
-          {/* Right Column */}
-          <Stack spacing={2} sx={{ width: "100%" }}>
-             {/* Licensing Model */}
-            <Box sx={{ width: 260 }}>
-              <Typography variant="body2" gutterBottom>Licensing Model</Typography>
-              <Autocomplete
-                multiple
-                options={licensingModel}
-                disableCloseOnSelect
-                value={formData.licensingModel || []}
-                getOptionLabel={(option) => option.label}
-                onChange={(_, newValue) => handleUpdateField("licensingModel", newValue)}
-                isOptionEqualToValue={(option, value) => option.key === value.key}
-                renderTags={() => null}
-                renderOption={(props, option, { selected }) => (
-                  <li {...props}>
-                    <Checkbox icon={icon} checkedIcon={checkedIcon} style={{ marginRight: 8 }} checked={selected} />
-                    {option.label}
-                  </li>
-                )}
-                renderInput={(params) => (
-                  <TextField
-                    {...params}
-                    variant="outlined"
-                    label="Select Licensing Model"
-                    placeholder="Select Licensing Model"
-                    size="small"
-                    InputLabelProps={{ sx: { fontSize: 14 } }}
-                  />
-                )}
-              />
-              <Box sx={{ mt: 1, display: "flex", gap: 1, flexWrap: "wrap" }}>
-                {(formData.licensingModel || []).map((item: any) => (
-                  <Chip
-                    key={item.key}
-                    label={item.label}
-                    onDelete={() => handleDelete(item.key, "licensingModel")}
-                    color="primary"
-                    variant="outlined"
-                    size="small"
-                  />
-                ))}
-              </Box>
-            </Box>
-          </Stack>
-        </Box>
-
-        {/* Final Description Field */}
-        <Box>
-          <Typography variant="body2" gutterBottom>Description</Typography>
-          <TextField
-            name="description"
-            value={formData.description || ""}
-            onChange={handleChange}
-            variant="outlined"
-            size="small"
-            sx={textFieldStyle}
-            InputProps={{ sx: inputStyle }}
-            placeholder="Enter Detail"
-            multiline
-            rows={4}
-            style={{ width: "680px" }}
-          />
-        </Box>
-      </Stack>
-    </Paper>
+        </ContentPaper>
+      </RootBox>
+    </ThemeProvider>
   );
-};
+});
+
+export default BaseLayout;
