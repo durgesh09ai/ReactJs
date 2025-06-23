@@ -1,86 +1,58 @@
-import React from "react";
-import { observer } from "mobx-react-lite";
-import { Box, CssBaseline, ThemeProvider } from "@mui/material";
-import DefaultSidebar from "./DefaultSidebar";
-import DefaultHeader from "./DefaultHeader";
-import { Outlet } from "react-router-dom";
-import { theme } from "./BaseLayout.style";
-import { mainPageStore } from "../../stores/MainPageStore";
+<Autocomplete
+  multiple
+  freeSolo
+  filterSelectedOptions
+  options={technologyOptionsList}
+  value={data.smartTags || []}
+  getOptionLabel={(option) => typeof option === "string" ? option : option.name}
+  onChange={(_, newValue) => {
+    const formatted = newValue.map((item) => {
+      if (typeof item === "string") {
+        return { id: item.toLowerCase().replace(/\s+/g, "-"), name: item };
+      }
+      return item;
+    });
+    onDataChange({ ...data, smartTags: formatted });
+  }}
+  isOptionEqualToValue={(option, value) => option.id === value.id}
+  renderTags={() => null}
+  renderOption={(props, option, { selected }) => (
+    <li {...props}>
+      <Checkbox
+        icon={icon}
+        checkedIcon={checkedIcon}
+        style={{ marginRight: 8 }}
+        checked={selected}
+      />
+      {typeof option === "string" ? option : option.name}
+    </li>
+  )}
+  renderInput={(params) => (
+    <TextField
+      {...params}
+      variant="outlined"
+      label="Select or Add Smart Tags"
+      placeholder="Type to add or select"
+      size="small"
+      InputLabelProps={{ sx: { fontSize: 14 } }}
+    />
+  )}
+/>
 
-interface BaseLayoutProps {
-  header?: React.ReactNode;
-  sidebar?: React.ReactNode;
-}
 
-const HEADER_HEIGHT = 48; // match your Header height
+------------------------
 
-const BaseLayout = observer((props?: BaseLayoutProps) => {
-  const header = props?.header ?? <DefaultHeader />;
-  const sidebar = props?.sidebar ?? <DefaultSidebar />;
-  const { sidebarCollapsed } = mainPageStore;
 
-  return (
-    <ThemeProvider theme={theme}>
-      <CssBaseline />
+<Box sx={{ mt: 1, display: "flex", gap: 1, flexWrap: "wrap" }}>
+  {(data.smartTags || []).map((item: any) => (
+    <Chip
+      key={item.id}
+      label={item.name}
+      onDelete={() => handleDeleteChip("smartTags", item.id)}
+      color="primary"
+      variant="outlined"
+      size="small"
+    />
+  ))}
+</Box>
 
-      {/* ROOT Layout: Vertical */}
-      <Box
-        sx={{
-          display: "flex",
-          flexDirection: "column",
-          height: "100vh",
-          overflow: "hidden",
-        }}
-      >
-        {/* HEADER */}
-        <Box
-          sx={{
-            height: `${HEADER_HEIGHT}px`,
-            flexShrink: 0,
-            borderBottom: "1px solid rgba(0,0,0,0.1)",
-            zIndex: 10,
-          }}
-        >
-          {header}
-        </Box>
-
-        {/* BODY: Horizontal layout of sidebar and content */}
-        <Box
-          sx={{
-            display: "flex",
-            flexGrow: 1,
-            minHeight: 0, // Required to prevent layout breaking
-            overflow: "hidden",
-          }}
-        >
-          {/* SIDEBAR */}
-          <Box
-            sx={{
-              width: sidebarCollapsed ? 60 : 240,
-              borderRight: "1px solid rgba(0,0,0,0.1)",
-              overflowY: "auto",
-              flexShrink: 0,
-              backgroundColor: "#fff",
-            }}
-          >
-            {sidebar}
-          </Box>
-
-          {/* MAIN CONTENT */}
-          <Box
-            sx={{
-              flexGrow: 1,
-              overflowY: "auto",
-              padding: 2,
-              backgroundColor: "#F9FAFB",
-            }}
-          >
-            <Outlet />
-          </Box>
-        </Box>
-      </Box>
-    </ThemeProvider>
-  );
-});
-
-export default BaseLayout;
