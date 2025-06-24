@@ -1,58 +1,20 @@
-<Autocomplete
-  multiple
-  freeSolo
-  filterSelectedOptions
-  options={technologyOptionsList}
-  value={data.smartTags || []}
-  getOptionLabel={(option) => typeof option === "string" ? option : option.name}
-  onChange={(_, newValue) => {
-    const formatted = newValue.map((item) => {
-      if (typeof item === "string") {
-        return { id: item.toLowerCase().replace(/\s+/g, "-"), name: item };
-      }
-      return item;
-    });
-    onDataChange({ ...data, smartTags: formatted });
-  }}
-  isOptionEqualToValue={(option, value) => option.id === value.id}
-  renderTags={() => null}
-  renderOption={(props, option, { selected }) => (
-    <li {...props}>
-      <Checkbox
-        icon={icon}
-        checkedIcon={checkedIcon}
-        style={{ marginRight: 8 }}
-        checked={selected}
-      />
-      {typeof option === "string" ? option : option.name}
-    </li>
-  )}
-  renderInput={(params) => (
-    <TextField
-      {...params}
-      variant="outlined"
-      label="Select or Add Smart Tags"
-      placeholder="Type to add or select"
-      size="small"
-      InputLabelProps={{ sx: { fontSize: 14 } }}
-    />
-  )}
-/>
+const typeMessages: Record<string, string> = {
+  "case-study": "A proven solution implemented or currently an active engagement.",
+  "product": "A standalone, reusable solution that addresses a specific business problem.",
+  "framework": "A conceptual structure to build and customize solutions.",
+  "accelerator": "A tool, utility, or asset that accelerates delivery or performance.",
+  "client-story": "A story that highlights value delivered to a specific client.",
+  "RFI/RFPs": "A formal response to a Request for Information or Proposal.",
+};
 
 
-------------------------
+---------------
 
-
-<Box sx={{ mt: 1, display: "flex", gap: 1, flexWrap: "wrap" }}>
-  {(data.smartTags || []).map((item: any) => (
-    <Chip
-      key={item.id}
-      label={item.name}
-      onDelete={() => handleDeleteChip("smartTags", item.id)}
-      color="primary"
-      variant="outlined"
-      size="small"
-    />
-  ))}
-</Box>
-
+{typeMessages[selectedSolutionType] && (
+  <Paper elevation={0} sx={{ mt: 2, p: 2, bgcolor: "#fff", borderRadius: "16px", border: "1px solid #fff" }}>
+    <Box sx={{ display: "flex", width: "100%", fontSize: 12, alignItems: "center", gap: 1 }}>
+      <img src="/image604.png" width="16px" height="16px" />
+      {typeMessages[selectedSolutionType]}
+    </Box>
+  </Paper>
+)}
