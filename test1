@@ -24,3 +24,18 @@ ____________
  "& .MuiTabs-indicator": {
       display: value === false ? "none" : "block", // Hide indicator when no tab selected
     },
+_____________________
+
+PaperProps: {
+      sx: {
+        bgcolor: 'white',
+        zIndex: 9999,
+        maxHeight: 200, // optional: limit dropdown height
+        '& .MuiMenuItem-root': {
+          minHeight: '32px', // 👈 reduce each item height
+          fontSize: '13px',
+        },
+      }
+    }
+  }}
+>
