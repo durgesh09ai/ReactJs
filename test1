@@ -18,3 +18,9 @@ const typeMessages: Record<string, string> = {
     </Box>
   </Paper>
 )}
+
+____________
+
+ "& .MuiTabs-indicator": {
+      display: value === false ? "none" : "block", // Hide indicator when no tab selected
+    },
