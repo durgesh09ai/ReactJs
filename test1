@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { observer } from "mobx-react-lite";
-import { Box, Typography, Link, Stack, Paper, FormControl, FormLabel, MenuItem, Select, Button } from "@mui/material";
+import { Box, Typography, Link, Stack, Paper, FormControl, FormLabel, MenuItem, Select, Button, Autocomplete, TextField, Chip } from "@mui/material";
 import { ProjectCard } from "./ProjectCard";
 import { Pagination } from "./Pagination";
 import { mainPageStore } from "../../stores/MainPageStore";
@@ -97,10 +97,11 @@ export const ProjectsSection = observer(() => {
   const [currentPage, setCurrentPage] = useState(1);
   const [selectedType, setSelectedType] = useState<string>("");
   const [selectedClient, setSelectedClient] = useState<string>("");
-  const [selectedTechnology, setSelectedTechnology] = useState<string>("");
+  //const [selectedTechnology, setSelectedTechnology] = useState<string>("");
 
   const [solutionType, setSolutionType] = useState<dropDownItems[]>([]);
   const [clientList, setClientList] = useState<dropDownItems[]>([]);
+  const [selectedTechnology, setSelectedTechnology] = useState<string[]>([]);
 
   const projectsPerPage = 4;
   const start = (currentPage - 1) * projectsPerPage;
@@ -149,7 +150,14 @@ const toggleFilterDrawer = (open: boolean) => () => {
 
 
    useEffect(() => {
-    fetchSolutionCatalogueData(getId,getMenuType,selectedType,selectedTechnology,selectedClient,start,projectsPerPage);
+    fetchSolutionCatalogueData(
+      getId,
+      getMenuType,
+      selectedType,
+      selectedTechnology.join(","),
+      selectedClient,
+      start,
+      projectsPerPage);
   }, [currentPage,getId,selectedType,selectedTechnology,selectedClient]);
 
 const resultData = solutionCatalogueData?.result;
@@ -192,9 +200,9 @@ const totalPages = (solutionCatalogueData && totalResult) ? Math.ceil(totalResul
     setSelectedType(event.target.value);
   };
 
-  const handleTechnologyChange = (event: SelectChangeEvent<string>) => {
-    setSelectedTechnology(event.target.value);
-  };
+  // const handleTechnologyChange = (event: SelectChangeEvent<string>) => {
+  //   setSelectedTechnology(event.target.value);
+  // };
 
   const handleClientChange = (event: SelectChangeEvent<string>) => {
     setSelectedClient(event.target.value);
@@ -275,10 +283,10 @@ fontSize: '14px',
 fontStyle: 'normal', 
 fontWeight: 400, 
 lineHeight: 'normal'
-}}>By Technology</FormLabel> {/* Reduced font size */}
+}}>By Technology</FormLabel>
     <Select
     value={selectedTechnology}
-    onChange={handleTechnologyChange}
+    // onChange={handleTechnologyChange}
     displayEmpty
     IconComponent={KeyboardArrowDownIcon}
     sx={{
@@ -540,33 +548,102 @@ alignSelf: 'stretch',
   {/* Copy the same filter dropdowns here */}
   <FormControl fullWidth sx={{ mb: 2 }}>
     <FormLabel>By Solution Type</FormLabel>
-    <Select value={selectedType} onChange={handleTypeChange}>
-      <MenuItem value="" disabled>Select Type</MenuItem>
-      {solutionType.map(opt => (
-        <MenuItem key={opt.id} value={opt.name}>{opt.name}</MenuItem>
-      ))}
-    </Select>
-  </FormControl>
 
-  <FormControl fullWidth sx={{ mb: 2 }}>
-    <FormLabel>By Technology</FormLabel>
-    <Select value={selectedTechnology} onChange={handleTechnologyChange}>
-      <MenuItem value="" disabled>Select Technology</MenuItem>
-      {technologyOptionsList.map(opt => (
-        <MenuItem key={opt.id} value={opt.id}>{opt.name}</MenuItem>
-      ))}
-    </Select>
-  </FormControl>
+<Select
+  value={selectedType}
+  onChange={handleTypeChange}
+  displayEmpty
+  size="small"
+  sx={{
+    height: 36,
+    fontSize: 13,
+  }}
+>
+  <MenuItem value="">
+    <em>Select Type</em> {/* Or "Clear Selection" */}
+  </MenuItem>
+  {solutionType.map((opt) => (
+    <MenuItem key={opt.id} value={opt.id}>
+      {opt.name}
+    </MenuItem>
+  ))}
+</Select>
+</FormControl>
 
-  <FormControl fullWidth sx={{ mb: 2 }}>
-    <FormLabel>By Client</FormLabel>
-    <Select value={selectedClient} onChange={handleClientChange}>
-      <MenuItem value="" disabled>Select Client</MenuItem>
-      {clientList.map(opt => (
-        <MenuItem key={opt.id} value={opt.id}>{opt.name}</MenuItem>
+<FormControl fullWidth>
+  <FormLabel sx={{ mb: 1 }}>By Technology</FormLabel>
+
+  <Autocomplete
+    multiple
+    options={technologyOptionsList}
+    getOptionLabel={(option) => option.name}
+    value={technologyOptionsList.filter((opt) =>
+      selectedTechnology.includes(opt.id)
+    )}
+    onChange={(_, newValue) => {
+      const ids = newValue.map((item) => item.id);
+      setSelectedTechnology(ids);
+    }}
+    isOptionEqualToValue={(option, value) => option.id === value.id}
+    filterSelectedOptions
+    renderTags={() => null} // hide default chips in input box
+    renderInput={(params) => (
+      <TextField
+        {...params}
+        placeholder="Select Technology"
+        size="small"
+        variant="outlined"
+      />
+    )}
+  />
+
+  {/* Chips shown outside */}
+  <Box sx={{ mt: 1, display: "flex", gap: 1, flexWrap: "wrap" }}>
+    {technologyOptionsList
+      .filter((opt) => selectedTechnology.includes(opt.id))
+      .map((item) => (
+        <Chip
+          key={item.id}
+          label={item.name}
+          onDelete={() =>
+            setSelectedTechnology((prev) =>
+              prev.filter((id) => id !== item.id)
+            )
+          }
+          color="primary"
+          variant="outlined"
+          size="small"
+        />
       ))}
-    </Select>
-  </FormControl>
+  </Box>
+</FormControl>
+
+<FormControl fullWidth sx={{ mb: 2 }}>
+  <FormLabel sx={{ fontSize: 14, mb: 1 }}>By Client</FormLabel>
+<Select
+  value={selectedClient}
+  onChange={handleClientChange}
+  displayEmpty
+  size="small"
+  sx={{
+    height: 36,
+    fontSize: 13,
+  }}
+>
+  <MenuItem value="">
+    <em>Please Select Client</em> {/* Or "Clear Selection" */}
+  </MenuItem>
+  {clientList.map((opt) => (
+    <MenuItem key={opt.id} value={opt.id}>
+      {opt.name}
+    </MenuItem>
+  ))}
+</Select>
+
+</FormControl>
+
+
+
 </Drawer>
 
 
