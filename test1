@@ -1,41 +1,576 @@
-const typeMessages: Record<string, string> = {
-  "case-study": "A proven solution implemented or currently an active engagement.",
-  "product": "A standalone, reusable solution that addresses a specific business problem.",
-  "framework": "A conceptual structure to build and customize solutions.",
-  "accelerator": "A tool, utility, or asset that accelerates delivery or performance.",
-  "client-story": "A story that highlights value delivered to a specific client.",
-  "RFI/RFPs": "A formal response to a Request for Information or Proposal.",
+import React, { useEffect, useState } from "react";
+import { observer } from "mobx-react-lite";
+import { Box, Typography, Link, Stack, Paper, FormControl, FormLabel, MenuItem, Select, Button } from "@mui/material";
+import { ProjectCard } from "./ProjectCard";
+import { Pagination } from "./Pagination";
+import { mainPageStore } from "../../stores/MainPageStore";
+import { useParams } from "react-router-dom";
+import ViewListIcon from '@mui/icons-material/ViewList';
+import GridViewIcon from '@mui/icons-material/GridView';
+import FilterListIcon from '@mui/icons-material/FilterList';
+import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
+import LanguageIcon from '@mui/icons-material/Language';
+import { styled } from '@mui/material/styles';
+import FilterDropdown from '../ui/dashboard/FilterDropdown';
+import { SelectChangeEvent } from '@mui/material';
+import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
+import Drawer from "@mui/material/Drawer";
+import IconButton from "@mui/material/IconButton";
+import CloseIcon from "@mui/icons-material/Close";
+
+const FilterContainer = styled(Paper)`
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  border-radius: 12px;
+  width: 100%;
+  background-color: white;
+`;
+
+const FilterRow = styled(Box)`
+  display: flex;
+  align-items: flex-end;
+  flex-wrap: nowrap;
+  gap: 24px;
+  width: 100%;
+  overflow-x: auto;
+`;
+
+const FilterItemWrapper = styled(Box)`
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  justify-content: flex-end;
+  flex: 1;
+  min-width: 180px;   // Reduced minimum width to save space
+  max-width: 180px;   // Optional: limit width to prevent overflow
+`;
+
+const LabelButton = styled(Box)`
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 12px; // Reduced padding
+  background-color: white;
+  border-radius: 8px;
+  font-size: 10px;    // Reduced font size
+  font-weight: 500;
+  color: black;
+
+  img {
+    width: 20px;    // Reduced icon size
+  }
+`;
+
+
+const projectsData = [
+  {
+    id: 1,
+    title: "Provider data Management",
+    description:
+      "Streamline collection, validation, and maintenance of provider information effortlessly.",
+    tags: ["Payer", "Underwriting"],
+    imageSrc: "/project_image.png",
+    commentCount: 0,
+    contributorCount: "You & 1 other",
+    badgeIconSrc: "/redthumb.svg",
+    likeIconSrc: "/threedot.svg",
+    starIconSrc: "/bookmark.svg",
+  }
+];
+
+
+
+interface dropDownItems {
+  id:string;
+  name:string;
+}
+
+export const ProjectsSection = observer(() => {
+
+  const { id: getId } = useParams();
+  const { solutiontype: getMenuType } = useParams();
+
+  //const getId = (id!=='all') ? id : '';
+  //const getSolType = (solutiontype!=='all') ? solutiontype : '';
+
+  const [currentPage, setCurrentPage] = useState(1);
+  const [selectedType, setSelectedType] = useState<string>("");
+  const [selectedClient, setSelectedClient] = useState<string>("");
+  const [selectedTechnology, setSelectedTechnology] = useState<string>("");
+
+  const [solutionType, setSolutionType] = useState<dropDownItems[]>([]);
+  const [clientList, setClientList] = useState<dropDownItems[]>([]);
+
+  const projectsPerPage = 4;
+  const start = (currentPage - 1) * projectsPerPage;
+
+const [isFilterOpen, setIsFilterOpen] = useState(false);
+
+const toggleFilterDrawer = (open: boolean) => () => {
+  setIsFilterOpen(open);
 };
 
 
----------------
+  const handlePageChange = (pageNumber:number) => {
+    setCurrentPage(pageNumber);
+  };
 
-{typeMessages[selectedSolutionType] && (
-  <Paper elevation={0} sx={{ mt: 2, p: 2, bgcolor: "#fff", borderRadius: "16px", border: "1px solid #fff" }}>
-    <Box sx={{ display: "flex", width: "100%", fontSize: 12, alignItems: "center", gap: 1 }}>
-      <img src="/image604.png" width="16px" height="16px" />
-      {typeMessages[selectedSolutionType]}
-    </Box>
-  </Paper>
-)}
+  const {
+    fetchSolutionCatalogueData,
+    fetchFillerListData,
+    fetchByTechnologyOptions,
+    technologyOptionsList,
+    solutionCatalogueData,
+    catalogloading
+   }  = mainPageStore;
 
-____________
 
- "& .MuiTabs-indicator": {
-      display: value === false ? "none" : "block", // Hide indicator when no tab selected
-    },
-_____________________
-
-PaperProps: {
-      sx: {
-        bgcolor: 'white',
-        zIndex: 9999,
-        maxHeight: 200, // optional: limit dropdown height
-        '& .MuiMenuItem-root': {
-          minHeight: '32px', // 👈 reduce each item height
-          fontSize: '13px',
-        },
-      }
+   useEffect(()=>{
+    const loadSolutionTypeData = async() =>{
+     const data = await fetchFillerListData('type');
+     setSolutionType(data);
     }
+    loadSolutionTypeData();
+   },[]);
+
+  //Load Client Dropdown Data
+  useEffect(()=>{
+    const loadClientData = async() =>{
+     const data = await fetchFillerListData('client');
+     setClientList(data);
+    }
+    loadClientData();
+   },[]);
+
+   useEffect(()=>{
+    fetchByTechnologyOptions();
+   },[]);
+
+
+   useEffect(() => {
+    fetchSolutionCatalogueData(getId,getMenuType,selectedType,selectedTechnology,selectedClient,start,projectsPerPage);
+  }, [currentPage,getId,selectedType,selectedTechnology,selectedClient]);
+
+const resultData = solutionCatalogueData?.result;
+const totalResult = solutionCatalogueData?.count;
+
+const totalPages = (solutionCatalogueData && totalResult) ? Math.ceil(totalResult / projectsPerPage) : 0 ;
+
+  const renderProjects = () => {
+    //const selectedProjects = projectsData.slice(start, start + projectsPerPage);
+    return (
+      <Box
+        display="flex"
+        flexWrap="wrap"
+        gap={2}
+        mt={2}
+        justifyContent={{ xs: "center", sm: "flex-start" }}
+      >
+        {resultData && resultData.map((project:any) => (
+         <Box
+         key={project.id}
+         sx={{
+           width: {
+             xs: "100%",   // 1 per row on xs
+             sm: "48%",    // 2 per row on sm
+             md: "31.5%",  // 3 per row on md
+             lg: "23.5%",  // 4 per row on lg
+           },
+           flexGrow: 0,
+           flexShrink: 0,
+         }}
+       >
+            <ProjectCard {...project} />
+          </Box>
+        ))}
+      </Box>
+    );
+  };
+
+  const handleTypeChange = (event: SelectChangeEvent<string>) => {
+    setSelectedType(event.target.value);
+  };
+
+  const handleTechnologyChange = (event: SelectChangeEvent<string>) => {
+    setSelectedTechnology(event.target.value);
+  };
+
+  const handleClientChange = (event: SelectChangeEvent<string>) => {
+    setSelectedClient(event.target.value);
+  };
+
+ return (
+<Box width="100%" mt={1}>
+<FilterContainer elevation={0}>
+<FilterRow>
+<Stack
+direction={{ xs: 'column', md: 'row' }}
+sx={{
+display: 'flex',
+flexDirection: { xs: 'column', md: 'row' },
+alignItems: 'flex-start',
+gap: '16px',
+alignSelf: 'stretch',
+}}
+>    <Box sx={{ width: { xs: '100%', md: '50%' },minWidth:"200px" }}>
+  <FormControl fullWidth>
+  <FormLabel  sx={{ 
+            mb: 1, 
+            color: '#000', 
+            fontSize: '14px', 
+            fontStyle: 'normal', 
+            fontWeight: 400, 
+            lineHeight: 'normal'
+            
+      }}>By Solution Type</FormLabel> 
+    <Select
+    value={selectedType}
+    onChange={handleTypeChange}
+    displayEmpty
+    IconComponent={KeyboardArrowDownIcon}
+    sx={{
+      bgcolor: 'background.paper',
+      borderRadius: '8px',
+      '.MuiOutlinedInput-notchedOutline': {
+        borderColor: 'rgba(211,209,209,0.4)',
+      },
+      '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
+        borderColor: 'rgba(211,209,209,0.6)',
+      },
+      '& .MuiSelect-select': {
+        backgroundColor: 'white',
+      },
+      '& .MuiPaper-root': {
+        backgroundColor: 'white',
+        zIndex: 9999,
+      }
+    }}
+    MenuProps={{
+      PaperProps: {
+        sx: {
+          bgcolor: 'white',
+          zIndex: 9999,
+        }
+      }
+    }}
+    >
+    <MenuItem value="" disabled>
+      Select Type
+    </MenuItem>
+    {solutionType.map(opt => (
+      <MenuItem key={opt.id} value={opt.name} sx={{fontSize:"14px"}}>
+        {opt.name}
+      </MenuItem>
+    ))}
+    </Select>
+    </FormControl>
+</Box>
+<Box sx={{ width: { xs: '100%', md: '50%' },minWidth:"200px"  }}>
+  <FormControl fullWidth>
+      <FormLabel  sx={{ 
+mb: 1, 
+color: '#000', 
+fontSize: '14px', 
+fontStyle: 'normal', 
+fontWeight: 400, 
+lineHeight: 'normal'
+}}>By Technology</FormLabel> {/* Reduced font size */}
+    <Select
+    value={selectedTechnology}
+    onChange={handleTechnologyChange}
+    displayEmpty
+    IconComponent={KeyboardArrowDownIcon}
+    sx={{
+      bgcolor: 'background.paper',
+      borderRadius: '8px',
+      '.MuiOutlinedInput-notchedOutline': {
+        borderColor: 'rgba(211,209,209,0.4)',
+      },
+      '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
+        borderColor: 'rgba(211,209,209,0.6)',
+      },
+      '& .MuiSelect-select': {
+        backgroundColor: 'white',
+      },
+      '& .MuiPaper-root': {
+        backgroundColor: 'white',
+        zIndex: 9999,
+      }
+    }}
+    MenuProps={{
+      PaperProps: {
+        sx: {
+          bgcolor: 'white',
+          zIndex: 9999,
+        }
+      }
+    }}
+    >
+    <MenuItem value="" disabled>
+      Select Technology
+    </MenuItem>
+    {technologyOptionsList && technologyOptionsList.map(opt => (
+      <MenuItem key={opt.id} value={opt.id} sx={{fontSize:"14px"}}>
+        {opt.name}
+      </MenuItem>
+    ))}
+    </Select> 
+    
+    </FormControl>
+</Box>
+</Stack>
+
+        {/* VIEW TOGGLE BUTTONS */}
+
+<FilterItemWrapper>
+  <Typography variant="body2" fontWeight={500} color="transparent">
+    Placeholder
+  </Typography>
+  <Stack direction="row" spacing={1} alignItems="center">
+    
+  <Stack direction="row" spacing={0} alignItems="center" minHeight={55}>
+    <Box
+      sx={{
+        bgcolor: 'white',
+        border: '1px solid #ccc',
+        borderRadius: '8px 0 0 8px', 
+        width: 60, 
+        height: 55, 
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        cursor: 'pointer',
+      }}
+    >
+    <GridViewIcon fontSize="small" color="action" />
+    </Box>
+
+    <Box
+      sx={{
+        bgcolor: 'white',
+        border: '1px solid #ccc',
+        borderRadius: '0 8px 8px 0', 
+        width: 60,
+        height: 55, 
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        cursor: 'pointer', 
+      }}
+    >
+      <ViewListIcon fontSize="small" color="action" />
+    </Box>
+    </Stack>
+    <Box
+      sx={{
+        bgcolor: 'white',
+        border: '1px solid #ccc',
+        borderRadius: '8px', 
+        width: 50, 
+        height: 55,
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        cursor: 'pointer', 
+      }}
+    >
+      <FilterListIcon fontSize="small" color="primary" />
+      </Box>
+
+  </Stack>
+</FilterItemWrapper>
+
+
+<Stack
+direction={{ xs: 'column', md: 'row' }}
+sx={{
+display: 'flex',
+flexDirection: { xs: 'column', md: 'row' },
+alignItems: 'flex-start',
+gap: '16px',
+alignSelf: 'stretch',
+}}
+> 
+
+<Box sx={{ width: { xs: '100%', md: '50%' },minWidth:"200px" }}>
+  <FormControl fullWidth>
+  <FormLabel  sx={{ 
+            mb: 1, 
+            color: '#000', 
+            fontSize: '14px', 
+            fontStyle: 'normal', 
+            fontWeight: 400, 
+            lineHeight: 'normal'
+            
+      }}>By Client</FormLabel> 
+    <Select
+    value={selectedClient}
+    onChange={handleClientChange}
+    displayEmpty
+    IconComponent={KeyboardArrowDownIcon}
+    sx={{
+      bgcolor: 'background.paper',
+      borderRadius: '8px',
+      '.MuiOutlinedInput-notchedOutline': {
+        borderColor: 'rgba(211,209,209,0.4)',
+      },
+      '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
+        borderColor: 'rgba(211,209,209,0.6)',
+      },
+      '& .MuiSelect-select': {
+        backgroundColor: 'white',
+      },
+      '& .MuiPaper-root': {
+        backgroundColor: 'white',
+        zIndex: 9999,
+      }
+    }}
+    MenuProps={{
+      PaperProps: {
+        sx: {
+          bgcolor: 'white',
+          zIndex: 9999,
+        }
+      }
+    }}
+    >
+    <MenuItem value="" disabled>
+      Select Client
+    </MenuItem>
+    {clientList && clientList.map(opt => (
+      <MenuItem key={opt.id} value={opt.id} sx={{fontSize:"14px"}}>
+        {opt.name}
+      </MenuItem>
+    ))}
+    </Select>
+    </FormControl>
+</Box>
+<Box>
+
+<Box
+  sx={{
+    bgcolor: 'white',
+    border: '1px solid #ccc',
+    borderRadius: '8px', 
+    width: 50, 
+    height: 55,
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    cursor: 'pointer', 
+  }}
+  onClick={toggleFilterDrawer(true)} // 👈 Open drawer
+>
+  <FilterListIcon fontSize="small" color="primary" />
+</Box>
+
+</Box>
+</Stack>
+
+      </FilterRow>
+
+
+    </FilterContainer>
+
+
+      {/* Header Section */}
+      <Stack direction="row" justifyContent="space-between" alignItems="center">
+        <Stack direction="row" spacing={1} alignItems="center">
+          <Typography variant="subtitle2" color="#1F2633" fontWeight="600" fontSize={14}>
+            Total Solution 
+          </Typography>
+          <Box
+            sx={{
+              backgroundColor: "#E9F3F9",
+              color: "#0F4977",
+              fontSize: "10px",
+              fontWeight: "800",
+              borderRadius: "8px",
+              width: 25,
+              height: 25,
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "center",
+            }}
+          >
+            { totalResult ?? 0 }
+          </Box>
+        </Stack>
+
+      {catalogloading && (
+      <Box sx={{display:"flex", justifyContent:"center", alignItems:"center", width:"60%", height:25}}>Loading<img src="/loader3.gif"/></Box>    
+      )}
+
+     <Link href="#" underline="hover" sx={{ fontSize: "10px", color: "#0F4977",fontWeight:"400" }}>
+      View all
+     </Link>
+      </Stack>
+    
+    
+
+      {/* Projects Layout */}
+      {renderProjects()}
+
+      {/* Pagination */}
+      <Box mt={2}>
+      {totalPages>0 && <Pagination
+          currentPage={currentPage}
+          totalPages={totalPages}
+          onPageChange={handlePageChange}
+        />
+      }
+      </Box>
+
+<Drawer
+  anchor="right"
+  open={isFilterOpen}
+  onClose={toggleFilterDrawer(false)}
+  PaperProps={{
+    sx: { width: 300, padding: 2 },
   }}
 >
+  <Box display="flex" justifyContent="space-between" alignItems="center" mb={2}>
+    <Typography variant="h6">Filter</Typography>
+    <IconButton onClick={toggleFilterDrawer(false)}>
+      <CloseIcon />
+    </IconButton>
+  </Box>
+
+  {/* Copy the same filter dropdowns here */}
+  <FormControl fullWidth sx={{ mb: 2 }}>
+    <FormLabel>By Solution Type</FormLabel>
+    <Select value={selectedType} onChange={handleTypeChange}>
+      <MenuItem value="" disabled>Select Type</MenuItem>
+      {solutionType.map(opt => (
+        <MenuItem key={opt.id} value={opt.name}>{opt.name}</MenuItem>
+      ))}
+    </Select>
+  </FormControl>
+
+  <FormControl fullWidth sx={{ mb: 2 }}>
+    <FormLabel>By Technology</FormLabel>
+    <Select value={selectedTechnology} onChange={handleTechnologyChange}>
+      <MenuItem value="" disabled>Select Technology</MenuItem>
+      {technologyOptionsList.map(opt => (
+        <MenuItem key={opt.id} value={opt.id}>{opt.name}</MenuItem>
+      ))}
+    </Select>
+  </FormControl>
+
+  <FormControl fullWidth sx={{ mb: 2 }}>
+    <FormLabel>By Client</FormLabel>
+    <Select value={selectedClient} onChange={handleClientChange}>
+      <MenuItem value="" disabled>Select Client</MenuItem>
+      {clientList.map(opt => (
+        <MenuItem key={opt.id} value={opt.id}>{opt.name}</MenuItem>
+      ))}
+    </Select>
+  </FormControl>
+</Drawer>
+
+
+
+    </Box>
+  );
+});
