@@ -245,102 +245,90 @@ const primaryColor = 'rgba(15,73,119,1)';
  return (
 
 <Box width="100%" mt={1}>
-<FilterContainer elevation={0}>
-<FilterRow>
 
-<Stack
-direction={{ xs: 'column', md: 'row' }}
-sx={{
-display: 'flex',
-flexDirection: { xs: 'column', md: 'row' },
-alignItems: 'flex-start',
-gap: '16px',
-alignSelf: 'stretch',
-}}
-> 
-
-<Box>
-
-<Box sx={{ width: { xs: '100%', md: '50%' },minWidth:"200px" }}>
-<FormControl fullWidth>
-  <FormLabel sx={{ mb: 1 }}>By Smart Tag</FormLabel>
-
-  <Autocomplete
-    multiple
-    options={technologyOptionsList}
-    getOptionLabel={(option) => option.name}
-    value={technologyOptionsList.filter((opt) =>
-      selectedTechnology.includes(opt.id)
-    )}
-    onChange={(_, newValue) => {
-      const ids = newValue.map((item) => item.id);
-      setSelectedTechnology(ids);
-    }}
-    isOptionEqualToValue={(option, value) => option.id === value.id}
-    filterSelectedOptions
-    renderTags={() => null} 
-    renderInput={(params) => (
-      <TextField
-        {...params}
-        placeholder="Select Smart Tag"
-        size="small"
-        variant="outlined"
-      />
-    )}
-  />
-</FormControl>
-
-</Box>
-  <Box sx={{ mt: 1, display: "flex", gap: 1, flexWrap: "wrap", minWidth:"90%"  }}>
-    {technologyOptionsList
-      .filter((opt) => selectedTechnology.includes(opt.id))
-      .map((item) => (
-        <Chip
-          key={item.id}
-          label={item.name}
-          onDelete={() =>
-            setSelectedTechnology((prev) =>
-              prev.filter((id) => id !== item.id)
-            )
-          }
-          color="primary"
-          variant="outlined"
-          size="small"
+<Box sx={{ width: '100%' }}>
+  {/* Top Row: Filter Fields + Filter Button aligned right */}
+  <Stack
+    direction="row"
+    justifyContent="space-between"
+    alignItems="flex-start"
+    sx={{ flexWrap: 'wrap', width: '100%' }}
+  >
+    {/* Left Side: Smart Tag Selector + Chips */}
+    <Box sx={{ width: '200px' }}>
+      <FormControl fullWidth>
+        <FormLabel sx={{ mb: 1 }}>By Smart Tag</FormLabel>
+        <Autocomplete
+          multiple
+          options={technologyOptionsList}
+          getOptionLabel={(option) => option.name}
+          value={technologyOptionsList.filter((opt) =>
+            selectedTechnology.includes(opt.id)
+          )}
+          onChange={(_, newValue) => {
+            const ids = newValue.map((item) => item.id);
+            setSelectedTechnology(ids);
+          }}
+          isOptionEqualToValue={(option, value) => option.id === value.id}
+          filterSelectedOptions
+          renderTags={() => null}
+          renderInput={(params) => (
+            <TextField
+              {...params}
+              placeholder="Select Smart Tag"
+              size="small"
+              variant="outlined"
+            />
+          )}
         />
-      ))}
-  </Box>
+      </FormControl>
+      </Box>
 
+      <Box sx={{ mt: 1, display: 'flex', gap: 1, flexWrap: 'wrap', minWidth: '90%' }}>
+        {technologyOptionsList
+          .filter((opt) => selectedTechnology.includes(opt.id))
+          .map((item) => (
+            <Chip
+              key={item.id}
+              label={item.name}
+              onDelete={() =>
+                setSelectedTechnology((prev) => prev.filter((id) => id !== item.id))
+              }
+              color="primary"
+              variant="outlined"
+              size="small"
+            />
+          ))}
+    </Box>
 
+    {/* Right Side: Filter Button */}
+
+<Box sx={{ mt: { xs: 2, md: 0 } }}>
+  <Button
+    variant="outlined"
+    size="small"
+    onClick={toggleFilterDrawer(true)}
+    sx={{
+      color: primaryColor,
+      borderColor: primaryColor,
+      width: '105px',
+      '&.Mui-disabled': {
+        opacity: 0.5,
+      },
+      display: 'flex',
+      alignItems: 'center',
+      gap: '4px', // Adds spacing between icon and text
+    }}
+  >
+    <FilterListIcon fontSize="small" />
+    Filter
+  </Button>
+</Box>
+
+  </Stack>
 </Box>
 
 
-<Box>
-
-<Button
-        variant="outlined"
-        size="small"
-        onClick={toggleFilterDrawer(true)}
-        sx={{ 
-          color: primaryColor,
-          borderColor: primaryColor,
-          width: '105px',
-          '&.Mui-disabled': {
-            opacity: 0.5
-          }
-        }}
-      >
-        Filter
-      </Button>
-</Box>
-
-</Stack>
-
-
-
-
-
-</FilterRow>
-</FilterContainer>
 
       {/* Header Section */}
       <Stack direction="row" justifyContent="space-between" alignItems="center">
@@ -370,9 +358,9 @@ alignSelf: 'stretch',
       <Box sx={{display:"flex", justifyContent:"center", alignItems:"center", width:"60%", height:25}}>Loading<img src="/loader3.gif"/></Box>    
       )}
 
-     <Link href="#" underline="hover" sx={{ fontSize: "10px", color: "#0F4977",fontWeight:"400" }}>
+     {/* <Link href="#" underline="hover" sx={{ fontSize: "10px", color: "#0F4977",fontWeight:"400" }}>
       View all
-     </Link>
+     </Link> */}
       </Stack>
     
     
