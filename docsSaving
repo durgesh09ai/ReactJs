@@ -1,50 +1,50 @@
-import React, { useRef } from "react";
-import { Button, Container, Typography, Card, CardContent } from "@mui/material";
-import { jsPDF } from "jspdf";
+const [selectedTechnology, setSelectedTechnology] = useState<dropDownItems[]>([]);
 
-const DownloadSelectedTextPDF = () => {
-  const textRef = useRef<HTMLDivElement>(null);
+-----------------
 
-  const downloadPDF = () => {
-    if (!textRef.current) return;
+<Box sx={{ width: '200px' }}>
+  <FormControl fullWidth>
+    <FormLabel sx={{ mb: 1 }}>By Smart Tag</FormLabel>
 
-    const doc = new jsPDF();
-    const textContent = textRef.current.innerText; // Get only the selected text
+    <Autocomplete
+      multiple
+      options={technologyOptionsList}
+      getOptionLabel={(option) => option.name}
+      value={selectedTechnology}
+      onChange={(_, newValue) => {
+        setSelectedTechnology(newValue);
+      }}
+      isOptionEqualToValue={(option, value) => option.id === value.id}
+      filterSelectedOptions
+      renderTags={() => null}
+      renderInput={(params) => (
+        <TextField
+          {...params}
+          placeholder="Select Smart Tag"
+          size="small"
+          variant="outlined"
+        />
+      )}
+    />
+  </FormControl>
+</Box>
 
-    doc.setFont("times", "normal");
-    doc.setFontSize(12);
-    doc.text(textContent, 10, 20, { maxWidth: 180 });
+<Box sx={{ mt: 1, display: 'flex', gap: 1, flexWrap: 'wrap', minWidth: '90%' }}>
+  {selectedTechnology.map((item) => (
+    <Chip
+      key={item.id}
+      label={item.name}
+      onDelete={() =>
+        setSelectedTechnology((prev) =>
+          prev.filter((tech) => tech.id !== item.id)
+        )
+      }
+      color="primary"
+      variant="outlined"
+      size="small"
+    />
+  ))}
+</Box>
+___________________
 
-    doc.save("selected-text.pdf");
-  };
-
-  return (
-    <Container sx={{ textAlign: "center", mt: 4 }}>
-      <Card sx={{ p: 3 }}>
-        <CardContent>
-          <Typography variant="h5">Download Selected Text as PDF</Typography>
-
-          {/* Only this part will be saved to PDF */}
-          <div ref={textRef}>
-            <Typography variant="body1">
-              This is a sample document that will be exported as a PDF.
-            </Typography>
-            <Typography variant="body1">
-              The text formatting is preserved, and no images are used.
-            </Typography>
-          </div>
-
-          <Typography variant="body2" color="gray" sx={{ mt: 2 }}>
-            This part will NOT be included in the PDF.
-          </Typography>
-        </CardContent>
-      </Card>
-
-      <Button variant="contained" sx={{ mt: 3 }} onClick={downloadPDF}>
-        Download Selected Text
-      </Button>
-    </Container>
-  );
-};
-
-export default DownloadSelectedTextPDF;
+selectedTechnology.map((tech) => tech.id).join(","),
