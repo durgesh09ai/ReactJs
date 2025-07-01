@@ -1,43 +1,50 @@
-  <Box sx={{ width: "100%", px: 2, display: "flex", justifyContent: "space-between" }}>
-      <Box sx={{ width: "100%", py: 2,display:"flex" }}>
-        <Typography variant="body1" sx={{ color: "#1d1b20",fontSize:'16px',fontWeight:400, }}>
-        My Solution
-        </Typography>
-       <Box display={"flex"} alignItems={"center"}> 
-       <Box>
-       <FormControl>
+<Box sx={{ width: "100%", px: 2, py: 2 }}>
+  {/* Top row: Left title + Right controls */}
+  <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: 2 }}>
+    
+    {/* Left: Title */}
+    <Typography
+      variant="body1"
+      sx={{ color: "#1d1b20", fontSize: "16px", fontWeight: 400 }}
+    >
+      My Solution
+    </Typography>
+
+    {/* Right: Select + Search */}
+    <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
+      {/* Select */}
+      <FormControl>
         <InputLabel id="demo-simple-select-label">Select Status</InputLabel>
         <Select
           id="demo-simple-select"
           value=""
           onChange={handleStatusChange}
-          sx={{width:150,height:40}}
+          label="Select Status"
+          sx={{ width: 150, height: 40 }}
         >
           <MenuItem value={"Active"}>Active</MenuItem>
           <MenuItem value={"InActive"}>InActive</MenuItem>
         </Select>
       </FormControl>
-       </Box>
-       <Box>
-       <TextField
+
+      {/* Search */}
+      <Box sx={{ display: "flex", alignItems: "center" }}>
+        <TextField
           onInput={handleInput}
           id="search-bar"
-          className="text"
           label="Search title"
           variant="outlined"
           placeholder="Search..."
           size="small"
-          sx={{
-            width: 250,
-            margin: "10px auto"
-          }}
+          sx={{ width: 250 }}
         />
         <IconButton type="submit" aria-label="search">
-          <SearchIcon style={{ fill: "blue" }} />
+          <SearchIcon sx={{ color: "blue" }} />
         </IconButton>
-       </Box>
-       </Box>
-
-        <Divider sx={{ mt: 1 }} />
       </Box>
     </Box>
+  </Box>
+
+  {/* Divider */}
+  <Divider sx={{ mt: 2 }} />
+</Box>
