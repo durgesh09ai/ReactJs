@@ -32,3 +32,22 @@
     />
   )}
 />
+
+-----------------------------------
+
+   <Box sx={{ mt: 1, display: 'flex', gap: 1, flexWrap: 'wrap' }}>
+  {selectedTechnology.map((item) => (
+    <Chip
+      key={item.id}
+      label={item.name}
+      onDelete={() =>
+        setSelectedTechnology((prev) =>
+          prev.filter((tech) => tech.id !== item.id)
+        )
+      }
+      color="primary"
+      variant="outlined"
+      size="small"
+    />
+  ))}
+</Box>
