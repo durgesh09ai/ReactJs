@@ -1,15 +1,20 @@
-export const sliceToWords = (text: string, wordLimit: number = 40): string => {
-  if (!text) return "";
-
-  const words = text.trim().split(/\s+/);
-  if (words.length <= wordLimit) return text;
-
-  return words.slice(0, wordLimit).join(" ") + "...";
-};
-
-
-import { sliceToWords } from "../utils/sliceToWords";
-
-<Typography variant="body2">
-  {sliceToWords(item.description, 40)}
-</Typography>
+{/* MAIN CONTENT */}
+<Box
+  sx={{
+    flexGrow: 1,
+    overflowY: "auto",
+    backgroundColor: "#F9FAFB",
+    display: "flex",
+    justifyContent: "center",
+    padding: 2,
+  }}
+>
+  <Box
+    sx={{
+      width: "100%",
+      maxWidth: "80vw", // 80% of the screen width
+    }}
+  >
+    <Outlet />
+  </Box>
+</Box>
