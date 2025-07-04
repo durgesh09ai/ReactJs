@@ -1,166 +1,31 @@
-import React, { useState } from 'react';
-import {
-  Box,
-  Typography,
-  TextField,
-  Switch,
-  FormControlLabel,
-  Button,
-  Link,
-  Divider,
-} from '@mui/material';
+resources: 
+  repositories:
+    - repository: genserve_ai_frt
+      type: git
+      name: HCTitan/genserve_ai_frt
+      ref: 'refs/heads/main'
+      trigger:
+      - main
 
-export const LoginForm: React.FC = () => {
-  const [login, setLogin] = useState('');
-  const [password, setPassword] = useState('');
-  const [rememberMe, setRememberMe] = useState(false);
-  const [ssoLogin, setSsoLogin] = useState(false);
-  const [errors, setErrors] = useState<{ login?: string; password?: string }>({});
-  const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const validate = () => {
-    const newErrors: { login?: string; password?: string } = {};
-    if (!login) {
-      newErrors.login = 'Login is required';
-    } else if (!/\S+@\S+\.\S+/.test(login)) {
-      newErrors.login = 'Please enter a valid email';
-    }
+pool:
+  vmImage: ubuntu-latest
+steps:
+- checkout: genserve_ai_frt
+- task: Npm@1
+  inputs:
+    command: 'install'
+- script: npm run build
+  displayName: 'Build NextJs Application'
+- task: CopyFiles@2
+  inputs:
+    Contents: '.next/**'
+    TargetFolder: '$(Build.ArtifactStagingDirectory)'
 
-    if (!password) {
-      newErrors.password = 'Password is required';
-    } else if (password.length < 6) {
-      newErrors.password = 'Password must be at least 6 characters';
-    }
-
-    setErrors(newErrors);
-    return Object.keys(newErrors).length === 0;
-  };
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!validate()) return;
-
-    setIsSubmitting(true);
-    console.log('Form submitted:', { login, password, rememberMe, ssoLogin });
-
-    await new Promise((res) => setTimeout(res, 1000));
-    setIsSubmitting(false);
-  };
-
-  const handleForgotPassword = () => {
-    console.log('Forgot password clicked');
-  };
-
-  return (
-    <Box sx={{ display: 'flex', flexDirection: 'column', gap: 6, width: '100%' }}>
-      <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 3, width: '100%' }}>
-        <Box component="form" noValidate onSubmit={handleSubmit} sx={{ display: 'flex', flexDirection: 'column', gap: 4, width: '100%' }}>
-          <Box sx={{ display: 'flex', flexDirection: 'column', gap: 3, width: '100%' }}>
-            <Typography
-              variant="h5"
-              component="h1"
-              sx={{
-                color: '#1A1A1A',
-                fontWeight: 'bold',
-                fontSize: { xs: '18px', sm: '20px' },
-                lineHeight: { xs: '24px', sm: '28px' },
-              }}
-            >
-              Welcome
-            </Typography>
-
-            <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2.5 }}>
-              <TextField
-                label="Login"
-                placeholder="Email or phone number"
-                type="email"
-                value={login}
-                onChange={(e) => setLogin(e.target.value)}
-                error={!!errors.login}
-                helperText={errors.login}
-                fullWidth
-              />
-
-              <TextField
-                label="Password"
-                placeholder="Enter password"
-                type="password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                error={!!errors.password}
-                helperText={errors.password}
-                fullWidth
-              />
-
-              <Box
-                sx={{
-                  display: 'flex',
-                  justifyContent: 'space-between',
-                  alignItems: 'center',
-                  gap: 2,
-                  flexDirection: { xs: 'column', sm: 'row' },
-                }}
-              >
-                <FormControlLabel
-                  control={
-                    <Switch
-                      checked={rememberMe}
-                      onChange={(e) => setRememberMe(e.target.checked)}
-                      color="primary"
-                    />
-                  }
-                  label="Remember me"
-                />
-
-                <Link
-                  component="button"
-                  type="button"
-                  onClick={handleForgotPassword}
-                  sx={{
-                    color: '#007AFF',
-                    fontSize: '14px',
-                    fontWeight: 'bold',
-                    lineHeight: '16.8px',
-                    cursor: 'pointer',
-                    textDecoration: 'none',
-                    '&:hover': {
-                      textDecoration: 'underline',
-                    },
-                  }}
-                >
-                  Forgot password?
-                </Link>
-              </Box>
-            </Box>
-          </Box>
-
-          <Button
-            type="submit"
-            variant="contained"
-            color="primary"
-            fullWidth
-            disabled={isSubmitting}
-            sx={{ height: 48, borderRadius: 2 }}
-          >
-            {isSubmitting ? 'Signing in...' : 'Sign in'}
-          </Button>
-
-          <Divider sx={{ backgroundColor: '#E5E5E5', height: '0.5px' }} />
-        </Box>
-
-        <FormControlLabel
-          control={
-            <Switch
-              checked={ssoLogin}
-              onChange={(e) => setSsoLogin(e.target.checked)}
-              color="primary"
-            />
-          }
-          label="SSO Login"
-        />
-      </Box>
-    </Box>
-  );
-};
-
-https://cdn.builder.io/api/v1/image/assets/b22a1f591db946d8a5b6fadc33b7c231/52a2695623cbc9525eb32a347c4125359b5e386d?placeholderIfAbsent=true
+- task: ArchiveFiles@2
+  inputs:
+    rootFolderOrFile: '$(Build.ArtifactStagingDirectory)/.next'
+    includeRootFolder: false
+    archiveType: 'zip'
+    archiveFile: '$(Build.ArtifactStagingDirectory)/$(Build.BuildId).zip'
+    replaceExistingArchive: true
