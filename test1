@@ -1,44 +1,61 @@
-import { Box, Stack, Typography } from '@mui/material';
+import React from 'react';
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TableRow,
+  Paper,
+  Typography,
+  Chip,
+} from '@mui/material';
 
-<Stack
-  direction="row"
-  justifyContent="space-between"
-  alignItems="center"
-  sx={{ width: '100%' }}
->
-  {/* Custom "chip" box on the left */}
-  <Box
-    onClick={() => console.log('Left clicked')}
-    sx={{
-      bgcolor: '#F3FAFF',
-      color: '#0F4977',
-      borderRadius: '1rem',
-      px: 2,
-      py: 0.5,
-      cursor: 'pointer',
-      display: 'inline-block',
-    }}
-  >
-    <Typography variant="body2" fontWeight={500}>
-      Save files in the same folder as source
-    </Typography>
-  </Box>
+const data = [
+  {
+    sourceType: 'GitHub',
+    techType: 'JavaScript',
+    totalFiles: 120,
+    status: 'Active',
+  },
+  {
+    sourceType: 'Azure Blob',
+    techType: 'Python',
+    totalFiles: 87,
+    status: 'Pending',
+  },
+];
 
-  {/* Custom "chip" box on the right */}
-  <Box
-    onClick={() => console.log('Right clicked')}
-    sx={{
-      bgcolor: '#F3FAFF',
-      color: '#0F4977',
-      borderRadius: '1rem',
-      px: 2,
-      py: 0.5,
-      cursor: 'pointer',
-      display: 'inline-block',
-    }}
-  >
-    <Typography variant="body2" fontWeight={500}>
-      Save files in the same folder as source
-    </Typography>
-  </Box>
-</Stack>
+export const SourceTable = () => {
+  return (
+    <TableContainer component={Paper} elevation={2}>
+      <Table>
+        <TableHead>
+          <TableRow>
+            <TableCell><Typography fontWeight="bold">Source Type</Typography></TableCell>
+            <TableCell><Typography fontWeight="bold">Tech Type</Typography></TableCell>
+            <TableCell><Typography fontWeight="bold">Total Files Content</Typography></TableCell>
+            <TableCell><Typography fontWeight="bold">Status</Typography></TableCell>
+          </TableRow>
+        </TableHead>
+        <TableBody>
+          {data.map((row, index) => (
+            <TableRow key={index}>
+              <TableCell>{row.sourceType}</TableCell>
+              <TableCell>{row.techType}</TableCell>
+              <TableCell>{row.totalFiles}</TableCell>
+              <TableCell>
+                <Chip
+                  label={row.status}
+                  color={row.status === 'Active' ? 'success' : 'warning'}
+                  size="small"
+                  sx={{ fontWeight: 500 }}
+                />
+              </TableCell>
+            </TableRow>
+          ))}
+        </TableBody>
+      </Table>
+    </TableContainer>
+  );
+};
