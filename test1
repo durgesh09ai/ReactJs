@@ -1,127 +1,28 @@
-// LoginPage.tsx
-import React from 'react';
-import { Box, Typography, ThemeProvider, createTheme } from '@mui/material';
-import { LoginForm } from '../components/Login/LoginForm';
-
-const theme = createTheme({
-  palette: {
-    primary: {
-      main: '#0F4977',
-    },
-    secondary: {
-      main: '#FB4E0B',
-    },
-  },
-});
-
-const LoginPage: React.FC = () => {
-  return (
-    <ThemeProvider theme={theme}>
-      <Box sx={{ width: '100%', bgcolor: 'white' }}>
-        <Box
-          sx={{
-            width: '100%',
-            maxWidth: '1440px',
-            mx: 'auto',
-            borderRadius: '24px',
-            display: 'flex',
-            flexDirection: { xs: 'column', md: 'row' },
-          }}
-        >
-          {/* Left Section */}
-          <Box
-            sx={{
-              flex: 1,
-              display: { xs: 'none', md: 'block' },
-              position: 'relative',
-              bgcolor: 'white',
+ <Stack display={"flex"} alignContent={"space-between"} sx={{width:'100%' }}>
+         <Box sx={{alignItems:"flex-start"}}>
+        <Chip
+        onClick = {()=>{console.log('clicked')}}
+          label="Save files in the same folder as source"
+          sx={{ 
+            bgcolor: '#F3FAFF',
+            color: '#0F4977',
+            borderRadius: '1rem',
+            height: 'auto',
+            py: 0.5,
             }}
-          >
-            <Box sx={{ position: 'absolute', top: 46, left: 47 }}>
-              <Box
-                component="img"
-                src="/EXL_Service_logo.png"
-                alt="Logo"
-                sx={{ width: 93, height: 34 }}
-              />
-            </Box>
-
-            <Box
-              sx={{
-                width: '734px',
-                position: 'absolute',
-                top: 90,
-                left: 26,
-              }}
-            >
-              <Box sx={{ position: 'relative', width: '100%', height: '100%' }}>
-                {/* <Box
-                  component="svg"
-                  width="933"
-                  height="734"
-                  viewBox="0 0 933 734"
-                  fill="none"
-                  xmlns="http://www.w3.org/2000/svg"
-                >
-                  <path d="M932.553 0L932.553 650.959L-0.0006 650.959L-0.0006 0L932.553 0Z" fill="#E5E5E5" />
-                  <path d="M52.996 49.6397L888.339 53.7931L884.957 734L49.6141 729.847L52.996 49.6397Z" fill="#F5F5F5" />
-                </Box> */}
-                <Box
-                  component="img"
-                  src="/login_image_center.png"
-                  alt="Preview"
-                  sx={{
-                    width: '835px',
-                    position: 'absolute',
-                    left: '50px',
-                    borderRadius: '13.289px',
-                  }}
-                />
-              </Box>
-            </Box>
-          </Box>
-
-          {/* Center Section */}
-          <Box
-            sx={{
-              flex: { md: '1 0 0' },
-              bgcolor: '#FB4E0B',
-              display: { xs: 'none', md: 'block' },
+      />
+        </Box> 
+        <Box sx={{alignItems:"flex-end"}}> 
+        <Chip
+        onClick = {()=>{console.log('clicked')}}
+          label="Save files in the same folder as source"
+          sx={{ 
+            bgcolor: '#F3FAFF',
+            color: '#0F4977',
+            borderRadius: '1rem',
+            height: 'auto',
+            py: 0.5,
             }}
-          />
-
-          {/* Right Section */}
-          <Box
-            sx={{
-              width: { xs: '100%', md: '456px' },
-              display: 'flex',
-              flexDirection: 'column',
-              justifyContent: 'center',
-              p: { xs: 3, sm: 4, md: 6 },
-              gap: { xs: 4, sm: 8, md: '228px' },
-              bgcolor: 'white',
-            }}
-          >
-            <Box sx={{ display: { xs: 'flex', md: 'none' }, mb: 3 }}>
-              <Box
-                component="img"
-                src="/EXL_Service_logo.png"
-                alt="Mobile Logo"
-                sx={{ width: 93, height: 34 }}
-              />
-            </Box>
-            <LoginForm />
-
-            <Box component="footer" sx={{ display: 'flex', justifyContent: 'space-between', height: 24 }}>
-              <Typography variant="caption" sx={{ color: '#666', fontSize: 12 }}>
-                © Exlcopywrite
-              </Typography>
-            </Box>
-          </Box>
-        </Box>
-      </Box>
-    </ThemeProvider>
-  );
-};
-
-export default LoginPage;
+      />
+        </Box> 
+        </Stack>
