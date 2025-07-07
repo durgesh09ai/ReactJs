@@ -1,28 +1,44 @@
- <Stack display={"flex"} alignContent={"space-between"} sx={{width:'100%' }}>
-         <Box sx={{alignItems:"flex-start"}}>
-        <Chip
-        onClick = {()=>{console.log('clicked')}}
-          label="Save files in the same folder as source"
-          sx={{ 
-            bgcolor: '#F3FAFF',
-            color: '#0F4977',
-            borderRadius: '1rem',
-            height: 'auto',
-            py: 0.5,
-            }}
-      />
-        </Box> 
-        <Box sx={{alignItems:"flex-end"}}> 
-        <Chip
-        onClick = {()=>{console.log('clicked')}}
-          label="Save files in the same folder as source"
-          sx={{ 
-            bgcolor: '#F3FAFF',
-            color: '#0F4977',
-            borderRadius: '1rem',
-            height: 'auto',
-            py: 0.5,
-            }}
-      />
-        </Box> 
-        </Stack>
+import { Box, Stack, Typography } from '@mui/material';
+
+<Stack
+  direction="row"
+  justifyContent="space-between"
+  alignItems="center"
+  sx={{ width: '100%' }}
+>
+  {/* Custom "chip" box on the left */}
+  <Box
+    onClick={() => console.log('Left clicked')}
+    sx={{
+      bgcolor: '#F3FAFF',
+      color: '#0F4977',
+      borderRadius: '1rem',
+      px: 2,
+      py: 0.5,
+      cursor: 'pointer',
+      display: 'inline-block',
+    }}
+  >
+    <Typography variant="body2" fontWeight={500}>
+      Save files in the same folder as source
+    </Typography>
+  </Box>
+
+  {/* Custom "chip" box on the right */}
+  <Box
+    onClick={() => console.log('Right clicked')}
+    sx={{
+      bgcolor: '#F3FAFF',
+      color: '#0F4977',
+      borderRadius: '1rem',
+      px: 2,
+      py: 0.5,
+      cursor: 'pointer',
+      display: 'inline-block',
+    }}
+  >
+    <Typography variant="body2" fontWeight={500}>
+      Save files in the same folder as source
+    </Typography>
+  </Box>
+</Stack>
