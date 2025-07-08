@@ -1,80 +1,64 @@
-import React from 'react';
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableContainer,
-  TableHead,
-  TableRow,
-  Paper,
-  Typography,
-  Chip,
-} from '@mui/material';
+import React, { useState } from "react";
+import { observer } from "mobx-react-lite";
+import { Box, Container } from "@mui/material";
+import UserProfile from "../components/UserProfile/UserProfile";
+import Sidebar from "../components/WorkspaceSetup/Sidebar";
+import { ModelConfigurationPanel } from "../components/LLMModelSelection/ModelConfigurationPanel ";
+import SourceSetup from "../components/SourceSetup/SourceSetup";
+import TargetSetup from "../components/TargetSetup/TargetSetup";
+import WorkBookSpace from "../components/WorkBookSpace/WorkBookSpace";
+import { LanguageConfigurationPanel } from "../components/Languages/LanguageConfigurationPanel ";
+import WorkSpaceDetailSetup from "../components/WorkSpaceDetailSetup/WorkSpaceDetailSetup";
+import { mainPageStore } from "../stores/MainPageStore";
 
-const data = [
-  {
-    sourceType: 'GitHub',
-    techType: 'JavaScript',
-    totalFiles: 120,
-    status: 'Active',
-  },
-  {
-    sourceType: 'Azure Blob',
-    techType: 'Python',
-    totalFiles: 87,
-    status: 'Pending',
-  },
-];
+const WorkspaceSetup: React.FC = () => {
 
-export const SourceTable = () => {
+  const {
+    selectedItem,
+    setSelectedItem
+   }  = mainPageStore;
+
+  const renderContent = () => {
+    switch (selectedItem) {
+      case "User Profile":
+        return <UserProfile />;
+      case "Source":
+          return <SourceSetup />;  
+      case "Target":
+          return <TargetSetup />;      
+      case "WorkSpace":
+          return <WorkBookSpace />; 
+      case "LLM Setting":
+        return <ModelConfigurationPanel />;  
+      case "Languages":
+        return <LanguageConfigurationPanel />;  
+      default:
+        return null;
+    }
+  };
+
   return (
-    <TableContainer
-      component={Paper}
-      elevation={0}
-      sx={{
-        border: '1px dotted #ccc',
-        borderRadius: 2,
-      }}
-    >
-      <Table>
-        <TableHead>
-          <TableRow
-            sx={{
-              backgroundColor: '#F3FAFF',
-            }}
-          >
-            {['Source Type', 'Tech Type', 'Total Files Content', 'Status'].map((label) => (
-              <TableCell
-                key={label}
-                sx={{
-                  fontWeight: 'bold',
-                  fontSize: '14px',
-                  color: '#0F4977',
-                }}
-              >
-                {label}
-              </TableCell>
-            ))}
-          </TableRow>
-        </TableHead>
-        <TableBody>
-          {data.map((row, index) => (
-            <TableRow key={index}>
-              <TableCell>{row.sourceType}</TableCell>
-              <TableCell>{row.techType}</TableCell>
-              <TableCell>{row.totalFiles}</TableCell>
-              <TableCell>
-                <Chip
-                  label={row.status}
-                  color={row.status === 'Active' ? 'success' : 'warning'}
-                  size="small"
-                  sx={{ fontWeight: 500 }}
-                />
-              </TableCell>
-            </TableRow>
-          ))}
-        </TableBody>
-      </Table>
-    </TableContainer>
+    <Container maxWidth="xl" sx={{m:0,p:0}}>
+      <Box
+        sx={{
+          display: 'flex',
+          gap: 2,
+          bgcolor: '#fff',
+          p: 0,
+          borderRadius: 2,
+          justifyContent: 'center',
+          alignItems: 'flex-start',
+          my: 1
+          }}
+      >
+        <Sidebar/>
+        
+        <Box sx={{ flexGrow: 1, minWidth: "82%" }}>
+          {renderContent()}
+        </Box>
+      </Box>
+    </Container>
   );
 };
+
+export default observer(WorkspaceSetup);
