@@ -1,44 +1,6 @@
-import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
-import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
-
---------------------------------------
-
-<Box
-  sx={{
-    width: 60,
-    borderRight: '1px solid #ddd',
-    bgcolor: '#fff',
-    display: 'flex',
-    flexDirection: 'column',
-    alignItems: 'center',
-    overflow: 'hidden',
-  }}
->
-  {/* Scroll Up Arrow */}
-  <IconButton
-    size="small"
-    sx={{ visibility: showScrollArrows ? 'visible' : 'hidden' }}
-    onClick={() => sideTabRef.current?.scrollBy({ top: -60, behavior: 'smooth' })}
-  >
-    <KeyboardArrowUpIcon fontSize="small" />
-  </IconButton>
-
-  {/* Scrollable Side Tab List */}
-  <Box
-    ref={sideTabRef}
-    sx={{
-      overflowY: 'auto',
-      flex: 1,
-      width: '100%',
-      '&::-webkit-scrollbar': { display: 'none' }, // Hide scrollbar for clean look
-    }}
-    onScroll={() => {
-      const el = sideTabRef.current;
-      if (el) {
-        setShowScrollArrows(el.scrollHeight > el.clientHeight);
-      }
-    }}
-  >
+{/* Left Side Tabs */}
+<Box sx={{ width: 60, borderRight: '1px solid #ddd', bgcolor: '#fff', position: 'relative' }}>
+  <Box sx={{ height: '100%', overflowY: 'auto' }}>
     {currentSideTabs.map((item, index) => (
       <ListItemButton
         key={item.label}
@@ -50,30 +12,4 @@ import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
       </ListItemButton>
     ))}
   </Box>
-
-  {/* Scroll Down Arrow */}
-  <IconButton
-    size="small"
-    sx={{ visibility: showScrollArrows ? 'visible' : 'hidden' }}
-    onClick={() => sideTabRef.current?.scrollBy({ top: 60, behavior: 'smooth' })}
-  >
-    <KeyboardArrowDownIcon fontSize="small" />
-  </IconButton>
 </Box>
-____________________________
-
-const [showScrollArrows, setShowScrollArrows] = useState(false);
-const sideTabRef = React.useRef<HTMLDivElement>(null);
-
-useEffect(() => {
-  const checkOverflow = () => {
-    const el = sideTabRef.current;
-    if (el) {
-      setShowScrollArrows(el.scrollHeight > el.clientHeight);
-    }
-  };
-
-  checkOverflow();
-  window.addEventListener('resize', checkOverflow);
-  return () => window.removeEventListener('resize', checkOverflow);
-}, []);
