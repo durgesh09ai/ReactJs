@@ -1,6 +1,60 @@
-{/* Left Side Tabs */}
+import ExpandLessIcon from '@mui/icons-material/ExpandLess';
+import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
+import { useRef, useEffect, useState } from 'react';
+
+__________________________
+
+// State and Ref for scroll handling
+const scrollRef = useRef<HTMLDivElement>(null);
+const [showScrollUp, setShowScrollUp] = useState(false);
+const [showScrollDown, setShowScrollDown] = useState(false);
+
+const checkScrollButtons = () => {
+  const el = scrollRef.current;
+  if (el) {
+    setShowScrollUp(el.scrollTop > 0);
+    setShowScrollDown(el.scrollTop + el.clientHeight < el.scrollHeight);
+  }
+};
+
+useEffect(() => {
+  checkScrollButtons(); // on mount
+  const el = scrollRef.current;
+  if (el) {
+    el.addEventListener('scroll', checkScrollButtons);
+    return () => el.removeEventListener('scroll', checkScrollButtons);
+  }
+}, [currentSideTabs]); // update if tab items change
+
+const scrollByOffset = (offset: number) => {
+  if (scrollRef.current) {
+    scrollRef.current.scrollBy({ top: offset, behavior: 'smooth' });
+  }
+};
+
+
+____________________________
+
 <Box sx={{ width: 60, borderRight: '1px solid #ddd', bgcolor: '#fff', position: 'relative' }}>
-  <Box sx={{ height: '100%', overflowY: 'auto' }}>
+  {showScrollUp && (
+    <IconButton
+      size="small"
+      sx={{ position: 'absolute', top: 0, left: 0, right: 0, zIndex: 1 }}
+      onClick={() => scrollByOffset(-60)}
+    >
+      <ExpandLessIcon />
+    </IconButton>
+  )}
+
+  <Box
+    ref={scrollRef}
+    sx={{
+      height: '100%',
+      overflowY: 'auto',
+      pt: showScrollUp ? 4 : 0,
+      pb: showScrollDown ? 4 : 0,
+    }}
+  >
     {currentSideTabs.map((item, index) => (
       <ListItemButton
         key={item.label}
@@ -12,4 +66,14 @@
       </ListItemButton>
     ))}
   </Box>
+
+  {showScrollDown && (
+    <IconButton
+      size="small"
+      sx={{ position: 'absolute', bottom: 0, left: 0, right: 0, zIndex: 1 }}
+      onClick={() => scrollByOffset(60)}
+    >
+      <ExpandMoreIcon />
+    </IconButton>
+  )}
 </Box>
