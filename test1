@@ -1,13 +1,67 @@
-<Box
-  ref={scrollRef}
-  sx={{
-    height: '100%',
-    overflowY: 'auto',
-    pt: showScrollUp ? 4 : 0,
-    pb: showScrollDown ? 4 : 0,
-    scrollbarWidth: 'none',          // Firefox
-    '&::-webkit-scrollbar': {        // Chrome, Safari
-      display: 'none',
-    },
-  }}
->
+<Box sx={{ width: 60, borderRight: '1px solid #ddd', bgcolor: '#fff', position: 'relative' }}>
+  {/* Scroll Up Arrow */}
+  {showScrollUp && (
+    <IconButton
+      size="small"
+      sx={{
+        position: 'absolute',
+        top: 0,
+        left: 0,
+        right: 0,
+        zIndex: 1,
+        height: 32, // reserve height
+        bgcolor: '#fff',
+      }}
+      onClick={() => scrollByOffset(-60)}
+    >
+      <ExpandLessIcon />
+    </IconButton>
+  )}
+
+  {/* Scrollable Icon List */}
+  <Box
+    ref={scrollRef}
+    sx={{
+      height: '100%',
+      overflowY: 'auto',
+      pt: showScrollUp ? 4 : 0,
+      pb: showScrollDown ? 4 : 0,
+      scrollbarWidth: 'none',
+      '&::-webkit-scrollbar': {
+        display: 'none',
+      },
+    }}
+  >
+    <Box sx={{ pt: showScrollUp ? '32px' : 0, pb: showScrollDown ? '32px' : 0 }}>
+      {currentSideTabs.map((item, index) => (
+        <ListItemButton
+          key={item.label}
+          selected={activeSideTab === index}
+          onClick={() => setActiveSideTab(index)}
+          sx={{ px: 2 }}
+        >
+          <ListItemIcon sx={{ minWidth: 32 }}>{item.icon}</ListItemIcon>
+        </ListItemButton>
+      ))}
+    </Box>
+  </Box>
+
+  {/* Scroll Down Arrow */}
+  {showScrollDown && (
+    <IconButton
+      size="small"
+      sx={{
+        position: 'absolute',
+        bottom: 0,
+        left: 0,
+        right: 0,
+        zIndex: 1,
+        height: 32,
+        bgcolor: '#fff',
+      }}
+      onClick={() => scrollByOffset(60)}
+    >
+      <ExpandMoreIcon />
+    </IconButton>
+  )}
+</Box>
