@@ -1,158 +1,14 @@
-import React, { useEffect, useRef, useState } from 'react';
-import { observer } from "mobx-react-lite";
-import {
-  Box, Paper, Tabs, Tab, Typography, List, ListItemButton, ListItemText,ListItemIcon, IconButton
-} from '@mui/material';
-import AssessmentIcon from '@mui/icons-material/Assessment';
-import BarChartIcon from '@mui/icons-material/BarChart';
-import CodeIcon from '@mui/icons-material/Code';
-import BugReportIcon from '@mui/icons-material/BugReport';
-import PsychologyIcon from '@mui/icons-material/Psychology';
-import { PushPin as PushPinIcon } from '@mui/icons-material';
-import { mainPageStore } from "../../stores/MainPageStore";
-import ExpandLessIcon from '@mui/icons-material/ExpandLess';
-import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
-
-type TabType = 'assessment' | 'metrics' | 'generation' | 'debug' | 'reasoning';
-
-const leftTabItems: Record<TabType, { label: string; icon: React.ReactNode }[]> = {
-  assessment: [
-    { label: 'Fix Suggestions', icon: <AssessmentIcon /> },
-    { label: 'Static Summary', icon: <AssessmentIcon /> },
-    { label: 'Code Complexity', icon: <BarChartIcon /> },
-    { label: 'Maintainability', icon: <BarChartIcon /> },
-    { label: 'AI Code Generator', icon: <CodeIcon /> },
-    { label: 'Logs', icon: <BugReportIcon /> },
-    { label: 'AI Reasoning', icon: <PsychologyIcon /> }
-  ],
-  metrics: [
-    { label: 'Code Complexity', icon: <BarChartIcon /> },
-    { label: 'Maintainability', icon: <BarChartIcon /> }
-  ],
-  generation: [
-    { label: 'AI Code Generator', icon: <CodeIcon /> }
-  ],
-  debug: [
-    { label: 'Logs', icon: <BugReportIcon /> }
-  ],
-  reasoning: [
-    { label: 'AI Reasoning', icon: <PsychologyIcon /> }
-  ]
-};
-
-export const AssessmentPanel: React.FC = observer(() => {
-  const [activeTab, setActiveTab] = useState<TabType>('assessment');
-  const [activeSideTab, setActiveSideTab] = useState<number>(0);
-  const scrollRef = useRef<HTMLDivElement>(null);
-  const [showScrollUp, setShowScrollUp] = useState(false);
-  const [showScrollDown, setShowScrollDown] = useState(false);
-  
-  const checkScrollButtons = () => {
-    const el = scrollRef.current;
-    if (el) {
-      setShowScrollUp(el.scrollTop > 0);
-      setShowScrollDown(el.scrollTop + el.clientHeight < el.scrollHeight);
-    }
-  };
-    
-  const scrollByOffset = (offset: number) => {
-    if (scrollRef.current) {
-      scrollRef.current.scrollBy({ top: offset, behavior: 'smooth' });
-    }
-  };
-  const handleTopTabChange = (_: React.SyntheticEvent, newValue: TabType) => {
-    setActiveTab(newValue);
-    setActiveSideTab(0); // reset side tab on top tab switch
-  };
-
-  const currentSideTabs = leftTabItems[activeTab];
-
-  useEffect(() => {
-    checkScrollButtons(); // on mount
-    const el = scrollRef.current;
-    if (el) {
-      el.addEventListener('scroll', checkScrollButtons);
-      return () => el.removeEventListener('scroll', checkScrollButtons);
-    }
-  }, [currentSideTabs]); // update if tab items change
-
-
-  const {
-    isPinnedAssPanel,
-    setIsPinnedAssPanel
-  } = mainPageStore;
-
-  return (
-    <Paper
-      elevation={0}
-      sx={{
-        height: '100%',
-        bgcolor: '#f5f5f5',
-        border: '1px solid #e4e4e5',
-        borderRadius: 1,
-        display: 'flex',
-        flexDirection: 'column',
-        overflow: 'hidden'
-      }}
-    >
-      {/* Top Tabs */}
-      <Box
+<Box
   sx={{
+    width: 60,
+    borderRight: '1px solid #ddd',
+    bgcolor: '#fff',
+    position: 'relative',
     display: 'flex',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    borderBottom: '1px solid #e0e0e0',
-    px: 1,
+    flexDirection: 'column',
+    height: '100%',
   }}
 >
-  <Tabs
-    value={activeTab}
-    onChange={handleTopTabChange}
-    variant="scrollable"
-    scrollButtons="auto"
-    sx={{
-      minHeight: '40px',
-      '& .MuiTab-root': {
-        minHeight: '40px',
-        textTransform: 'none',
-        fontSize: '12px',
-        color: '#000',
-        fontWeight: 500,
-        px: 2,
-        '&.Mui-selected': {
-          color: '#0F4977',
-          bgcolor: '#F3FAFF',
-        },
-      },
-      '& .MuiTabs-indicator': { display: 'none' },
-    }}
-  >
-    <Tab label="Assessment" value="assessment" />
-    <Tab label="Advance Metrics" value="metrics" />
-    <Tab label="Code Generation" value="generation" />
-    <Tab label="Debug" value="debug" />
-    <Tab label="Reasoning" value="reasoning" />
-  </Tabs>
-
-  <IconButton
-    size="small"
-    onClick={() => setIsPinnedAssPanel()}
-    title={isPinnedAssPanel ? 'Unpin' : 'Pin'}
-    sx={{ ml: 1 }}
-  >
-    <PushPinIcon
-      sx={{
-        transform: isPinnedAssPanel ? 'rotate(45deg)' : 'rotate(0deg)',
-        color: isPinnedAssPanel ? 'primary.main' : 'inherit',
-      }}
-    />
-  </IconButton>
-</Box>
-
-      {/* Content Area */}
-      <Box sx={{ display: 'flex', flex: 1 }}>
-        {/* Left Side Tabs */}
-  <Box sx={{ width: 60, borderRight: '1px solid #ddd', bgcolor: '#fff', position: 'relative' }}>
   {showScrollUp && (
     <IconButton
       size="small"
@@ -166,7 +22,7 @@ export const AssessmentPanel: React.FC = observer(() => {
   <Box
     ref={scrollRef}
     sx={{
-      height: '100%',
+      flexGrow: 1,
       overflowY: 'auto',
       pt: showScrollUp ? 4 : 0,
       pb: showScrollDown ? 4 : 0,
@@ -194,17 +50,3 @@ export const AssessmentPanel: React.FC = observer(() => {
     </IconButton>
   )}
 </Box>
-
-        {/* Right Content */}
-        <Box sx={{ p: 2, flexGrow: 1, overflow: 'auto' }}>
-          <Typography variant="subtitle2" sx={{ fontWeight: 600, mb: 1, fontSize: '14px' }}>
-            {currentSideTabs[activeSideTab]?.label}
-          </Typography>
-          <Typography sx={{ fontSize: '13px' }}>
-            Content for <b>{currentSideTabs[activeSideTab]?.label}</b> under <b>{activeTab}</b> tab.
-          </Typography>
-        </Box>
-      </Box>
-    </Paper>
-  );
-});
