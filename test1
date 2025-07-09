@@ -1,14 +1,101 @@
-<ReflexElement flex={0.4} minSize={100}>
-  <Box
-    sx={{
-      height: '100%',
-      p: 1,
-      bgcolor: '#f5f5f5',
-      overflow: 'auto',
-      transition: 'margin-top 0.3s ease',
-      mt: isPinnedAssPanel ? '-32px' : 0, // <-- Adjust this as needed
-    }}
-  >
-    <AssessmentPanel />
-  </Box>
-</ReflexElement>
+{isPinnedAssPanel ? (
+  // When pinned, show only AssessmentPanel (full width/height)
+  <ReflexElement>
+    <Box sx={{ height: '100%', p: 1, bgcolor: '#f5f5f5', overflow: 'auto' }}>
+      <AssessmentPanel />
+    </Box>
+  </ReflexElement>
+) : (
+  // When not pinned, show editor + assessment in horizontal layout
+  <ReflexElement>
+    <ReflexContainer orientation="horizontal">
+      {/* Editors */}
+      <ReflexElement flex={0.6} minSize={150}>
+        <Box sx={{ height: '100%', p: 1, overflow: 'hidden' }}>
+          <ReflexContainer orientation="vertical" style={{ height: '100%' }}>
+            {/* Source Editor */}
+            <ReflexElement flex={0.5} minSize={150}>
+              <Paper
+                elevation={0}
+                sx={{
+                  height: '100%',
+                  bgcolor: '#F3FAFF',
+                  border: '1px solid #e0e0e0',
+                  borderRadius: 1,
+                  overflow: 'hidden',
+                }}
+              >
+                <Box sx={{ p: 1.5, borderBottom: '1px solid #e0e0e0' }}>
+                  <Typography variant="subtitle2" sx={{ fontWeight: 600, fontSize: '14px' }}>
+                    Source Code
+                  </Typography>
+                </Box>
+                <Editor
+                  height="calc(100% - 50px)"
+                  language="python"
+                  value={sourceCodeValue}
+                  onChange={(val) => setSourceCodeValue(val || '')}
+                  theme="vs-light"
+                  options={{
+                    minimap: { enabled: false },
+                    fontSize: 12,
+                    scrollBeyondLastLine: false,
+                    wordWrap: 'on',
+                    automaticLayout: true,
+                    padding: { top: 10, bottom: 10 },
+                  }}
+                />
+              </Paper>
+            </ReflexElement>
+
+            <ReflexSplitter propagate />
+
+            {/* Target Editor */}
+            <ReflexElement flex={0.5} minSize={150}>
+              <Paper
+                elevation={0}
+                sx={{
+                  height: '100%',
+                  bgcolor: '#f5f5f5',
+                  border: '1px solid #e0e0e0',
+                  borderRadius: 1,
+                  overflow: 'hidden',
+                }}
+              >
+                <Box sx={{ p: 1.5, borderBottom: '1px solid #e0e0e0' }}>
+                  <Typography variant="subtitle2" sx={{ fontWeight: 600, fontSize: '14px' }}>
+                    Target Code
+                  </Typography>
+                </Box>
+                <Editor
+                  height="calc(100% - 50px)"
+                  language="python"
+                  value={targetCodeValue}
+                  onChange={(val) => setTargetCodeValue(val || '')}
+                  theme="vs-light"
+                  options={{
+                    minimap: { enabled: false },
+                    fontSize: 12,
+                    scrollBeyondLastLine: false,
+                    wordWrap: 'on',
+                    automaticLayout: true,
+                    padding: { top: 10, bottom: 10 },
+                  }}
+                />
+              </Paper>
+            </ReflexElement>
+          </ReflexContainer>
+        </Box>
+      </ReflexElement>
+
+      <ReflexSplitter propagate />
+
+      {/* Assessment Panel */}
+      <ReflexElement flex={0.4} minSize={100}>
+        <Box sx={{ height: '100%', p: 1, bgcolor: '#f5f5f5', overflow: 'auto' }}>
+          <AssessmentPanel />
+        </Box>
+      </ReflexElement>
+    </ReflexContainer>
+  </ReflexElement>
+)}
