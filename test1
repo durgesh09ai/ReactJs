@@ -1,45 +1,316 @@
-<Box sx={{ width: 60, borderRight: '1px solid #ddd', bgcolor: '#fff', position: 'relative', display: 'flex', flexDirection: 'column' }}>
-  {/* Up Arrow (always occupies space) */}
-  <Box sx={{ height: 32, display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
-    <IconButton
-      size="small"
-      disabled={!showScrollUp}
-      onClick={() => scrollByOffset(-60)}
-    >
-      <ExpandLessIcon />
-    </IconButton>
-  </Box>
+// ContractListing.tsx
+import React, { useState, useMemo } from 'react';
+import {
+  Box,
+  Table,
+  TableHead,
+  TableRow,
+  TableCell,
+  TableBody,
+  TableContainer,
+  Paper,
+  TextField,
+  Typography,
+  Button,
+  MenuItem,
+  Stack,
+  Chip,
+  IconButton,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogActions,
+  Menu,
+} from '@mui/material';
+import CloudUploadIcon from '@mui/icons-material/CloudUpload';
+import MoreVertIcon from "@mui/icons-material/MoreVert";
+import DeleteIcon from "@mui/icons-material/Delete";
+import ReplayIcon from '@mui/icons-material/Replay';
 
-  {/* Scrollable Icon List */}
-  <Box
-    ref={scrollRef}
-    sx={{
-      flex: 1,
-      overflowY: 'auto',
-      scrollbarWidth: 'none',
-      '&::-webkit-scrollbar': { display: 'none' },
-    }}
-  >
-    {currentSideTabs.map((item, index) => (
-      <ListItemButton
-        key={item.label}
-        selected={activeSideTab === index}
-        onClick={() => setActiveSideTab(index)}
-        sx={{ px: 2 }}
-      >
-        <ListItemIcon sx={{ minWidth: 32 }}>{item.icon}</ListItemIcon>
-      </ListItemButton>
-    ))}
-  </Box>
 
-  {/* Down Arrow (always occupies space) */}
-  <Box sx={{ height: 32, display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
-    <IconButton
-      size="small"
-      disabled={!showScrollDown}
-      onClick={() => scrollByOffset(60)}
-    >
-      <ExpandMoreIcon />
-    </IconButton>
-  </Box>
-</Box>
+const initialData = [
+  {
+    hospital: 'Frankfort Regional Medical Center',
+    solution_version: 'CCG 1',
+    contract: 'Hospital',
+    apex_id: 'ACV-0001',
+    referral: 'Ref-7',
+    apex_worksite: '62424',
+    cis_id: 'CSID-123',
+    cis_type: 'Pricer',
+    start_date: '2025-01-03',
+    term_date: '2025-01-03',
+    tax_id: 'Single',
+    lob: '123',
+    description: 'Parent contract',
+    status: 'Completed'
+  },
+  {
+    hospital: 'Mindstate',
+    solution_version: 'CCG 2',
+    contract: 'Physician',
+    apex_id: 'ACV-0002',
+    referral: 'Ref-2',
+    apex_worksite: '63001',
+    cis_id: 'CSID-9876',
+    cis_type: 'DRG',
+    start_date: '2025-01-26',
+    term_date: '2025-01-26',
+    tax_id: 'Multiple',
+    lob: '876',
+    description: 'Morning contract',
+    status: 'Completed'
+  },
+];
+
+const UploadContractListing = () => {
+  const [search, setSearch] = useState('');
+  const [currentPage, setCurrentPage] = useState(1);
+  const [selectedRows, setSelectedRows] = useState<number[]>([]);
+  const [filterDrawerOpen, setFilterDrawerOpen] = useState(false);
+  const [pdfDialogOpen, setPdfDialogOpen] = useState(false);
+  const [data, setData] = useState(initialData);
+  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
+  const isMenuOpen = Boolean(anchorEl);
+
+  const [filterValues, setFilterValues] = useState({
+    hospital: '',
+    contract: '',
+    cisType: '',
+    cdgType: '',
+    taxId: '',
+    date: '',
+    cdgCategory: '',
+  });
+
+  const handleUploadSimulated = () => {
+    const newEntries = [
+      {
+        hospital: 'New Hospital Upload',
+        solution_version: 'CCG 1',
+        contract: 'Hospital',
+        apex_id: 'ACV-NEW1',
+        referral: 'Ref-New',
+        apex_worksite: '90000',
+        cis_id: 'CSID-NEW',
+        cis_type: 'Pricer',
+        start_date: '2025-08-17',
+        term_date: '2025-08-17',
+        tax_id: 'CSID-9876',
+        lob: '555',
+        description: 'Uploaded contract',
+        status: 'Progress'
+      },
+      {
+        hospital: 'Failed Upload Hospital',
+        solution_version: 'CCG 2',
+        contract: 'Physician',
+        apex_id: 'ACV-FAIL',
+        referral: 'Ref-Fail',
+        apex_worksite: '99999',
+        cis_id: 'CSID-FAIL',
+        cis_type: 'DRG',
+        start_date: '2025-08-17',
+        term_date: '2025-08-17',
+        tax_id: 'CSID-9877',
+        lob: '999',
+        description: 'Failed contract',
+        status: 'Failed'
+      },
+    ];
+    setData((prev) => [...prev, ...newEntries]);
+    setPdfDialogOpen(false);
+  };
+
+  const filteredData = useMemo(() => {
+    return data.filter((row) => {
+      const matchesDate = !filterValues.date || new Date(row.start_date).toISOString().split('T')[0] === filterValues.date;
+      return (
+        (!filterValues.hospital || row.hospital.toLowerCase().includes(filterValues.hospital.toLowerCase())) &&
+        (!filterValues.contract || row.contract === filterValues.contract) &&
+        (!filterValues.cisType || row.cis_type === filterValues.cisType) &&
+        (!filterValues.cdgType || row.cis_type === filterValues.cdgType) &&
+        (!filterValues.taxId || row.tax_id === filterValues.taxId) &&
+        matchesDate &&
+        (!filterValues.cdgCategory || filterValues.cdgCategory === 'All Types')
+      );
+    }).filter(row => 
+      row.hospital.toLowerCase().includes(search.toLowerCase()) ||
+      row.contract.toLowerCase().includes(search.toLowerCase()) ||
+      row.apex_id.toLowerCase().includes(search.toLowerCase())
+    );
+  }, [filterValues, data, search]);
+
+  const paginatedData = useMemo(() => {
+    return filteredData.slice(0,50);
+  }, [filteredData, currentPage]);
+
+  const toggleRowSelection = (idx: number) => {
+    setSelectedRows((prev) =>
+      prev.includes(idx) ? prev.filter((i) => i !== idx) : [...prev, idx]
+    );
+  };
+
+  const handlePageChange = (pageNumber: number) => {
+    setCurrentPage(pageNumber);
+  };
+
+  const handleFilterChange = (key: string, value: string) => {
+    setFilterValues((prev) => ({ ...prev, [key]: value }));
+  };
+
+  const getStatusChip = (status: string) => {
+    switch (status) {
+      case 'Completed':
+        return <Chip label="Completed" size="small" sx={{ bgcolor: 'white', color: '#4CAF50', border: '1px solid #4CAF50' }} />;
+      case 'Progress':
+        return <Chip label="Progress" size="small" color="error" sx={{bgcolor: 'white',color: '#604F4F', border: '1px solid #604F4F'}} />;
+      case 'Failed':
+        return <Chip label="Failed" size="small" sx={{bgcolor: 'white',color: '#B3261E', border: '1px solid #B3261E'}}  />;
+      default:
+        return null;
+    }
+  };
+
+  return (
+    <Paper elevation={0} sx={{ backgroundColor: 'white', borderRadius: '10px', width: '100%', p: 1, mt: 2 }}>
+      <Box>
+        <Stack direction="row" justifyContent="space-between" alignItems="center" mb={1}>
+          <TextField
+            size="small"
+            placeholder="Quick Search"
+            value={search}
+            onChange={(e) => {
+              setSearch(e.target.value);
+              setCurrentPage(1);
+            }}
+          />
+
+          <Stack direction="row" alignItems="center" spacing={2}>
+            <Box display="flex" alignItems="center" gap={1}>
+              <Box sx={{ width: 10, height: 10, borderRadius: '50%', bgcolor: '#0F4977' }} />
+              <Typography variant="body2">CCG 1</Typography>
+            </Box>
+            <Box display="flex" alignItems="center" gap={1}>
+              <Box sx={{ width: 10, height: 10, borderRadius: '50%', bgcolor: '#87CEEB' }} />
+              <Typography variant="body2">CCG 2</Typography>
+            </Box>
+            <Box display="flex" alignItems="center" gap={1}>
+              <Box sx={{ width: 10, height: 10, borderRadius: '50%', bgcolor: '#2476B7' }} />
+              <Typography variant="body2">CCG Unified</Typography>
+            </Box>
+          </Stack>
+
+          <Stack direction="row" spacing={1}>
+           <Button
+              variant="outlined"
+              startIcon={<CloudUploadIcon />}
+              size="small"
+              onClick={() => setPdfDialogOpen(true)}
+            >
+              Upload PDF
+            </Button>
+
+          </Stack>
+        </Stack>
+
+        <TableContainer component={Paper}>
+          <Table size="small">
+            <TableHead sx={{ bgcolor: '#0F4977' }}>
+              <TableRow>
+                {[ 'S.No', 'Solution Version', 'Document Name', 'Contract Type','CIS ID', 'CIS ID Type', 'Effective Start Date', 'Term Date', 'Attechment ID', 'Description', 'Status', 'Action'].map((heading, i) => (
+                  <TableCell key={i} sx={{ color: 'white',fontSize:'14px' }}>{heading}</TableCell>
+                ))}
+              </TableRow>
+            </TableHead>
+            <TableBody>
+              {paginatedData.map((row, idx) => {
+                const isSelected = selectedRows.includes(idx);
+                return (
+                  <TableRow key={idx} sx={{ bgcolor: isSelected ? '#e3f2fd' : 'inherit' }}>
+                    <TableCell>
+                    <TableCell>{idx + 1 }.</TableCell>
+                    </TableCell>
+                    {/* <TableCell><Chip label={row.solution_version} variant="outlined" size="small" /></TableCell> */}
+                    
+                    <TableCell>
+                    {row.solution_version==="CCG 1"?(<Box sx={{ width: 10, height: 10, borderRadius: '50%', bgcolor: '#0F4977' }} />):(<Box sx={{ width: 10, height: 10, borderRadius: '50%', bgcolor: '#87CEEB' }} />)
+
+                    }                 
+                                        
+
+                  </TableCell>
+                    <TableCell>{row.hospital}</TableCell>
+                    <TableCell><Chip label={row.contract} size="small" sx={{ bgcolor: '#EAF2F7', color: '#0F4977',fontSize:'12px' }} /></TableCell>
+                    <TableCell><Chip label={row.cis_id} size="small" sx={{ bgcolor: '#E4E4E5', color: 'black',fontSize:'12px' }} /></TableCell>
+                    <TableCell>{row.cis_type}</TableCell>
+                    <TableCell>{row.start_date}</TableCell>
+                    <TableCell>{row.term_date}</TableCell>
+                    <TableCell>{row.tax_id}</TableCell>
+                    <TableCell>{row.description}</TableCell>
+                    <TableCell>{getStatusChip(row.status)}</TableCell>
+                    <TableCell>
+                    <Box sx={{ display: "flex", justifyContent: "flex-end"}}>
+              <IconButton
+                size="small"
+                onClick={(e) => setAnchorEl(e.currentTarget)}
+              >
+                <MoreVertIcon  sx={{fontSize:14}} />
+              </IconButton>
+
+              <Menu
+              anchorEl={anchorEl}
+              open={isMenuOpen}
+              onClose={() => setAnchorEl(null)}
+              anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
+              transformOrigin={{ vertical: "top", horizontal: "right" }}
+              PaperProps={{
+                elevation: 1, // reduces the default shadow
+                sx: {
+                  boxShadow: 'none', // or customize: '0px 2px 6px rgba(0,0,0,0.1)'
+                  border: '1px solid #ccc', // optional for light border
+                  mt: 0.2 // margin top if needed
+                }
+              }}
+            >
+            <MenuItem onClick={() => setAnchorEl(null)} sx={{ fontSize: 12 }}>
+              <ReplayIcon fontSize="small" sx={{ mr: 1, fontSize: 12 }} /> Retry
+            </MenuItem>
+            <MenuItem onClick={() => setAnchorEl(null)} sx={{ fontSize: 12 }}>
+              <DeleteIcon fontSize="small" sx={{ mr: 1, fontSize: 12 }} /> Delete
+            </MenuItem>
+          </Menu>
+         
+            </Box>
+                    </TableCell>
+                  </TableRow>
+                );
+              })}
+            </TableBody>
+          </Table>
+        </TableContainer>
+
+
+        {/* Upload PDF Modal */}
+        <Dialog open={pdfDialogOpen} onClose={() => setPdfDialogOpen(false)} maxWidth="sm" fullWidth>
+          <DialogTitle sx={{fontSize:14}}>Upload Your PDF</DialogTitle>
+          <DialogContent sx={{bgcolor:"#EAF2F7"}}>
+            <Box display="flex" alignItems="center" justifyContent="center" flexDirection="column" minHeight={200}>
+              <Typography variant="body1" gutterBottom>Drag & drop files or <Typography component="span" color="primary" sx={{ textDecoration: 'underline', cursor: 'pointer' }}>Browse</Typography></Typography>
+              <Typography variant="caption">Supported formats: PDF. Max size: 10MB</Typography>
+            </Box>
+            
+          </DialogContent>
+
+          <DialogActions>
+            <Button onClick={() => setPdfDialogOpen(false)}>Cancel</Button>
+            <Button variant="contained" onClick={handleUploadSimulated}>Upload</Button>
+          </DialogActions>
+        </Dialog>
+
+      </Box>
+    </Paper>
+  );
+};
+
+export default UploadContractListing;
