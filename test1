@@ -262,3 +262,52 @@ const UploadContractListing = () => {
 };
 
 export default UploadContractListing;
+
+
+
+___________________________________________________________
+
+const handleUploadAll = () => {
+  setUploading(true);
+  setUploadProgress(0);
+
+  const filesToUpload = [...uploadedFiles]; // snapshot of files
+  setUploadedFiles([]); // Clear uploaded files list immediately
+
+  const interval = setInterval(() => {
+    setUploadProgress(prev => {
+      if (prev >= 100) {
+        clearInterval(interval);
+
+        const dummyEntries = filesToUpload.map((file, index) => ({
+          hospital: file.name.replace('.pdf', ''),
+          solution_version: index % 2 === 0 ? 'CCG 1' : 'CCG 2',
+          contract: index % 2 === 0 ? 'Hospital' : 'Physician',
+          apex_id: `ACV-UP-${Date.now()}-${index}`,
+          referral: `Ref-${Math.floor(Math.random() * 10)}`,
+          apex_worksite: `${90000 + index}`,
+          cis_id: `CSID-UP-${index}`,
+          cis_type: index % 2 === 0 ? 'Pricer' : 'DRG',
+          start_date: '2025-08-17',
+          term_date: '2025-08-17',
+          tax_id: `Tax-${index}`,
+          lob: `${100 + index}`,
+          description: 'Uploaded via PDF drop',
+          status: 'Progress'
+        }));
+
+        setData(prev => [...prev, ...dummyEntries]);
+
+        setTimeout(() => {
+          setUploading(false);
+          setPdfDialogOpen(false);
+        }, 800);
+
+        return 100;
+      }
+      return prev + 10;
+    });
+  }, 300);
+};
+
+
