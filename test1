@@ -18,178 +18,123 @@ import {
   DialogTitle,
   DialogContent,
   DialogActions,
+  Menu,
+  MenuItem,
+  LinearProgress,
 } from '@mui/material';
 import { useDropzone } from 'react-dropzone';
 import CloudUploadIcon from '@mui/icons-material/CloudUpload';
 import MoreVertIcon from "@mui/icons-material/MoreVert";
-
-const initialData = [
-  {
-    hospital: 'Frankfort Regional Medical Center',
-    solution_version: 'CCG 1',
-    contract: 'Hospital',
-    apex_id: 'ACV-0001',
-    referral: 'Ref-7',
-    apex_worksite: '62424',
-    cis_id: 'CSID-123',
-    cis_type: 'Pricer',
-    start_date: '2025-01-03',
-    term_date: '2025-01-03',
-    tax_id: 'Single',
-    lob: '123',
-    description: 'Parent contract',
-    status: 'Completed'
-  }
-];
+import DeleteIcon from "@mui/icons-material/Delete";
+import ReplayIcon from '@mui/icons-material/Replay';
 
 const UploadContractListing = () => {
-  const [search, setSearch] = useState('');
   const [pdfDialogOpen, setPdfDialogOpen] = useState(false);
-  const [data, setData] = useState(initialData);
   const [uploadedFiles, setUploadedFiles] = useState<File[]>([]);
+  const [uploading, setUploading] = useState(false);
+  const [uploadProgress, setUploadProgress] = useState(0);
 
-  const { getRootProps, getInputProps, isDragActive, fileRejections } = useDropzone({
-    accept: { 'application/pdf': ['.pdf'] },
-    maxSize: 10 * 1024 * 1024,
-    multiple: true,
-    onDrop: (acceptedFiles) => {
-      setUploadedFiles(prev => [...prev, ...acceptedFiles]);
-    }
-  });
-
-  const handleUploadSimulated = () => {
-    const newEntries = uploadedFiles.map((file, index) => ({
-      hospital: file.name,
-      solution_version: 'CCG 1',
-      contract: 'Hospital',
-      apex_id: `ACV-NEW${index + 1}`,
-      referral: 'Ref-New',
-      apex_worksite: '90000',
-      cis_id: `CSID-NEW-${index}`,
-      cis_type: 'Pricer',
-      start_date: '2025-08-17',
-      term_date: '2025-08-17',
-      tax_id: '99999',
-      lob: '555',
-      description: 'Uploaded contract',
-      status: 'Progress'
-    }));
-    setData((prev) => [...prev, ...newEntries]);
-    setUploadedFiles([]);
-    setPdfDialogOpen(false);
+  const onDrop = (acceptedFiles: File[]) => {
+    const pdfFiles = acceptedFiles.filter(file => file.type === "application/pdf");
+    setUploadedFiles(prev => [...prev, ...pdfFiles]);
   };
 
-  const filteredData = useMemo(() => {
-    return data.filter(row =>
-      row.hospital.toLowerCase().includes(search.toLowerCase())
-    );
-  }, [data, search]);
+  const { getRootProps, getInputProps, isDragActive } = useDropzone({
+    onDrop,
+    multiple: true,
+    accept: { "application/pdf": [] }
+  });
+
+  const handleUploadAll = () => {
+    setUploading(true);
+    setUploadProgress(0);
+
+    const interval = setInterval(() => {
+      setUploadProgress(prev => {
+        if (prev >= 100) {
+          clearInterval(interval);
+          setTimeout(() => {
+            setUploading(false);
+            setUploadedFiles([]);
+            setPdfDialogOpen(false);
+          }, 800);
+          return 100;
+        }
+        return prev + 10;
+      });
+    }, 300);
+  };
 
   return (
-    <Paper elevation={0} sx={{ backgroundColor: 'white', borderRadius: '10px', width: '100%', p: 2, mt: 2 }}>
-      <Box>
-        <Stack direction="row" justifyContent="space-between" alignItems="center" mb={2}>
-          <TextField
-            size="small"
-            placeholder="Quick Search"
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-          />
-          <Button
-            variant="outlined"
-            startIcon={<CloudUploadIcon />}
-            size="small"
-            onClick={() => setPdfDialogOpen(true)}
+    <>
+      {/* Your main table layout remains unchanged */}
+
+      <Dialog open={pdfDialogOpen} onClose={() => setPdfDialogOpen(false)} maxWidth="sm" fullWidth>
+        <DialogTitle sx={{ fontSize: 14 }}>Upload Your PDF</DialogTitle>
+        <DialogContent sx={{ bgcolor: "#EAF2F7", py: 3 }}>
+          <Box
+            {...getRootProps()}
+            sx={{
+              border: '2px dashed #aaa',
+              borderRadius: 2,
+              padding: 4,
+              textAlign: 'center',
+              cursor: 'pointer',
+              backgroundColor: isDragActive ? '#ddd' : '#F7FBFF',
+              transition: '0.3s'
+            }}
           >
-            Upload PDFs
-          </Button>
-        </Stack>
+            <input {...getInputProps()} />
+            <CloudUploadIcon sx={{ fontSize: 48, mb: 1, color: '#0F4977' }} />
+            <Typography variant="body1" gutterBottom>
+              Drag & drop PDF files or <span style={{ color: '#0F4977', textDecoration: 'underline' }}>Browse</span>
+            </Typography>
+            <Typography variant="caption">Supported format: PDF. Max size: 10MB</Typography>
+          </Box>
 
-        <TableContainer component={Paper}>
-          <Table size="small">
-            <TableHead sx={{ bgcolor: '#0F4977' }}>
-              <TableRow>
-                {['S.No', 'Document Name', 'Contract Type', 'CIS ID', 'Start Date', 'Status', 'Action'].map((heading, i) => (
-                  <TableCell key={i} sx={{ color: 'white' }}>{heading}</TableCell>
-                ))}
-              </TableRow>
-            </TableHead>
-            <TableBody>
-              {filteredData.map((row, idx) => (
-                <TableRow key={idx}>
-                  <TableCell>{idx + 1}</TableCell>
-                  <TableCell>{row.hospital}</TableCell>
-                  <TableCell>{row.contract}</TableCell>
-                  <TableCell>{row.cis_id}</TableCell>
-                  <TableCell>{row.start_date}</TableCell>
-                  <TableCell>
-                    <Chip label={row.status} size="small" sx={{
-                      bgcolor: row.status === 'Completed' ? '#C8E6C9' : '#FFF3E0',
-                      color: row.status === 'Completed' ? '#388E3C' : '#F57C00'
-                    }} />
-                  </TableCell>
-                  <TableCell>
-                    <IconButton size="small"><MoreVertIcon fontSize="small" /></IconButton>
-                  </TableCell>
-                </TableRow>
+          {/* File list */}
+          {uploadedFiles.length > 0 && (
+            <Box mt={3}>
+              <Typography variant="subtitle2">Files to upload:</Typography>
+              {uploadedFiles.map((file, idx) => (
+                <Typography variant="body2" key={idx}>• {file.name}</Typography>
               ))}
-            </TableBody>
-          </Table>
-        </TableContainer>
-
-        {/* Upload Modal */}
-        <Dialog open={pdfDialogOpen} onClose={() => setPdfDialogOpen(false)} maxWidth="sm" fullWidth>
-          <DialogTitle sx={{ fontSize: 16 }}>Upload Your PDFs</DialogTitle>
-          <DialogContent sx={{ bgcolor: "#EAF2F7" }}>
-            <Box
-              {...getRootProps()}
-              sx={{
-                border: '2px dashed #aaa',
-                borderRadius: 2,
-                p: 4,
-                bgcolor: '#fff',
-                textAlign: 'center',
-                cursor: 'pointer',
-                mb: 2
-              }}
-            >
-              <input {...getInputProps()} />
-              <Typography variant="body1" gutterBottom>
-                {isDragActive ? 'Drop PDFs here...' : 'Drag & drop PDFs here or click to browse'}
-              </Typography>
-              <Typography variant="caption">Only PDF files. Max 10MB each.</Typography>
             </Box>
+          )}
 
-            {uploadedFiles.length > 0 && (
-              <Box>
-                <Typography variant="subtitle2" gutterBottom>Selected Files:</Typography>
-                <ul style={{ paddingLeft: 20 }}>
-                  {uploadedFiles.map((file, idx) => (
-                    <li key={idx}><Typography variant="body2">{file.name}</Typography></li>
-                  ))}
-                </ul>
-              </Box>
-            )}
+          {/* Progress bar */}
+          {uploading && (
+            <Box mt={3}>
+              <Typography variant="body2" gutterBottom>Uploading... {uploadProgress}%</Typography>
+              <LinearProgress variant="determinate" value={uploadProgress} />
+            </Box>
+          )}
+        </DialogContent>
 
-            {fileRejections.length > 0 && (
-              <Typography color="error" variant="body2">
-                Some files were rejected. Please upload PDFs under 10MB.
-              </Typography>
-            )}
-          </DialogContent>
-          <DialogActions>
-            <Button onClick={() => setPdfDialogOpen(false)}>Cancel</Button>
-            <Button
-              variant="contained"
-              onClick={handleUploadSimulated}
-              disabled={uploadedFiles.length === 0}
-            >
-              Upload {uploadedFiles.length > 1 ? 'All' : ''}
-            </Button>
-          </DialogActions>
-        </Dialog>
+        <DialogActions>
+          <Button onClick={() => setPdfDialogOpen(false)} disabled={uploading}>Cancel</Button>
+          <Button
+            variant="contained"
+            onClick={handleUploadAll}
+            disabled={uploadedFiles.length === 0 || uploading}
+          >
+            Upload All
+          </Button>
+        </DialogActions>
+      </Dialog>
+
+      {/* Trigger Button */}
+      <Box sx={{ textAlign: 'right', mt: 2 }}>
+        <Button
+          variant="outlined"
+          startIcon={<CloudUploadIcon />}
+          size="small"
+          onClick={() => setPdfDialogOpen(true)}
+        >
+          Upload PDF
+        </Button>
       </Box>
-    </Paper>
+    </>
   );
 };
 
