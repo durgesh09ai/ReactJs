@@ -1,4 +1,3 @@
-// UploadContractListing.tsx
 import React, { useState, useMemo } from 'react';
 import {
   Box,
@@ -12,7 +11,6 @@ import {
   TextField,
   Typography,
   Button,
-  MenuItem,
   Stack,
   Chip,
   IconButton,
@@ -20,13 +18,10 @@ import {
   DialogTitle,
   DialogContent,
   DialogActions,
-  Menu,
 } from '@mui/material';
 import { useDropzone } from 'react-dropzone';
 import CloudUploadIcon from '@mui/icons-material/CloudUpload';
 import MoreVertIcon from "@mui/icons-material/MoreVert";
-import DeleteIcon from "@mui/icons-material/Delete";
-import ReplayIcon from '@mui/icons-material/Replay';
 
 const initialData = [
   {
@@ -44,156 +39,97 @@ const initialData = [
     lob: '123',
     description: 'Parent contract',
     status: 'Completed'
-  },
-  {
-    hospital: 'Mindstate',
-    solution_version: 'CCG 2',
-    contract: 'Physician',
-    apex_id: 'ACV-0002',
-    referral: 'Ref-2',
-    apex_worksite: '63001',
-    cis_id: 'CSID-9876',
-    cis_type: 'DRG',
-    start_date: '2025-01-26',
-    term_date: '2025-01-26',
-    tax_id: 'Multiple',
-    lob: '876',
-    description: 'Morning contract',
-    status: 'Completed'
-  },
+  }
 ];
 
 const UploadContractListing = () => {
   const [search, setSearch] = useState('');
-  const [currentPage, setCurrentPage] = useState(1);
-  const [selectedRows, setSelectedRows] = useState<number[]>([]);
   const [pdfDialogOpen, setPdfDialogOpen] = useState(false);
   const [data, setData] = useState(initialData);
-  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
-  const [uploadedFile, setUploadedFile] = useState<File | null>(null);
-  const isMenuOpen = Boolean(anchorEl);
+  const [uploadedFiles, setUploadedFiles] = useState<File[]>([]);
 
   const { getRootProps, getInputProps, isDragActive, fileRejections } = useDropzone({
     accept: { 'application/pdf': ['.pdf'] },
     maxSize: 10 * 1024 * 1024,
-    multiple: false,
+    multiple: true,
     onDrop: (acceptedFiles) => {
-      if (acceptedFiles.length) {
-        setUploadedFile(acceptedFiles[0]);
-      }
+      setUploadedFiles(prev => [...prev, ...acceptedFiles]);
     }
   });
 
   const handleUploadSimulated = () => {
-    const newEntries = [
-      {
-        hospital: uploadedFile?.name || 'New Upload',
-        solution_version: 'CCG 1',
-        contract: 'Hospital',
-        apex_id: 'ACV-NEW1',
-        referral: 'Ref-New',
-        apex_worksite: '90000',
-        cis_id: 'CSID-NEW',
-        cis_type: 'Pricer',
-        start_date: '2025-08-17',
-        term_date: '2025-08-17',
-        tax_id: 'CSID-9876',
-        lob: '555',
-        description: 'Uploaded contract',
-        status: 'Progress'
-      }
-    ];
+    const newEntries = uploadedFiles.map((file, index) => ({
+      hospital: file.name,
+      solution_version: 'CCG 1',
+      contract: 'Hospital',
+      apex_id: `ACV-NEW${index + 1}`,
+      referral: 'Ref-New',
+      apex_worksite: '90000',
+      cis_id: `CSID-NEW-${index}`,
+      cis_type: 'Pricer',
+      start_date: '2025-08-17',
+      term_date: '2025-08-17',
+      tax_id: '99999',
+      lob: '555',
+      description: 'Uploaded contract',
+      status: 'Progress'
+    }));
     setData((prev) => [...prev, ...newEntries]);
-    setUploadedFile(null);
+    setUploadedFiles([]);
     setPdfDialogOpen(false);
   };
 
   const filteredData = useMemo(() => {
     return data.filter(row =>
-      row.hospital.toLowerCase().includes(search.toLowerCase()) ||
-      row.contract.toLowerCase().includes(search.toLowerCase()) ||
-      row.apex_id.toLowerCase().includes(search.toLowerCase())
+      row.hospital.toLowerCase().includes(search.toLowerCase())
     );
   }, [data, search]);
 
-  const paginatedData = useMemo(() => {
-    return filteredData.slice(0, 50);
-  }, [filteredData]);
-
-  const toggleRowSelection = (idx: number) => {
-    setSelectedRows((prev) =>
-      prev.includes(idx) ? prev.filter((i) => i !== idx) : [...prev, idx]
-    );
-  };
-
-  const getStatusChip = (status: string) => {
-    switch (status) {
-      case 'Completed':
-        return <Chip label="Completed" size="small" sx={{ bgcolor: 'white', color: '#4CAF50', border: '1px solid #4CAF50' }} />;
-      case 'Progress':
-        return <Chip label="Progress" size="small" sx={{ bgcolor: 'white', color: '#604F4F', border: '1px solid #604F4F' }} />;
-      case 'Failed':
-        return <Chip label="Failed" size="small" sx={{ bgcolor: 'white', color: '#B3261E', border: '1px solid #B3261E' }} />;
-      default:
-        return null;
-    }
-  };
-
   return (
-    <Paper elevation={0} sx={{ backgroundColor: 'white', borderRadius: '10px', width: '100%', p: 1, mt: 2 }}>
+    <Paper elevation={0} sx={{ backgroundColor: 'white', borderRadius: '10px', width: '100%', p: 2, mt: 2 }}>
       <Box>
-        <Stack direction="row" justifyContent="space-between" alignItems="center" mb={1}>
+        <Stack direction="row" justifyContent="space-between" alignItems="center" mb={2}>
           <TextField
             size="small"
             placeholder="Quick Search"
             value={search}
-            onChange={(e) => {
-              setSearch(e.target.value);
-              setCurrentPage(1);
-            }}
+            onChange={(e) => setSearch(e.target.value)}
           />
-
-          <Stack direction="row" alignItems="center" spacing={2}>
-            <Button
-              variant="outlined"
-              startIcon={<CloudUploadIcon />}
-              size="small"
-              onClick={() => setPdfDialogOpen(true)}
-            >
-              Upload PDF
-            </Button>
-          </Stack>
+          <Button
+            variant="outlined"
+            startIcon={<CloudUploadIcon />}
+            size="small"
+            onClick={() => setPdfDialogOpen(true)}
+          >
+            Upload PDFs
+          </Button>
         </Stack>
 
         <TableContainer component={Paper}>
           <Table size="small">
             <TableHead sx={{ bgcolor: '#0F4977' }}>
               <TableRow>
-                {['S.No', 'Solution Version', 'Document Name', 'Contract Type', 'CIS ID', 'CIS ID Type', 'Effective Start Date', 'Term Date', 'Attechment ID', 'Description', 'Status', 'Action'].map((heading, i) => (
-                  <TableCell key={i} sx={{ color: 'white', fontSize: '14px' }}>{heading}</TableCell>
+                {['S.No', 'Document Name', 'Contract Type', 'CIS ID', 'Start Date', 'Status', 'Action'].map((heading, i) => (
+                  <TableCell key={i} sx={{ color: 'white' }}>{heading}</TableCell>
                 ))}
               </TableRow>
             </TableHead>
             <TableBody>
-              {paginatedData.map((row, idx) => (
+              {filteredData.map((row, idx) => (
                 <TableRow key={idx}>
                   <TableCell>{idx + 1}</TableCell>
-                  <TableCell>
-                    <Box sx={{ width: 10, height: 10, borderRadius: '50%', bgcolor: row.solution_version === 'CCG 1' ? '#0F4977' : '#87CEEB' }} />
-                  </TableCell>
                   <TableCell>{row.hospital}</TableCell>
-                  <TableCell><Chip label={row.contract} size="small" sx={{ bgcolor: '#EAF2F7', color: '#0F4977', fontSize: '12px' }} /></TableCell>
-                  <TableCell><Chip label={row.cis_id} size="small" sx={{ bgcolor: '#E4E4E5', color: 'black', fontSize: '12px' }} /></TableCell>
-                  <TableCell>{row.cis_type}</TableCell>
+                  <TableCell>{row.contract}</TableCell>
+                  <TableCell>{row.cis_id}</TableCell>
                   <TableCell>{row.start_date}</TableCell>
-                  <TableCell>{row.term_date}</TableCell>
-                  <TableCell>{row.tax_id}</TableCell>
-                  <TableCell>{row.description}</TableCell>
-                  <TableCell>{getStatusChip(row.status)}</TableCell>
                   <TableCell>
-                    <IconButton size="small" onClick={(e) => setAnchorEl(e.currentTarget)}>
-                      <MoreVertIcon sx={{ fontSize: 14 }} />
-                    </IconButton>
+                    <Chip label={row.status} size="small" sx={{
+                      bgcolor: row.status === 'Completed' ? '#C8E6C9' : '#FFF3E0',
+                      color: row.status === 'Completed' ? '#388E3C' : '#F57C00'
+                    }} />
+                  </TableCell>
+                  <TableCell>
+                    <IconButton size="small"><MoreVertIcon fontSize="small" /></IconButton>
                   </TableCell>
                 </TableRow>
               ))}
@@ -201,9 +137,9 @@ const UploadContractListing = () => {
           </Table>
         </TableContainer>
 
-        {/* Upload PDF Modal */}
+        {/* Upload Modal */}
         <Dialog open={pdfDialogOpen} onClose={() => setPdfDialogOpen(false)} maxWidth="sm" fullWidth>
-          <DialogTitle sx={{ fontSize: 14 }}>Upload Your PDF</DialogTitle>
+          <DialogTitle sx={{ fontSize: 16 }}>Upload Your PDFs</DialogTitle>
           <DialogContent sx={{ bgcolor: "#EAF2F7" }}>
             <Box
               {...getRootProps()}
@@ -214,37 +150,41 @@ const UploadContractListing = () => {
                 bgcolor: '#fff',
                 textAlign: 'center',
                 cursor: 'pointer',
-                transition: 'border 0.2s ease-in-out',
-                '&:hover': { borderColor: '#0F4977' },
+                mb: 2
               }}
             >
               <input {...getInputProps()} />
               <Typography variant="body1" gutterBottom>
-                {isDragActive ? 'Drop the PDF here...' : 'Drag & drop your PDF here or click to browse'}
+                {isDragActive ? 'Drop PDFs here...' : 'Drag & drop PDFs here or click to browse'}
               </Typography>
-              <Typography variant="caption">Only PDF files are accepted. Max size: 10MB</Typography>
-
-              {uploadedFile && (
-                <Box mt={2}>
-                  <Typography variant="body2" fontWeight={500}>Selected File:</Typography>
-                  <Typography variant="body2" color="primary">{uploadedFile.name}</Typography>
-                </Box>
-              )}
-              {fileRejections.length > 0 && (
-                <Typography color="error" variant="body2" mt={1}>
-                  Invalid file. Only PDF up to 10MB allowed.
-                </Typography>
-              )}
+              <Typography variant="caption">Only PDF files. Max 10MB each.</Typography>
             </Box>
+
+            {uploadedFiles.length > 0 && (
+              <Box>
+                <Typography variant="subtitle2" gutterBottom>Selected Files:</Typography>
+                <ul style={{ paddingLeft: 20 }}>
+                  {uploadedFiles.map((file, idx) => (
+                    <li key={idx}><Typography variant="body2">{file.name}</Typography></li>
+                  ))}
+                </ul>
+              </Box>
+            )}
+
+            {fileRejections.length > 0 && (
+              <Typography color="error" variant="body2">
+                Some files were rejected. Please upload PDFs under 10MB.
+              </Typography>
+            )}
           </DialogContent>
           <DialogActions>
             <Button onClick={() => setPdfDialogOpen(false)}>Cancel</Button>
             <Button
               variant="contained"
               onClick={handleUploadSimulated}
-              disabled={!uploadedFile}
+              disabled={uploadedFiles.length === 0}
             >
-              Upload
+              Upload {uploadedFiles.length > 1 ? 'All' : ''}
             </Button>
           </DialogActions>
         </Dialog>
