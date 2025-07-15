@@ -1,61 +1,8 @@
-const filesToUploadRef = useRef<File[]>([]);
+import PictureAsPdfIcon from '@mui/icons-material/PictureAsPdf';
 
-
----------------
-
-
-const handleUploadAll = () => {
-  if (isUploadingRef.current) return; // prevent double trigger
-  if (uploadedFiles.length === 0) return;
-
-  isUploadingRef.current = true;
-  filesToUploadRef.current = [...uploadedFiles]; // store files here
-
-  setUploading(true);
-  setUploadProgress(0);
-};
-
-
------------------------------------------------
-React.useEffect(() => {
-  if (!uploading) return;
-
-  const interval = setInterval(() => {
-    setUploadProgress(prev => {
-      if (prev >= 100) {
-        clearInterval(interval);
-
-        const dummyEntries = filesToUploadRef.current.map((file, index) => ({
-          hospital: file.name.replace('.pdf', ''),
-          solution_version: index % 2 === 0 ? 'CCG 1' : 'CCG 2',
-          contract: index % 2 === 0 ? 'Hospital' : 'Physician',
-          apex_id: `ACV-UP-${Date.now()}-${index}`,
-          referral: `Ref-${Math.floor(Math.random() * 10)}`,
-          apex_worksite: `${90000 + index}`,
-          cis_id: `CSID-UP-${index}`,
-          cis_type: index % 2 === 0 ? 'Pricer' : 'DRG',
-          start_date: '2025-08-17',
-          term_date: '2025-08-17',
-          tax_id: `Tax-${index}`,
-          lob: `${100 + index}`,
-          description: 'Uploaded via PDF drop',
-          status: 'Progress'
-        }));
-
-        setData(prev => [...prev, ...dummyEntries]);
-        setUploadedFiles([]); // now safely clear
-        setTimeout(() => {
-          setUploading(false);
-          setPdfDialogOpen(false);
-          isUploadingRef.current = false;
-          filesToUploadRef.current = [];
-        }, 800);
-
-        return 100;
-      }
-      return prev + 10;
-    });
-  }, 300);
-
-  return () => clearInterval(interval);
-}, [uploading]);
+{uploadedFiles.map((file, idx) => (
+  <Stack key={idx} direction="row" alignItems="center" spacing={1} mt={1}>
+    <PictureAsPdfIcon fontSize="small" sx={{ color: '#B71C1C' }} />
+    <Typography variant="body2">{file.name}</Typography>
+  </Stack>
+))}
