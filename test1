@@ -1,260 +1,61 @@
-import React, { useState, useMemo, useRef } from 'react';
-import {
-  Box,
-  Table,
-  TableHead,
-  TableRow,
-  TableCell,
-  TableBody,
-  TableContainer,
-  Paper,
-  TextField,
-  Typography,
-  Button,
-  Stack,
-  Chip,
-  IconButton,
-  Dialog,
-  DialogTitle,
-  DialogContent,
-  DialogActions,
-  Menu,
-  MenuItem,
-  LinearProgress,
-} from '@mui/material';
-import { useDropzone } from 'react-dropzone';
-import CloudUploadIcon from '@mui/icons-material/CloudUpload';
-import MoreVertIcon from "@mui/icons-material/MoreVert";
-import DeleteIcon from "@mui/icons-material/Delete";
-import ReplayIcon from '@mui/icons-material/Replay';
+const filesToUploadRef = useRef<File[]>([]);
 
-const initialData = [
-  {
-    hospital: 'Frankfort Regional Medical Center',
-    solution_version: 'CCG 1',
-    contract: 'Hospital',
-    apex_id: 'ACV-0001',
-    referral: 'Ref-7',
-    apex_worksite: '62424',
-    cis_id: 'CSID-123',
-    cis_type: 'Pricer',
-    start_date: '2025-01-03',
-    term_date: '2025-01-03',
-    tax_id: 'Single',
-    lob: '123',
-    description: 'Parent contract',
-    status: 'Completed'
-  },
-];
 
-const UploadContractListing = () => {
-  const [data, setData] = useState(initialData);
-  const [search, setSearch] = useState('');
-  const [selectedRows, setSelectedRows] = useState<number[]>([]);
-  const [pdfDialogOpen, setPdfDialogOpen] = useState(false);
-  const [uploadedFiles, setUploadedFiles] = useState<File[]>([]);
-  const [uploading, setUploading] = useState(false);
-  const [uploadProgress, setUploadProgress] = useState(0);
-  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
-  const isMenuOpen = Boolean(anchorEl);
-  const isUploadingRef = useRef(false);
+---------------
 
-  const onDrop = (acceptedFiles: File[]) => {
-    const pdfFiles = acceptedFiles.filter(file => file.type === "application/pdf");
-    setUploadedFiles(prev => [...prev, ...pdfFiles]);
-  };
 
-  const { getRootProps, getInputProps, isDragActive } = useDropzone({
-    onDrop,
-    multiple: true,
-    accept: { "application/pdf": [] }
-  });
+const handleUploadAll = () => {
+  if (isUploadingRef.current) return; // prevent double trigger
+  if (uploadedFiles.length === 0) return;
 
-  const handleUploadAll = () => {
-    if (isUploadingRef.current) return; // prevent double-trigger
-  
-    isUploadingRef.current = true;
-  
-    const filesToUpload = [...uploadedFiles];
-  
-    setUploading(true);
-    setUploadProgress(0);
-    setUploadedFiles([]);
-  
-    const interval = setInterval(() => {
-      setUploadProgress(prev => {
-        if (prev >= 100) {
-          clearInterval(interval);
-  
-          console.log("Files to upload:", filesToUpload.length);
+  isUploadingRef.current = true;
+  filesToUploadRef.current = [...uploadedFiles]; // store files here
 
-          const dummyEntries = filesToUpload.map((file, index) => ({
-            hospital: file.name.replace('.pdf', ''),
-            solution_version: index % 2 === 0 ? 'CCG 1' : 'CCG 2',
-            contract: index % 2 === 0 ? 'Hospital' : 'Physician',
-            apex_id: `ACV-UP-${Date.now()}-${index}`,
-            referral: `Ref-${Math.floor(Math.random() * 10)}`,
-            apex_worksite: `${90000 + index}`,
-            cis_id: `CSID-UP-${index}`,
-            cis_type: index % 2 === 0 ? 'Pricer' : 'DRG',
-            start_date: '2025-08-17',
-            term_date: '2025-08-17',
-            tax_id: `Tax-${index}`,
-            lob: `${100 + index}`,
-            description: 'Uploaded via PDF drop',
-            status: 'Progress'
-          }));
-
-          console.log('dummyEntries',dummyEntries);
-  
-          setData(prev => [...prev, ...dummyEntries]);
-  
-          setTimeout(() => {
-            setUploading(false);
-            setPdfDialogOpen(false);
-            isUploadingRef.current = false; // reset for next time
-          }, 800);
-  
-          return 100;
-        }
-        return prev + 10;
-      });
-    }, 300);
-  };
-
-  const filteredData = useMemo(() => {
-    return data.filter(row =>
-      row.hospital.toLowerCase().includes(search.toLowerCase()) ||
-      row.contract.toLowerCase().includes(search.toLowerCase()) ||
-      row.apex_id.toLowerCase().includes(search.toLowerCase())
-    );
-  }, [search, data]);
-
-  return (
-    <Paper elevation={0} sx={{ backgroundColor: 'white', borderRadius: '10px', p: 2 }}>
-      <Stack direction="row" justifyContent="space-between" alignItems="center" mb={2}>
-        <TextField
-          size="small"
-          placeholder="Quick Search"
-          value={search}
-          onChange={(e) => setSearch(e.target.value)}
-        />
-
-        <Button
-          variant="outlined"
-          startIcon={<CloudUploadIcon />}
-          size="small"
-          onClick={() => setPdfDialogOpen(true)}
-        >
-          Upload PDF
-        </Button>
-      </Stack>
-
-      <TableContainer component={Paper}>
-        <Table size="small">
-          <TableHead sx={{ bgcolor: '#0F4977' }}>
-            <TableRow>
-              {['S.No', 'Solution Version', 'Document Name', 'Contract Type', 'CIS ID', 'CIS ID Type', 'Start Date', 'Term Date', 'Tax ID', 'Description', 'Status', 'Action'].map((heading, i) => (
-                <TableCell key={i} sx={{ color: 'white', fontSize: '14px' }}>{heading}</TableCell>
-              ))}
-            </TableRow>
-          </TableHead>
-          <TableBody>
-            {filteredData.map((row, idx) => (
-              <TableRow key={idx}>
-                <TableCell>{idx + 1}.</TableCell>
-                <TableCell>
-                  <Box sx={{
-                    width: 10, height: 10, borderRadius: '50%',
-                    bgcolor: row.solution_version === 'CCG 1' ? '#0F4977' : '#87CEEB'
-                  }} />
-                </TableCell>
-                <TableCell>{row.hospital}</TableCell>
-                <TableCell>
-                  <Chip label={row.contract} size="small" sx={{ bgcolor: '#EAF2F7', color: '#0F4977' }} />
-                </TableCell>
-                <TableCell><Chip label={row.cis_id} size="small" sx={{ bgcolor: '#E4E4E5', color: 'black' }} /></TableCell>
-                <TableCell>{row.cis_type}</TableCell>
-                <TableCell>{row.start_date}</TableCell>
-                <TableCell>{row.term_date}</TableCell>
-                <TableCell>{row.tax_id}</TableCell>
-                <TableCell>{row.description}</TableCell>
-                <TableCell>
-                  <Chip
-                    label={row.status}
-                    size="small"
-                    sx={{
-                      bgcolor: 'white',
-                      color:
-                        row.status === 'Completed' ? '#4CAF50' :
-                          row.status === 'Progress' ? '#604F4F' : '#B3261E',
-                      border: `1px solid ${
-                        row.status === 'Completed' ? '#4CAF50' :
-                        row.status === 'Progress' ? '#604F4F' : '#B3261E'}`
-                    }}
-                  />
-                </TableCell>
-                <TableCell>
-                  <IconButton size="small" onClick={(e) => setAnchorEl(e.currentTarget)}>
-                    <MoreVertIcon sx={{ fontSize: 14 }} />
-                  </IconButton>
-                </TableCell>
-              </TableRow>
-            ))}
-          </TableBody>
-        </Table>
-      </TableContainer>
-
-      {/* Upload PDF Dialog */}
-      <Dialog open={pdfDialogOpen} onClose={() => setPdfDialogOpen(false)} maxWidth="sm" fullWidth>
-        <DialogTitle sx={{ fontSize: 14 }}>Upload Your PDF</DialogTitle>
-        <DialogContent sx={{ bgcolor: "#EAF2F7", py: 3 }}>
-          <Box
-            {...getRootProps()}
-            sx={{
-              border: '2px dashed #aaa',
-              borderRadius: 2,
-              padding: 4,
-              textAlign: 'center',
-              cursor: 'pointer',
-              backgroundColor: isDragActive ? '#ddd' : '#F7FBFF',
-              transition: '0.3s'
-            }}
-          >
-            <input {...getInputProps()} />
-            <CloudUploadIcon sx={{ fontSize: 48, mb: 1, color: '#0F4977' }} />
-            <Typography variant="body1" gutterBottom>
-              Drag & drop PDF files or <span style={{ color: '#0F4977', textDecoration: 'underline' }}>Browse</span>
-            </Typography>
-            <Typography variant="caption">Supported format: PDF. Max size: 10MB</Typography>
-          </Box>
-
-          {uploadedFiles.length > 0 && (
-            <Box mt={3}>
-              <Typography variant="subtitle2">Files to upload:</Typography>
-              {uploadedFiles.map((file, idx) => (
-                <Typography variant="body2" key={idx}>• {file.name}</Typography>
-              ))}
-            </Box>
-          )}
-
-          {uploading && (
-            <Box mt={3}>
-              <Typography variant="body2" gutterBottom>Uploading... {uploadProgress}%</Typography>
-              <LinearProgress variant="determinate" value={uploadProgress} />
-            </Box>
-          )}
-        </DialogContent>
-
-        <DialogActions>
-          <Button onClick={() => setPdfDialogOpen(false)} disabled={uploading}>Cancel</Button>
-          <Button variant="contained" onClick={handleUploadAll} disabled={uploadedFiles.length === 0 || uploading}>
-            Upload All
-          </Button>
-        </DialogActions>
-      </Dialog>
-    </Paper>
-  );
+  setUploading(true);
+  setUploadProgress(0);
 };
 
-export default UploadContractListing;
+
+-----------------------------------------------
+React.useEffect(() => {
+  if (!uploading) return;
+
+  const interval = setInterval(() => {
+    setUploadProgress(prev => {
+      if (prev >= 100) {
+        clearInterval(interval);
+
+        const dummyEntries = filesToUploadRef.current.map((file, index) => ({
+          hospital: file.name.replace('.pdf', ''),
+          solution_version: index % 2 === 0 ? 'CCG 1' : 'CCG 2',
+          contract: index % 2 === 0 ? 'Hospital' : 'Physician',
+          apex_id: `ACV-UP-${Date.now()}-${index}`,
+          referral: `Ref-${Math.floor(Math.random() * 10)}`,
+          apex_worksite: `${90000 + index}`,
+          cis_id: `CSID-UP-${index}`,
+          cis_type: index % 2 === 0 ? 'Pricer' : 'DRG',
+          start_date: '2025-08-17',
+          term_date: '2025-08-17',
+          tax_id: `Tax-${index}`,
+          lob: `${100 + index}`,
+          description: 'Uploaded via PDF drop',
+          status: 'Progress'
+        }));
+
+        setData(prev => [...prev, ...dummyEntries]);
+        setUploadedFiles([]); // now safely clear
+        setTimeout(() => {
+          setUploading(false);
+          setPdfDialogOpen(false);
+          isUploadingRef.current = false;
+          filesToUploadRef.current = [];
+        }, 800);
+
+        return 100;
+      }
+      return prev + 10;
+    });
+  }, 300);
+
+  return () => clearInterval(interval);
+}, [uploading]);
