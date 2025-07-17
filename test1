@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { observer } from "mobx-react-lite";
 
 import { 
@@ -64,6 +64,33 @@ const fileStructure: FileNode[] = [
 ];
 
 
+const fileStructure2: FileNode[] = [
+  {
+    id: 'main',
+    name: 'src',
+    type: 'folder',
+    isExpanded: false,
+    children: [
+      { id: 'utils1', name: 'utils.py', type: 'file' },
+      { id: 'transformer1', name: 'transformer.py', type: 'file' },
+      { id: 'metrics1', name: 'metrics_engine.py', type: 'file' }
+    ]
+  },
+  {
+    id: 'pipelines2',
+    name: 'Transform SQL to DAX.txt1',
+    type: 'file'
+  },
+];
+
+
+
+const projectFileStructures: Record<string, FileNode[]> = {
+  Healthify: fileStructure,
+  Project2: fileStructure2,
+};
+
+
 
 const fileStructureTarget: FileNode[] = [
   {
@@ -96,6 +123,12 @@ export const FileExplorer: React.FC = observer(() => {
   const [selectedProject, setSelectedProject] = useState('Healthify');
   const [sourceFiles, setSourceFiles] = useState(fileStructure);
   const [targetFiles, setTargetFiles] = useState(fileStructureTarget);
+
+useEffect(() => {
+  setSourceFiles(projectFileStructures[selectedProject] || []);
+}, [selectedProject]);
+
+
 
  const {
     fileContent,
