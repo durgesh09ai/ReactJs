@@ -1,0 +1,11 @@
+DECLARE @period int = (Select max(period) from fact_denial);
+
+WITH lst_three_months as
+(
+SELECT @period Period, sum(A.denial_amount) denied_amount
+FROM fact_denial A
+where A.period between Convert(varchar(6),DATEADD(MM,-2,CAST(LEFT(@period,4)+'-'+RIGHT(@period,2)+'-01')+as date))) and @period
+)
+SELECT Period, sum(denied_amount) lst_three_mnth_denial_amount
+FROM lst_three_months
+GROUP BY Period
