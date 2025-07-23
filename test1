@@ -1,52 +1,7 @@
-const express = require('express');
-const path = require('path');
-const axios = require('axios');
-const app = express();
-const PORT = process.env.PORT || 5000;
+PS C:\Users\Durgesh226462\Documents\emblem_frt\backend> node server.js
+C:\Users\Durgesh226462\Documents\emblem_frt\backend\node_modules\path-to-regexp\dist\index.js:73
+            throw new TypeError(`Missing parameter name at ${i}: ${DEBUG_URL}`);
+            ^
 
-app.use(express.json());
-
-// 🔹 Your API route
-app.post('/api/data-agentic-ai', async (req, res) => {
-  const { query } = req.body;
-
-  const ds_dict = {
-    dataframe_split: {
-      columns: ['query'],
-      data: [[query]]
-    }
-  };
-
-  try {
-    const apiResponse = await axios.post(
-      'https://your-external-api.com/endpoint',
-      ds_dict,
-      {
-        headers: {
-          Authorization: `Bearer your-real-api-token`,
-          'Content-Type': 'application/json'
-        }
-      }
-    );
-
-    res.json({
-      message: 'Data processed',
-      apiResponse: apiResponse.data
-    });
-  } catch (error) {
-    console.error('External API error:', error.message);
-    res.status(500).json({ error: 'Failed to call external API' });
-  }
-});
-
-// ✅ Serve React build (AFTER routes)
-app.use(express.static(path.join(__dirname, '../build')));
-
-app.get('*', (req, res) => {
-  res.sendFile(path.join(__dirname, '../build', 'index.html'));
-});
-
-// ✅ Start the server
-app.listen(PORT, () => {
-  console.log(`Server is running on http://localhost:${PORT}`);
-});
+TypeError: Missing parameter name at 1: https://git.new/pathToRegexpError
+    at name (C:\Users\Durgesh226462\Documents\emblem_frt\backend\node_modules\path-to-regexp\dist\index.js:73:19)
