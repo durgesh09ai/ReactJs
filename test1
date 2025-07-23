@@ -1,21 +1,44 @@
+trigger:
+  - main
 
-PS C:\Users\Durgesh226462\Documents\emblem_frt\backend> node server.js
-buildPath C:\Users\Durgesh226462\Documents\emblem_frt\build
-C:\Users\Durgesh226462\Documents\emblem_frt\backend\node_modules\path-to-regexp\dist\index.js:73
-            throw new TypeError(`Missing parameter name at ${i}: ${DEBUG_URL}`);
-            ^
+pool:
+  vmImage: 'ubuntu-latest'
 
-TypeError: Missing parameter name at 1: https://git.new/pathToRegexpError
-    at name (C:\Users\Durgesh226462\Documents\emblem_frt\backend\node_modules\path-to-regexp\dist\index.js:73:19)
-    at lexer (C:\Users\Durgesh226462\Documents\emblem_frt\backend\node_modules\path-to-regexp\dist\index.js:91:27)
-    at lexer.next (<anonymous>)
-    at Iter.peek (C:\Users\Durgesh226462\Documents\emblem_frt\backend\node_modules\path-to-regexp\dist\index.js:106:38)
-    at Iter.tryConsume (C:\Users\Durgesh226462\Documents\emblem_frt\backend\node_modules\path-to-regexp\dist\index.js:112:28)
-    at Iter.text (C:\Users\Durgesh226462\Documents\emblem_frt\backend\node_modules\path-to-regexp\dist\index.js:128:30)
-    at consume (C:\Users\Durgesh226462\Documents\emblem_frt\backend\node_modules\path-to-regexp\dist\index.js:152:29)
-    at parse (C:\Users\Durgesh226462\Documents\emblem_frt\backend\node_modules\path-to-regexp\dist\index.js:183:20)
-    at C:\Users\Durgesh226462\Documents\emblem_frt\backend\node_modules\path-to-regexp\dist\index.js:294:74
-    at Array.map (<anonymous>)
+variables:
+  NODE_VERSION: '18.x'
 
-Node.js v22.17.1
-PS C:\Users\Durgesh226462\Documents\emblem_frt\backend>
+steps:
+  - task: UseNode@1
+    inputs:
+      version: '$(NODE_VERSION)'
+
+  # 🔹 Install frontend dependencies and build React
+  - script: |
+      npm install
+      npm run build
+    displayName: 'Build React App'
+
+  # 🔹 Copy React build to backend
+  - script: |
+      mkdir -p backend/build
+      cp -r build/* backend/build/
+    displayName: 'Move React build to backend'
+
+  # 🔹 Install backend dependencies
+  - script: |
+      cd backend
+      npm install
+    displayName: 'Install backend dependencies'
+
+  # 🔹 Archive files for deployment
+  - task: ArchiveFiles@2
+    inputs:
+      rootFolderOrFile: 'backend'
+      archiveType: 'zip'
+      archiveFile: '$(Build.ArtifactStagingDirectory)/app.zip'
+      replaceExistingArchive: true
+
+  # 🔹 Publish artifacts
+  - task: PublishBuildArtifacts@1
+    inputs:
+      artifactName: 'drop'
