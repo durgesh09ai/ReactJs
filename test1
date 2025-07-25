@@ -1,186 +1,37 @@
-import React, { useState } from 'react';
-import { Box } from '@mui/material';
-import { styled } from '@mui/material/styles';
-import { WelcomeHeader } from '../components/HomePage/WelcomeHeader';
-import { FeatureCard } from '../components/HomePage/FeatureCard';
-import { ModuleCard } from '../components/HomePage/ModuleCard';
+const DescriptionText = styled(Typography)(({ theme }) => ({
+  color: '#61646B',
+  fontSize: '0.875rem',
+  fontWeight: 400,
+  lineHeight: '26px',
+  letterSpacing: '0.14px',
+  position: 'relative',
+  overflow: 'hidden',
+  textOverflow: 'ellipsis',
+  display: '-webkit-box',
+  WebkitLineClamp: 2,
+  WebkitBoxOrient: 'vertical',
+}));
 
 
-interface Module {
-  id: string;
-  iconUrl: string;
-  title: string;
-  description: string;
-  isHighlighted?: boolean;
-}
+-----------------
+
+const FeatureImage = styled('img')({
+  width: '100%',
+  maxWidth: '362px',
+  height: 'auto',
+  objectFit: 'cover',
+  borderRadius: '8px',
+});
+
+
+<Box sx={{ maxWidth: '362px', width: '100%' }}>
+  <FeatureImage src={imageUrl} alt={`${title} illustration`} />
+</Box>
+
+
+_____________
+
 const MainContainer = styled(Box)(({ theme }) => ({
-  maxWidth: 'none',
-  display: 'flex',
-  height: '100%',
-  flexDirection: 'column',
-  alignItems: 'flex-start',
-  gap: '16px',
-  flex: '1 0 0',
-  position: 'relative',
-  backgroundColor: 'white',
-  margin: '0 auto',
-  padding: '12px 8px',
+  overflowX: 'hidden', // Prevent scroll from horizontal overflow
+  maxWidth: '100vw',
 }));
-
-const FeaturesSection = styled(Box)(({ theme }) => ({
-  display: 'flex',
-  alignItems: 'center',
-  gap: '40px',
-  alignSelf: 'stretch',
-  position: 'relative',
-  [theme.breakpoints.down('md')]: {
-    flexDirection: 'column',
-    gap: '20px',
-  },
-  [theme.breakpoints.down('sm')]: {
-    gap: '16px',
-  },
-}));
-
-const GridContainer = styled(Box)(({ theme }) => ({
-  display: 'flex',
-  flexDirection: 'column',
-  gap: '18px',
-  alignSelf: 'stretch',
-  position: 'relative',
-  [theme.breakpoints.down('md')]: {
-    gap: '12px',
-  },
-}));
-
-const GridRow = styled(Box)(({ theme }) => ({
-  display: 'flex',
-  alignItems: 'flex-start',
-  gap: '18px',
-  alignSelf: 'stretch',
-  position: 'relative',
-  [theme.breakpoints.down('md')]: {
-    flexDirection: 'column',
-    gap: '12px',
-  },
-}));
-
-const HomePage = () => {
-  const [selectedModule, setSelectedModule] = useState<any | null>(null);
-
-  const handleFeatureExplore = (featureTitle: string) => {
-    console.log(`Exploring ${featureTitle}`);
-  };
-
-  const handleModuleClick = (moduleId: string) => {
-    const module = modules.find((m) => m.id === moduleId);
-    if (module) setSelectedModule(module);
-  };
-
-  const legacyPricingFeatures = [
-    { title: 'Provider Shell Builder', description: 'Initializes provider-specific configurations' },
-    { title: 'Service Config Rates', description: 'Defines fixed pricing rules for services' },
-    { title: 'Rate Matching Logics', description: 'Supports mapping of services to providers' },
-  ];
-
-  const providerBenefitsFeatures = [
-    { title: 'Data Extraction & Highlighting', description: 'Automatically extracts benefit-related data from source files' },
-    { title: 'Contract Comparison Engine', description: 'Compares annotated data' },
-    { title: 'Role-Based Assignment', description: 'Entries can be routed to Subject Matter Experts' },
-  ];
-
-  const modules = [
-    {
-      id: 'module-3',
-      iconUrl: 'https://api.builder.io/api/v1/image/assets/TEMP/ad00d47eacb058428ef92f194d8d38676bc70dc5?width=64',
-      title: 'Module 3',
-      description: 'SEO-Friendly Website, Self-Managed, Social Media Integrations',
-      isHighlighted: false,
-    },
-    {
-      id: 'module-4',
-      iconUrl: 'https://api.builder.io/api/v1/image/assets/TEMP/18f8ec028429ff54440a575ef75b8bd618977a8d?width=64',
-      title: 'Module 4',
-      description: 'Email & WhatsApp Marketing Tool',
-      isHighlighted: false,
-    },
-    {
-      id: 'module-5',
-      iconUrl: 'https://api.builder.io/api/v1/image/assets/TEMP/d38a8ec99a7f11ebb6527afc205a830a200ccd80?width=64',
-      title: 'Module 5',
-      description: 'Website Management & Analytics',
-      isHighlighted: true,
-    },
-    {
-      id: 'module-6',
-      iconUrl: 'https://api.builder.io/api/v1/image/assets/TEMP/18f8ec028429ff54440a575ef75b8bd618977a8d?width=64',
-      title: 'Module 6',
-      description: 'Content Scheduling & Automation',
-      isHighlighted: false,
-    },
-  ];
-
-   const chunkedModules: Module[][] = [];
-  for (let i = 0; i < modules.length; i += 2) {
-    chunkedModules.push(modules.slice(i, i + 2));
-  }
-
-  return (
-    <MainContainer>
-      <Box sx={{ width: '100%' }}>
-        <WelcomeHeader userName="Rajat" />
-      </Box>
-
-      <GridContainer aria-label="Solutions modules">
-        <GridRow>
-          <FeatureCard
-            cardNumber="01"
-            title="Legacy Pricing Logic"
-            description="CCG1 represents the Legacy Pricing Logic used in earlier phases of the Recon Stream project. It likely includes static or rule-based configurations."
-            features={legacyPricingFeatures}
-            imageUrl="https://api.builder.io/api/v1/image/assets/TEMP/8ce2a30fe662fb6d38565ab3aaa6e20f5a015801?width=723"
-            onExplore={() => handleFeatureExplore('Legacy Pricing Logic')}
-          />
-          <FeatureCard
-            cardNumber="02"
-            title="Provider Benefits Audit"
-            description="This is designed to audit and validate extracted provider benefit data. After annotation and review, the data is compared against contractual configurations using an external comparison system."
-            features={providerBenefitsFeatures}
-            imageUrl="https://api.builder.io/api/v1/image/assets/TEMP/a5b9fec369999a85e52185e05b49e484f3f7dc07?width=723"
-            onExplore={() => handleFeatureExplore('Provider Benefits Audit')}
-          />
-        </GridRow>
-
-        {chunkedModules.map((group, rowIndex) => (
-          <GridRow key={`row-${rowIndex}`}>
-            {group.map((module) =>
-              selectedModule?.id === module.id ? (
-             <Box key={module.id} sx={{ flex: '1 0 0', height: '100%' }}>
-                <FeatureCard
-                cardNumber="09"
-                title={module.title}
-                description={module.description}
-                features={providerBenefitsFeatures}
-                imageUrl="https://api.builder.io/api/v1/image/assets/TEMP/8ce2a30fe662fb6d38565ab3aaa6e20f5a015801?width=723"
-                onExplore={() => handleFeatureExplore(module.title)}
-                />
-              </Box>
-              ) : (
-                <ModuleCard
-                  key={module.id}
-                  iconUrl={module.iconUrl}
-                  title={module.title}
-                  description={module.description}
-                  isHighlighted={module.isHighlighted}
-                  onClick={() => handleModuleClick(module.id)}
-                />
-              )
-            )}
-          </GridRow>
-        ))}
-      </GridContainer>
-    </MainContainer>
-  );
-};
-
-export default HomePage;
