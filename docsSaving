@@ -1,50 +1,170 @@
-const [selectedTechnology, setSelectedTechnology] = useState<dropDownItems[]>([]);
+import React, { useState } from 'react';
+import { Box } from '@mui/material';
+import { styled } from '@mui/material/styles';
+import { WelcomeHeader } from '../components/HomePage/WelcomeHeader';
+import { FeatureCard } from '../components/HomePage/FeatureCard';
+import { ModuleCard } from '../components/HomePage/ModuleCard';
 
------------------
+interface FeatureItem {
+  title: string;
+  description: string;
+}
 
-<Box sx={{ width: '200px' }}>
-  <FormControl fullWidth>
-    <FormLabel sx={{ mb: 1 }}>By Smart Tag</FormLabel>
+interface Module {
+  id: string;
+  iconUrl: string;
+  imageUrl: string;
+  title: string;
+  description: string;
+  isHighlighted?: boolean;
+  features: FeatureItem[];
+}
 
-    <Autocomplete
-      multiple
-      options={technologyOptionsList}
-      getOptionLabel={(option) => option.name}
-      value={selectedTechnology}
-      onChange={(_, newValue) => {
-        setSelectedTechnology(newValue);
-      }}
-      isOptionEqualToValue={(option, value) => option.id === value.id}
-      filterSelectedOptions
-      renderTags={() => null}
-      renderInput={(params) => (
-        <TextField
-          {...params}
-          placeholder="Select Smart Tag"
-          size="small"
-          variant="outlined"
+const MainContainer = styled(Box)(({ theme }) => ({
+  display: 'flex',
+  flexDirection: 'column',
+  gap: '16px',
+  backgroundColor: 'white',
+  padding: '12px 8px',
+}));
+
+const ColumnsWrapper = styled(Box)(({ theme }) => ({
+  display: 'flex',
+  gap: '24px',
+  width: '100%',
+  [theme.breakpoints.down('md')]: {
+    flexDirection: 'column',
+  },
+}));
+
+const Column = styled(Box)({
+  display: 'flex',
+  flexDirection: 'column',
+  gap: '16px',
+  flex: 1,
+});
+
+const HomePage = () => {
+  const [selectedModuleId, setSelectedModuleId] = useState<string | null>(null);
+
+  const handleFeatureExplore = (featureTitle: string) => {
+    console.log(`Exploring ${featureTitle}`);
+  };
+
+  const handleModuleClick = (moduleId: string) => {
+    setSelectedModuleId(moduleId);
+  };
+
+
+  const legacyPricingFeatures = [
+    { title: 'Provider Shell Builder', description: 'Initializes provider-specific configurations' },
+    { title: 'Service Config Rates', description: 'Defines fixed pricing rules for services' },
+    { title: 'Rate Matching Logics', description: 'Supports mapping of services to providers' },
+  ];
+
+  const modules: Module[] = [
+    {
+      id: 'module-1',
+      iconUrl: 'https://api.builder.io/api/v1/image/assets/TEMP/18f8ec028429ff54440a575ef75b8bd618977a8d?width=64',
+      imageUrl: 'https://api.builder.io/api/v1/image/assets/TEMP/8ce2a30fe662fb6d38565ab3aaa6e20f5a015801?width=723',
+      title: 'Module 1',
+      description: 'This is designed to audit and validate extracted provider benefit data. After annotation and review, the data is compared against contractual configurations using an external comparison system 1',
+      isHighlighted: true,
+      features: legacyPricingFeatures,
+    },
+    {
+      id: 'module-2',
+      iconUrl: 'https://api.builder.io/api/v1/image/assets/TEMP/18f8ec028429ff54440a575ef75b8bd618977a8d?width=64',
+      imageUrl: 'https://api.builder.io/api/v1/image/assets/TEMP/8ce2a30fe662fb6d38565ab3aaa6e20f5a015801?width=723',
+      title: 'Module 2',
+      description: 'This is designed to audit and validate extracted provider benefit data. After annotation and review, the data is compared against contractual configurations using an external comparison system 2',
+      features: legacyPricingFeatures,
+    },
+    {
+      id: 'module-3',
+      iconUrl: 'https://api.builder.io/api/v1/image/assets/TEMP/18f8ec028429ff54440a575ef75b8bd618977a8d?width=64',
+      imageUrl: 'https://api.builder.io/api/v1/image/assets/TEMP/8ce2a30fe662fb6d38565ab3aaa6e20f5a015801?width=723',
+      title: 'Module 3',
+      description: 'This is designed to audit and validate extracted provider benefit data. After annotation and review, the data is compared against contractual configurations using an external comparison system 3',
+      features: legacyPricingFeatures,
+    },
+    {
+      id: 'module-4',
+      iconUrl: 'https://api.builder.io/api/v1/image/assets/TEMP/18f8ec028429ff54440a575ef75b8bd618977a8d?width=64',
+      imageUrl: 'https://api.builder.io/api/v1/image/assets/TEMP/8ce2a30fe662fb6d38565ab3aaa6e20f5a015801?width=723',
+      title: 'Module 4',
+      description: 'This is designed to audit and validate extracted provider benefit data. After annotation and review, the data is compared against contractual configurations using an external comparison system 4',
+      features: legacyPricingFeatures,
+    },
+    {
+      id: 'module-5',
+      iconUrl: 'https://api.builder.io/api/v1/image/assets/TEMP/18f8ec028429ff54440a575ef75b8bd618977a8d?width=64',
+      imageUrl: 'https://api.builder.io/api/v1/image/assets/TEMP/8ce2a30fe662fb6d38565ab3aaa6e20f5a015801?width=723',
+      title: 'Module 2',
+      description: 'This is designed to audit and validate extracted provider benefit data. After annotation and review, the data is compared against contractual configurations using an external comparison system 2',
+      features: legacyPricingFeatures,
+    },
+    {
+      id: 'module-6',
+      iconUrl: 'https://api.builder.io/api/v1/image/assets/TEMP/18f8ec028429ff54440a575ef75b8bd618977a8d?width=64',
+      imageUrl: 'https://api.builder.io/api/v1/image/assets/TEMP/8ce2a30fe662fb6d38565ab3aaa6e20f5a015801?width=723',
+      title: 'Module 3',
+      description: 'This is designed to audit and validate extracted provider benefit data. After annotation and review, the data is compared against contractual configurations using an external comparison system 3',
+      features: legacyPricingFeatures,
+    },
+    {
+      id: 'module-7',
+      iconUrl: 'https://api.builder.io/api/v1/image/assets/TEMP/18f8ec028429ff54440a575ef75b8bd618977a8d?width=64',
+      imageUrl: 'https://api.builder.io/api/v1/image/assets/TEMP/8ce2a30fe662fb6d38565ab3aaa6e20f5a015801?width=723',
+      title: 'Module 4',
+      description: 'This is designed to audit and validate extracted provider benefit data. After annotation and review, the data is compared against contractual configurations using an external comparison system 4',
+      features: legacyPricingFeatures,
+    },
+  ];
+
+  const leftModules = modules.filter((_, i) => i % 2 === 0);
+  const rightModules = modules.filter((_, i) => i % 2 === 1);
+
+  const renderColumn = (columnModules: Module[], isLeftColumn: boolean) =>
+    columnModules.map((module, index) => {
+      const isSelected = selectedModuleId === module.id;
+      const isFirst = index === 0;
+
+      const showFeatureCard = isFirst || isSelected;
+
+      return showFeatureCard ? (
+        <FeatureCard
+          key={module.id}
+          cardNumber={`0${index + 1}`}
+          title={module.title}
+          description={module.description}
+          features={module.features}
+          imageUrl={module.imageUrl}
+          onExplore={() => handleFeatureExplore(module.title)}
         />
-      )}
-    />
-  </FormControl>
-</Box>
+      ) : (
+        <Box>
+        <ModuleCard
+          key={module.id}
+          iconUrl={module.iconUrl}
+          title={module.title}
+          description={module.description}
+          isHighlighted={module.isHighlighted}
+          onClick={() => handleModuleClick(module.id)}
+        />
+        </Box>
+      );
+    });
 
-<Box sx={{ mt: 1, display: 'flex', gap: 1, flexWrap: 'wrap', minWidth: '90%' }}>
-  {selectedTechnology.map((item) => (
-    <Chip
-      key={item.id}
-      label={item.name}
-      onDelete={() =>
-        setSelectedTechnology((prev) =>
-          prev.filter((tech) => tech.id !== item.id)
-        )
-      }
-      color="primary"
-      variant="outlined"
-      size="small"
-    />
-  ))}
-</Box>
-___________________
+  return (
+    <MainContainer>
+      <WelcomeHeader userName="Rajat" />
+      <ColumnsWrapper>
+        <Column>{renderColumn(leftModules, true)}</Column>
+        <Column>{renderColumn(rightModules, false)}</Column>
+      </ColumnsWrapper>
+    </MainContainer>
+  );
+};
 
-selectedTechnology.map((tech) => tech.id).join(","),
+export default HomePage;
